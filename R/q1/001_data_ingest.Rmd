@@ -1,0 +1,90 @@
+---
+title: "PAWS Q1"
+author: "Alice Walsh"
+date: "3/16/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_libs}
+# This code works when you are using RStudio project. Paths are relative and stuff
+suppressPackageStartupMessages(library(tidyverse))
+
+```
+
+# Question
+What is the typical engagement timeline for a volunteer, from attending orientation to completing first shift?
+
+# Procedure
+
+## Load Data
+```{r data_load}
+master_file <- '../../Data/master.csv'
+service_file <- '../../Data/service.csv'
+signup_file <- '../../Data/signupsheet.csv'
+
+master <- read.csv(master_file, quote="")
+service <- read.csv(service_file)
+signup <- read.csv(signup_file)
+```
+
+The `r master_file` has `r nrow(master)` rows.
+
+The `r service_file` has `r nrow(service)` rows.
+
+The `r signup_file` has `r nrow(signup)` rows.
+
+## Data manipulation
+```{r data_manip, warning = FALSE}
+# Volunteers have unique IDs
+# Lets get Date.entered, Start.date from master and FIRST From.date from service, and Orientation.Date from signup
+# Not all IDs in master have ID in signup, not all IDs in service have ID in signup
+dates <- merge(select(master, ID, Date.entered, Start.date, Orientation.Date, Status), signup, by = "ID", all.x = TRUE)
+
+first_service <- service %>%
+  mutate(From.date = as.Date(From.date, format = "%m-%d-%Y")) %>%
+  group_by(ID) %>%
+  summarise(first_service = min(From.date))
+
+dates <- merge(dates, first_service, by = "ID", all.x = TRUE)
+
+# Convert to dates
+dates <- dates %>%
+  mutate(Date.entered = as.Date(Date.entered, format = "%m-%d-%Y"),
+         Start.date = as.Date(Start.date, format = "%m-%d-%Y"),
+         Orientation.Date.master = as.Date(Orientation.Date.x, format = "%m-%d-%Y"), 
+         Orientation.Date.signup = as.Date(Orientation.Date.y, format = "%m/%d/%y")
+  ) %>%
+  select(ID, Date.entered, Start.date, Orientation.Date.master, Orientation.Date.signup, Status)
+# I had no good ideas to merge two orientation date columns...
+dates$Orientation.Date <-  as.Date(apply(dates, 1, function(x) min(x[4], x[5], na.rm = T)))
+# One Orientation.Date was 1111-11-11 - change to NA
+dates$Orientation.Date[dates$Orientation.Date == "1111-11-11"] <- NA
+dates$days_start_orient <- dates$Start.date - dates$Orientation.Date
+
+```
+
+## Quick plot
+
+```{r plot}
+
+ggplot(dates, aes(x = Orientation.Date, y = days_start_orient)) + 
+  geom_point() + 
+  theme_bw()
+```
+
+I can clearly see either some data entry errors or some other things I need to consider like secondary orientation.
+
+
+# Output
+
+I wrote the Rds with merged data to Data/merged.Rds for downstream use.
+```{r save}
+saveRDS(dates, "../../Data/merged_dates.Rds")
+```
+
+
+# Session Information
