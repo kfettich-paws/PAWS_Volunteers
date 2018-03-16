@@ -1,0 +1,8 @@
+---
+title: "q1_readme"
+author: "Karla Fettich"
+date: "March 15, 2018"
+output: html_document
+---
+
+This is an example of a readme file for a research question.
