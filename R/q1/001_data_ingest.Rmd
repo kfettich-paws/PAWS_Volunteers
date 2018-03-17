@@ -47,12 +47,19 @@ The `r signup_file` has `r nrow(signup)` rows.
 dates <- merge(select(master, ID, Date.entered, Start.date, Orientation.Date, Status), 
                filter(signup, orientation == "Primary"), by = "ID", all.x = TRUE)
 
-first_service <- service %>%
-  mutate(From.date = as.Date(From.date, format = "%m-%d-%Y")) %>%
-  group_by(ID) %>%
-  summarise(first_service = min(From.date))
+# originally just wanted to keep first shift, but looked at karla version
+# and decided to use her code to make wide :)
+# first_service <- service %>%
+#   mutate(From.date = as.Date(From.date, format = "%m-%d-%Y")) %>%
+#   group_by(ID) %>%
+#   summarise(first_service = min(From.date))
 
-dates <- merge(dates, first_service, by = "ID", all.x = TRUE)
+service$From.date <- as.Date(service$From.date, format = "%m-%d-%Y")
+service <- service[order(service$ID, service$From.date),]
+service$shift <- sequence(rle(as.character(service$ID))$lengths)
+service <- reshape(service,timevar="shift",idvar="ID",direction="wide")
+
+dates <- merge(dates, select(service, ID, From.date.1, From.date.2, From.date.3, From.date.4, From.date.5), by = "ID", all.x = TRUE)
 
 # Convert to dates
 dates <- dates %>%
@@ -61,12 +68,19 @@ dates <- dates %>%
          Orientation.Date.master = as.Date(Orientation.Date.x, format = "%m-%d-%Y"), 
          Orientation.Date.signup = as.Date(Orientation.Date.y, format = "%m/%d/%y")
   ) %>%
-  select(ID, Date.entered, Start.date, Orientation.Date.master, Orientation.Date.signup, Status)
+  select(ID, Date.entered, Start.date, Orientation.Date.master, Orientation.Date.signup, Status, starts_with("From.date"))
 # I had no good ideas to merge two orientation date columns...
 dates$Orientation.Date <-  as.Date(apply(dates, 1, function(x) min(x[4], x[5], na.rm = T)))
 # One Orientation.Date was 1111-11-11 - change to NA
 dates$Orientation.Date[dates$Orientation.Date == "1111-11-11"] <- NA
+# Remove individual orientation dates
+dates <- select(dates, -Orientation.Date.master, -Orientation.Date.signup)
+
+```
+
+```{r calc_differences}
 dates$days_start_orient <- dates$Start.date - dates$Orientation.Date
+dates$days_service1_orient <- dates$From.date.1 - dates$Orientation.Date
 
 ```
 
@@ -82,15 +96,18 @@ ggplot(dates, aes(x = Orientation.Date, y = days_start_orient)) +
 
 I can clearly see either some data entry errors or some other things I need to consider like secondary orientation. For example, if start date is exactly 1 year or 2 years from orientation date, then I would guess that the year was entered incorrectly.
 
-Data could also be easier to look at by restricting to after 2014.
+Data could also be easier to look at by restricting to after Jan 1, 2015.
 
 ```{r plot_recent}
 
-ggplot(filter(dates, Orientation.Date > "2014-01-01"), aes(x = Orientation.Date, y = days_start_orient)) + 
+ggplot(filter(dates, Orientation.Date > "2015-01-01"), aes(x = Orientation.Date, y = days_start_orient)) + 
   geom_point() + 
-  geom_hline(yintercept = 365*c(-5:1), alpha = 0.5, color = "blue") +
+  geom_hline(yintercept = 365*c(-4:1), alpha = 0.5, color = "blue") +
   theme_light()
 ```
+
+
+I need to learn what the various dates actually are and also summarise the number of volunteers with various characteristics, such as no orientation, took orientation, but never volunteered, etc.
 
 # Output
 
