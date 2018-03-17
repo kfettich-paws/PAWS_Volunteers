@@ -42,7 +42,10 @@ The `r signup_file` has `r nrow(signup)` rows.
 # Volunteers have unique IDs
 # Lets get Date.entered, Start.date from master and FIRST From.date from service, and Orientation.Date from signup
 # Not all IDs in master have ID in signup, not all IDs in service have ID in signup
-dates <- merge(select(master, ID, Date.entered, Start.date, Orientation.Date, Status), signup, by = "ID", all.x = TRUE)
+
+# merge
+dates <- merge(select(master, ID, Date.entered, Start.date, Orientation.Date, Status), 
+               filter(signup, orientation == "Primary"), by = "ID", all.x = TRUE)
 
 first_service <- service %>%
   mutate(From.date = as.Date(From.date, format = "%m-%d-%Y")) %>%
@@ -73,11 +76,21 @@ dates$days_start_orient <- dates$Start.date - dates$Orientation.Date
 
 ggplot(dates, aes(x = Orientation.Date, y = days_start_orient)) + 
   geom_point() + 
-  theme_bw()
+  geom_hline(yintercept = 365*c(1:8), alpha = 0.5, color = "blue") +
+  theme_light()
 ```
 
-I can clearly see either some data entry errors or some other things I need to consider like secondary orientation.
+I can clearly see either some data entry errors or some other things I need to consider like secondary orientation. For example, if start date is exactly 1 year or 2 years from orientation date, then I would guess that the year was entered incorrectly.
 
+Data could also be easier to look at by restricting to after 2014.
+
+```{r plot_recent}
+
+ggplot(filter(dates, Orientation.Date > "2014-01-01"), aes(x = Orientation.Date, y = days_start_orient)) + 
+  geom_point() + 
+  geom_hline(yintercept = 365*c(-5:1), alpha = 0.5, color = "blue") +
+  theme_light()
+```
 
 # Output
 
