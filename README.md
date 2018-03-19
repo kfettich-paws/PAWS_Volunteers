@@ -47,6 +47,8 @@ There are 3 datasets we can use, with the following fields:
 - *Orientation.Date* = Date of orientation (there's better info in another file)
 
 2. **service.csv** (records of service for each volunteer)
+This dataset only covers shifts between March 1, 2017 and March 1, 2018. We can expand this dataset in the future. In order to limit it to the people for whom we know we have all available records, we should filter out volunteers who had their orientation prior to March 1 2017, because otherwise volunteers who signed up in e.g. 2015 will appear as attending their first shift 3 years later.  
+
 - *ID*
 - *Site* = Site where the volunteer served for that entry; main values are "PAWS Adoption Center - Old City", "Grays Ferry Clinic - GF" and "PAWS Grant Ave. Adoption Center/Wellness Clinic", but other values are also possible (e.g. "PAWS off-site events", "Mutt Strut")
 - *Assignment* = Specific duties the volunteer performed for that entry
