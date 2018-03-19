@@ -142,7 +142,7 @@ $(document).ready(function () {
 <h2>Data</h2>
 <p>There are 3 datasets we can use, with the following fields:</p>
 <ol style="list-style-type: decimal">
-<li>master.csv</li>
+<li><strong>master.csv</strong></li>
 </ol>
 <ul>
 <li><em>ID</em> = unique de-identified ID number (identifies the same person across all datasets)</li>
@@ -163,7 +163,7 @@ $(document).ready(function () {
 <li><em>Orientation.Date</em> = Date of orientation (there’s better info in another file)</li>
 </ul>
 <ol start="2" style="list-style-type: decimal">
-<li>service.csv (records of service for each volunteer)</li>
+<li><strong>service.csv</strong> (records of service for each volunteer)</li>
 </ol>
 <ul>
 <li><em>ID</em></li>
@@ -179,7 +179,7 @@ $(document).ready(function () {
 <li><em>Absence</em></li>
 </ul>
 <ol start="3" style="list-style-type: decimal">
-<li>signupsheet.csv (when people signed up for initial orientation)</li>
+<li><strong>signupsheet.csv</strong> (when people signed up for initial orientation)</li>
 </ol>
 <ul>
 <li><em>ID</em></li>
@@ -189,6 +189,29 @@ $(document).ready(function () {
 <li><em>Present</em> = whether the volunteer showed up</li>
 <li><em>orientation</em> = Primary/Secondary; Primary indicates first ever orientation for this volunteer, secondary indicates a subsequent one.</li>
 </ul>
+</div>
+<div id="workflow-and-github" class="section level2">
+<h2>Workflow and GitHub</h2>
+<p>If you’re not familiar with GitHub, please check out these links first: <a href="https://www.r-bloggers.com/rstudio-and-github/" class="uri">https://www.r-bloggers.com/rstudio-and-github/</a> and <a href="http://r-pkgs.had.co.nz/git.html" class="uri">http://r-pkgs.had.co.nz/git.html</a> .</p>
+<p>The GitHub repo will be a useful tool for collaboration. Once we have decided on a set of research questions, we will list these under the “Research Questions” heading above. Each question will have its own folder in ~/R, named “q01”, “q02”, etc. Each folder will have a readme file (if a more detailed description of the problem/code/data is necessary), the code for the analysis of that particular question, and any outputs for that research question (graphs, reports, shiny app files, etc.).</p>
+<p>If you’re ready to start working on a question, follow these steps:</p>
+<ol style="list-style-type: decimal">
+<li>Create a project via Rstudio and connect it to the github repo</li>
+</ol>
+<ul>
+<li>Open RStudio</li>
+<li>File -&gt; New Project -&gt; Version Control -&gt; Git Repository URL: <a href="https://github.com/kfettich/PAWS.git" class="uri">https://github.com/kfettich/PAWS.git</a> Project directory name: PAWS Create project as a subdirectory of: wherever you want on your HDD</li>
+<li>Check box “Open in New Session”</li>
+<li>Create project</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li><p>Create a branch via GitHub using the following naming convention: [question number]-[initials], e.g., “q01-kf” would be my branch if I worked on question 01.</p></li>
+<li><p>In Rstudio, go to the “Git” tab and hit “pull” to pull the most recent code.</p></li>
+<li><p>Make sure you change your local branch to the branch name you just created (do NOT work on “master”).</p></li>
+<li><p>Code! :) (either edit the script(s) that are already in the folder (e.g. if you want to add to the work), or create new ones.)</p></li>
+<li><p>When you’re happy with your code, check the boxes to “stage” your changes, then hit “commit” and provide a brief description of the changes you’ve made. Click “commit” again to commit your changes, and “Push” to push your changes to GitHub. At that point, your code will be visible to everyone else working on the project.</p></li>
+<li><p>If you are happy with your code and are done working on the particular question or topic, you can create a “pull request” so I can merge your branch in with the master code.</p></li>
+</ol>
 </div>
 </div>
 

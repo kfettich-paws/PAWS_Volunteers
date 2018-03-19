@@ -43,7 +43,7 @@ There are 3 datasets we can use, with the following fields:
 - *Call.Email.to.miss.shift* = total number of times called/emailed to miss a shift for current year
 - *Absence*  = total number of absences for current year
 - *Date.entered* = Date when the volunteer was entered into the volunteer management system by PAWS staff (occurs after orientation)
-- *Start.date* = Date when the vlunteer signed into the system for the first time  
+- *Start.date* = Date when the volunteer signed into the system for the first time  
 - *Orientation.Date* = Date of orientation (there's better info in another file)
 
 2. **service.csv** (records of service for each volunteer)
@@ -71,4 +71,33 @@ This dataset only covers shifts between March 1, 2017 and March 1, 2018. We can 
 
 ## Workflow and GitHub
 
-- stay tuned :) please don't start pulling anything from the repo yet!
+If you're not familiar with GitHub, please check out these links first:
+https://www.r-bloggers.com/rstudio-and-github/ and http://r-pkgs.had.co.nz/git.html .
+
+
+The GitHub repo will be a useful tool for collaboration. Once we have decided on a set of research questions, we will list these under the "Research Questions" heading above. Each question will have its own folder in ~/R, named "q01", "q02", etc. Each folder will have a readme file (if a more detailed description of the problem/code/data is necessary), the code for the analysis of that particular question, and any outputs for that research question (graphs, reports, shiny app files, etc.). 
+
+If you're ready to start working on a question, follow these steps:
+
+1. Create a project via Rstudio and connect it to the github repo
+
+- Open RStudio
+- File -> New Project -> Version Control -> Git
+Repository URL: https://github.com/kfettich/PAWS.git
+Project directory name: PAWS
+Create project as a subdirectory of: wherever you want on your HDD
+- Check box "Open in New Session"
+- Create project
+
+2. Create a branch via GitHub using the following naming convention: [question number]-[initials], e.g., "q01-kf" would be my branch if I worked on question 01. 
+
+3. In Rstudio, go to the "Git" tab and hit "pull" to pull the most recent code. 
+
+4. Make sure you change your local branch to the branch name you just created (do NOT work on "master"). 
+
+5. Code! :) (either edit the script(s) that are already in the folder (e.g. if you want to add to the work), or create new ones.)
+
+6. When you're happy with your code, check the boxes to "stage" your changes, then hit "commit" and provide a brief description of the changes you've made. Click "commit" again to commit your changes, and "Push" to push your changes to GitHub. At that point, your code will be visible to everyone else working on the project. 
+
+7. If you are happy with your code and are done working on the particular question or topic, you can create a "pull request" so I can merge your branch in with the master code. 
+
