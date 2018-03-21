@@ -18,7 +18,11 @@ suppressPackageStartupMessages(library(tidyverse))
 # Question
 What is the typical engagement timeline for a volunteer, from attending orientation to completing first shift?
 
-# Procedure
+# Procedure  
+* We have data from orientation sign up - orientation dates
+* We have data from PAWS master volunteer database - date for when they were entered and then started
+* We have data from volunteer shifts when people logged in and logged out
+
 
 ## Load Data
 ```{r data_load}
@@ -78,11 +82,14 @@ dates <- select(dates, -Orientation.Date.master, -Orientation.Date.signup)
 
 ```
 
+
+
 ```{r calc_differences}
 dates$days_start_orient <- dates$Start.date - dates$Orientation.Date
 dates$days_service1_orient <- dates$From.date.1 - dates$Orientation.Date
 
 ```
+
 
 ## Quick plot
 
@@ -106,8 +113,12 @@ ggplot(filter(dates, Orientation.Date > "2015-01-01"), aes(x = Orientation.Date,
   theme_light()
 ```
 
+```{r histogram_service1_orientation}
+hist(as.numeric(filter(dates, Orientation.Date > "2015-01-01")$days_service1_orient), xlim = c(1,300), 200)
+```
 
-I need to learn what the various dates actually are and also summarise the number of volunteers with various characteristics, such as no orientation, took orientation, but never volunteered, etc.
+
+I need to summarise the number of volunteers with various characteristics, such as no orientation, took orientation, but never volunteered, etc.
 
 # Output
 
