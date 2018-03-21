@@ -1,5 +1,5 @@
 ---
-title: "PAWS Q1"
+title: "PAWS Analysis with R-Ladies - Question 3"
 author: "Alice Walsh"
 date: "3/16/2018"
 output: html_document
@@ -16,13 +16,15 @@ suppressPackageStartupMessages(library(tidyverse))
 ```
 
 # Question
-What is the typical engagement timeline for a volunteer, from attending orientation to completing first shift?
+What is the typical pattern for volunteer disengagement?
 
 # Procedure  
 * We have data from orientation sign up - orientation dates
 * We have data from PAWS master volunteer database - date for when they were entered and then started
 * We have data from volunteer shifts when people logged in and logged out
 
+1. Load in the data
+1. 
 
 ## Load Data
 ```{r data_load}
@@ -88,33 +90,6 @@ dates <- select(dates, -Orientation.Date.master, -Orientation.Date.signup)
 dates$days_start_orient <- dates$Start.date - dates$Orientation.Date
 dates$days_service1_orient <- dates$From.date.1 - dates$Orientation.Date
 
-```
-
-
-## Quick plot
-
-```{r plot}
-
-ggplot(dates, aes(x = Orientation.Date, y = days_start_orient)) + 
-  geom_point() + 
-  geom_hline(yintercept = 365*c(1:8), alpha = 0.5, color = "blue") +
-  theme_light()
-```
-
-I can clearly see either some data entry errors or some other things I need to consider like secondary orientation. For example, if start date is exactly 1 year or 2 years from orientation date, then I would guess that the year was entered incorrectly.
-
-Data could also be easier to look at by restricting to after Jan 1, 2015.
-
-```{r plot_recent}
-
-ggplot(filter(dates, Orientation.Date > "2015-01-01"), aes(x = Orientation.Date, y = days_start_orient)) + 
-  geom_point() + 
-  geom_hline(yintercept = 365*c(-4:1), alpha = 0.5, color = "blue") +
-  theme_light()
-```
-
-```{r histogram_service1_orientation}
-hist(as.numeric(filter(dates, Orientation.Date > "2015-01-01")$days_service1_orient), xlim = c(1,300), 200)
 ```
 
 
