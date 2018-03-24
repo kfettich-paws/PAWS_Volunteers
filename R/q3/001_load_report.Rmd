@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r load_libs}
+```{r load_libs, warning=FALSE}
 # This code works when you are using RStudio project. Paths are relative and stuff
 suppressPackageStartupMessages(library(tidyverse))
 library(ggalluvial)
@@ -212,21 +212,30 @@ From the service table, derive variables for
 * did 1+ shift?
 * did only 1 shift?
 * did 2+ shifts?
-* did 3+ shifts?
+* did 10+ shifts?
 
 Should we filter out special events?
 
 ```{r service_flags}
+
 service_summary <- service_clean %>%
+  mutate(no_show = Absence > 0 ) %>%
   group_by(ID) %>%
-  summarise(total_shifts = n())
+  summarise(total_shifts = sum(no_show==FALSE),
+            missed_shifts = sum(no_show==TRUE),
+            primary_type = names(sort(table(assignment_type), decreasing = T)[1]),
+            primary_type_shifts = sort(table(assignment_type), decreasing = T)[1],
+            primary_site = names(sort(table(Site), decreasing = T)[1]))
+
 
 # Merge with Signup
 signup_service <- merge(signup_clean, service_summary, by = "ID", all.x = TRUE) %>%
   mutate(total_shifts = case_when(
     is.na(total_shifts) ~ 0,
-    TRUE ~ as.numeric(total_shifts)
-  )) %>%
+    TRUE ~ as.numeric(total_shifts)),
+    missed_shifts = case_when(
+    is.na(missed_shifts) ~ 0,
+    TRUE ~ as.numeric(missed_shifts))) %>%
   mutate(any_shifts = total_shifts != 0,
          only_one_shift = total_shifts == 1,
          twoplus_shifts = total_shifts > 1, 
@@ -234,17 +243,18 @@ signup_service <- merge(signup_clean, service_summary, by = "ID", all.x = TRUE) 
   
 ```
 
+## Visualizations
 ```{r plot}
 signup_service_plot <- signup_service %>%
-  group_by(orient_loc.Primary, orient_type.Primary, twoplus_shifts, any_shifts) %>%
+  group_by(orient_loc.Primary, orient_type.Primary, primary_type, any_shifts) %>%
   summarise(Freq = n()) %>%
   ungroup()
 
 
 ggplot(data = signup_service_plot,
-       aes(axis1 = orient_loc.Primary, axis2 = orient_type.Primary, axis3 = twoplus_shifts,
+       aes(axis1 = orient_loc.Primary, axis2 = orient_type.Primary, axis3 = primary_type,
            weight = Freq)) +
-  scale_x_discrete(limits = c("Primary Orientation Location", "Type", "Did 2+ shifts"), expand = c(.1, .05)) +
+  scale_x_discrete(limits = c("Primary Orientation Location", "Type", "primary_type"), expand = c(.1, .05)) +
   geom_alluvium(aes(fill = any_shifts)) +
   geom_stratum() + geom_text(stat = "stratum", label.strata = TRUE) +
   theme_minimal() +
