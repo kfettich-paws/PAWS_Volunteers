@@ -115,7 +115,8 @@ signup_clean <- reshape(signup_clean,timevar="orientation",idvar="ID",direction=
 
 Can see that again the text fields like city are not clean.  
 
-I cleaned the City variable and converted all zip code to 5 digit level.
+I cleaned the City variable and converted all zip code to 5 digit level. The zip codes are still messed up as some are not valid 5-digit codes. They might be missing a leading zero.
+
 ```{r clean_city}
 master_clean <- master %>%
   mutate(city_clean = case_when(
