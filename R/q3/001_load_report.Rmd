@@ -106,30 +106,45 @@ signup_clean <- reshape(signup_clean,timevar="orientation",idvar="ID",direction=
 
 ### Basic info on master table
 
-```{r basic_master}
-knitr::kable(table(master$Status, exclude=NULL), caption = "Status")
-knitr::kable(table(master$City, exclude=NULL), caption = "City")
-knitr::kable(table(master$Zip, exclude=NULL), caption = "Zip Codes")
 
+Can see that again the text fields like city are not clean.  
+
+I cleaned the City variable and converted all zip code to 5 digit level.
+```{r clean_city}
+master_clean <- master %>%
+  mutate(city_clean = case_when(
+    grepl("Phil|phil", City) ~ "Philadelphia",
+    TRUE ~ "other"
+  ),
+  Zip = case_when(
+    grepl("PA|NJ", Zip) ~ "",
+    TRUE ~ as.character(Zip)
+  )) %>%
+  separate(Zip, into="Zip", sep="-", extra = "drop")
 
 ```
 
-Can see that again the text fields like city are not clean. I did not yeat clean them.
+```{r basic_master}
+knitr::kable(table(master_clean$Status, exclude=NULL), caption = "Status")
+knitr::kable(table(master_clean$city_clean, exclude=NULL), caption = "City after cleaning")
+knitr::kable(table(master_clean$Zip, exclude=NULL), caption = "Zip Codes after cleaning")
+```
+
 
 Look at the date ranges for the dates
 ```{r master_dates}
-master <- master %>%
+master_clean <- master_clean %>%
   mutate(Date.entered = as.Date(Date.entered, format = "%m-%d-%Y"),
          Start.date = as.Date(Start.date, format = "%m-%d-%Y"),
          Stop.date = as.Date(Stop.date, format = "%m-%d-%Y"),
          Orientation.Date.master = as.Date(Orientation.Date, format = "%m-%d-%Y"))
 
 print("Date.entered")
-summary(master$Date.entered)
+summary(master_clean$Date.entered)
 print("Start.date")
-summary(master$Start.date)
+summary(master_clean$Start.date)
 print("Orientation.date")
-summary(master$Orientation.Date.master)
+summary(master_clean$Orientation.Date.master)
 
 ```
 
@@ -196,7 +211,7 @@ How many unique volunteer IDs does this leave in each table?
 service_clean <- service_clean %>%
   filter(From.date >= "2017-01-01")
 
-master_clean <- master %>%
+master_clean <- master_clean %>%
   filter(Date.entered >= "2017-01-01")
 
 length(unique(service_clean$ID))
@@ -241,11 +256,14 @@ signup_service <- merge(signup_clean, service_summary, by = "ID", all.x = TRUE) 
          twoplus_shifts = total_shifts > 1, 
          tenplus_shifts = total_shifts >= 10)
   
+# Add in demographics from master
+final_data <- merge(signup_service, select(master_clean, ID, Status, city_clean, Zip), by = "ID")
+# Weirdly have some IDs not in master_clean that are in signup_service - these have early date entered
 ```
 
 ## Visualizations
 ```{r plot}
-signup_service_plot <- signup_service %>%
+signup_service_plot <- final_data %>%
   group_by(orient_loc.Primary, orient_type.Primary, primary_type, any_shifts) %>%
   summarise(Freq = n()) %>%
   ungroup()
