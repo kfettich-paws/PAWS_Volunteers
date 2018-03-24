@@ -12,11 +12,25 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r load_libs}
 # This code works when you are using RStudio project. Paths are relative and stuff
 suppressPackageStartupMessages(library(tidyverse))
+library(ggalluvial)
 
 ```
 
 # Question
 What is the typical pattern for volunteer disengagement?
+
+I need to summarise the number of volunteers with various characteristics:  
+* did orientation, but no shifts
+* did orientation, had only 1 shift
+* did orientation, had 2+ shifts
+What factors are associated with these three groups? location, orientation type, zip code, days to first shift?
+
+For volunteers that do show up, what happens? Lets plot frequencies over the following factors:  
+* orientation type
+* orientation location
+* did a shift
+* did a second shift
+* shift types
 
 # Procedure  
 * We have data from orientation sign up - orientation dates
@@ -24,7 +38,10 @@ What is the typical pattern for volunteer disengagement?
 * We have data from volunteer shifts when people logged in and logged out
 
 1. Load in the data
-1. 
+1. Process data to make it analysis-ready
+1. Do some data exploration
+1. Make a plot to show volunteer patterns
+1. Idea: use ggplot2 extension ggalluvial
 
 ## Load Data
 ```{r data_load}
@@ -32,9 +49,9 @@ master_file <- '../../Data/master.csv'
 service_file <- '../../Data/service.csv'
 signup_file <- '../../Data/signupsheet.csv'
 
-master <- read.csv(master_file, quote="")
-service <- read.csv(service_file)
-signup <- read.csv(signup_file)
+master <- read.csv(master_file, quote="", stringsAsFactors = F)
+service <- read.csv(service_file, stringsAsFactors = F)
+signup <- read.csv(signup_file, stringsAsFactors = F)
 ```
 
 The `r master_file` has `r nrow(master)` rows.
@@ -43,63 +60,205 @@ The `r service_file` has `r nrow(service)` rows.
 
 The `r signup_file` has `r nrow(signup)` rows.
 
-## Data manipulation
-```{r data_manip, warning = FALSE}
-# Volunteers have unique IDs
-# Lets get Date.entered, Start.date from master and FIRST From.date from service, and Orientation.Date from signup
-# Not all IDs in master have ID in signup, not all IDs in service have ID in signup
+### Basic info on signup table
+Signup table has information of the types of orientations.
+```{r basic_signup}
+knitr::kable(table(signup$Type), caption = "Type")
+knitr::kable(table(signup$NOT.Attending), caption = "Not Attending")
+knitr::kable(table(signup$Present), caption = "Present")
+knitr::kable(table(signup$orientation), caption = "Primary or Secondary Orientation")
+```
 
-# merge
-dates <- merge(select(master, ID, Date.entered, Start.date, Orientation.Date, Status), 
-               filter(signup, orientation == "Primary"), by = "ID", all.x = TRUE)
+OK, so I learned that we need to clean up with "Type" fields and remove one row for cancelling on the orientation.
 
-# originally just wanted to keep first shift, but looked at karla version
-# and decided to use her code to make wide :)
-# first_service <- service %>%
-#   mutate(From.date = as.Date(From.date, format = "%m-%d-%Y")) %>%
-#   group_by(ID) %>%
-#   summarise(first_service = min(From.date))
+I also created a orientation location that was separate from orientation type.
 
-service$From.date <- as.Date(service$From.date, format = "%m-%d-%Y")
-service <- service[order(service$ID, service$From.date),]
-service$shift <- sequence(rle(as.character(service$ID))$lengths)
-service <- reshape(service,timevar="shift",idvar="ID",direction="wide")
+```{r}
+signup_clean <- signup %>%
+  filter(NOT.Attending != "CANCELLED") %>%
+  mutate(Type = case_when(
+    Type == "NE" | Type == "NE + NE" ~ "NE Basic",
+    Type == "GF Basic " ~ "GF Basic",
+    Type == "GF Basic  + GF WD" ~ "GF Basic + WD",
+    Type == "GF Basic + GF WD" ~ "GF Basic + WD",
+    TRUE ~ as.character(Type)
+  )) %>%
+  separate(Type, into = c("orient_loc", "orient_type"), sep = " ", extra = "merge", remove = FALSE) %>%
+  select(-NOT.Attending, -Present) %>% # dont need these
+  mutate(Orientation.Date = as.Date(Orientation.Date, format = "%m/%d/%y")) %>%
+  arrange(Orientation.Date)
 
-dates <- merge(dates, select(service, ID, From.date.1, From.date.2, From.date.3, From.date.4, From.date.5), by = "ID", all.x = TRUE)
 
-# Convert to dates
-dates <- dates %>%
+with(signup_clean, table(orient_type, orientation, exclude = NULL) )
+
+with(signup_clean, table(orient_loc, orientation, exclude = NULL) )
+```
+
+The earliest orientation date was `r min(signup_clean$Orientation.Date)`
+
+
+Decided to make separate variables for Primary and Secondary orientation (convert to wide).  There were some cases where there were duplicate Secondary orientations for a single ID. Kept the earliest.
+
+```{r}
+signup_clean <- reshape(signup_clean,timevar="orientation",idvar="ID",direction="wide")
+
+```
+
+### Basic info on master table
+
+```{r basic_master}
+knitr::kable(table(master$Status, exclude=NULL), caption = "Status")
+knitr::kable(table(master$City, exclude=NULL), caption = "City")
+knitr::kable(table(master$Zip, exclude=NULL), caption = "Zip Codes")
+
+
+```
+
+Can see that again the text fields like city are not clean. I did not yeat clean them.
+
+Look at the date ranges for the dates
+```{r master_dates}
+master <- master %>%
   mutate(Date.entered = as.Date(Date.entered, format = "%m-%d-%Y"),
          Start.date = as.Date(Start.date, format = "%m-%d-%Y"),
-         Orientation.Date.master = as.Date(Orientation.Date.x, format = "%m-%d-%Y"), 
-         Orientation.Date.signup = as.Date(Orientation.Date.y, format = "%m/%d/%y")
-  ) %>%
-  select(ID, Date.entered, Start.date, Orientation.Date.master, Orientation.Date.signup, Status, starts_with("From.date"))
-# I had no good ideas to merge two orientation date columns...
-dates$Orientation.Date <-  as.Date(apply(dates, 1, function(x) min(x[4], x[5], na.rm = T)))
-# One Orientation.Date was 1111-11-11 - change to NA
-dates$Orientation.Date[dates$Orientation.Date == "1111-11-11"] <- NA
-# Remove individual orientation dates
-dates <- select(dates, -Orientation.Date.master, -Orientation.Date.signup)
+         Stop.date = as.Date(Stop.date, format = "%m-%d-%Y"),
+         Orientation.Date.master = as.Date(Orientation.Date, format = "%m-%d-%Y"))
+
+print("Date.entered")
+summary(master$Date.entered)
+print("Start.date")
+summary(master$Start.date)
+print("Orientation.date")
+summary(master$Orientation.Date.master)
 
 ```
 
 
+### Basic info on service table
+Look at min/max dates
+```{r basic_service}
+service <- service %>%
+  mutate(From.date = as.Date(From.date, format = "%m-%d-%Y"),
+         To.date = as.Date(To.date, format = "%m-%d-%Y"))
 
-```{r calc_differences}
-dates$days_start_orient <- dates$Start.date - dates$Orientation.Date
-dates$days_service1_orient <- dates$From.date.1 - dates$Orientation.Date
+print("From.date")
+summary(service$From.date)
+print("To.date")
+summary(service$To.date)
+```
+
+Look at values for factors:
+We need to harmonize the site annotation from this table with that in the orientation table.
+There are also a ton of assignments that are special events. Let's create one new category for those and lump them all together. 
+```{r}
+knitr::kable(table(service$Site, exclude=NULL), caption = "Site")
+knitr::kable(table(service$Assignment, exclude=NULL), caption = "Assignment")
+knitr::kable(table(service$No.Call.No.Show, exclude=NULL), caption = "No.Call.No.Show")
+knitr::kable(table(service$Call.Email.to.miss.shift, exclude=NULL), caption = "Call.Email.to.miss.shift")
+knitr::kable(table(service$Absence, exclude=NULL), caption = "Absence")
 
 ```
 
+```{r}
+service_clean <- service %>%
+  mutate(assignment_group = case_when(
+    Assignment == "Cat Care Volunteer - PAC" ~ "Cat Care Volunteer - PAC",
+    Assignment == "Cat Care Volunteer - Grant Ave." ~ "Cat Care Volunteer - Grant Ave.",
+    Assignment == "Administrative tasks" ~ "Administrative tasks - ",
+    Assignment == "Dog Care Volunteer - GF" ~ "Dog Care Volunteer - GF",
+    Assignment == "Dog Walking Volunteer - Grant Ave." ~ "Dog Walking Volunteer - Grant Ave.",
+    Assignment == "Cat Care Volunteer - GF" ~ "Cat Care Volunteer - GF",
+    Assignment == "Cat Socialization Team" ~ "Cat Socialization Team - ",
+    Assignment == "PAWS South Philly PetSmart" ~ " - PAWS South Philly PetSmart",
+    Assignment == "PAC Adoptions Assistant" ~ "Adoptions Assistant - PAC",
+    Assignment == "Cat Pawsitive Program Volunteer - Grant Ave. Location" ~ "Cat Pawsitive Program Volunteer - Grant Ave.",
+    grepl("Mutt Strut", Assignment) ~ "Mutt Strut",
+    TRUE ~ "other_event"
+  ))
 
-I need to summarise the number of volunteers with various characteristics, such as no orientation, took orientation, but never volunteered, etc.
+# Should also sep location and task here
+service_clean <- service_clean %>%
+  separate(assignment_group, into = c("assignment_type", "location"), sep = " - ")
+
+```
+
+```{r}
+knitr::kable(table(service_clean$assignment_group, exclude=NULL), caption = "New Assignment Variable")
+```
+
+## Data manipulation
+
+
+
+### Filter to after January 1, 2017
+How many unique volunteer IDs does this leave in each table?
+```{r filter_dates}
+service_clean <- service_clean %>%
+  filter(From.date >= "2017-01-01")
+
+master_clean <- master %>%
+  filter(Date.entered >= "2017-01-01")
+
+length(unique(service_clean$ID))
+length(unique(master_clean$ID))
+length(unique(signup_clean$ID))
+# In all three
+length(intersect(signup_clean$ID, intersect(service_clean$ID, master_clean$ID)))
+```
+
+### Derive service flags
+From the service table, derive variables for   
+
+* did 1+ shift?
+* did only 1 shift?
+* did 2+ shifts?
+* did 3+ shifts?
+
+Should we filter out special events?
+
+```{r service_flags}
+service_summary <- service_clean %>%
+  group_by(ID) %>%
+  summarise(total_shifts = n())
+
+# Merge with Signup
+signup_service <- merge(signup_clean, service_summary, by = "ID", all.x = TRUE) %>%
+  mutate(total_shifts = case_when(
+    is.na(total_shifts) ~ 0,
+    TRUE ~ as.numeric(total_shifts)
+  )) %>%
+  mutate(any_shifts = total_shifts != 0,
+         only_one_shift = total_shifts == 1,
+         twoplus_shifts = total_shifts > 1, 
+         tenplus_shifts = total_shifts >= 10)
+  
+```
+
+```{r plot}
+signup_service_plot <- signup_service %>%
+  group_by(orient_loc.Primary, orient_type.Primary, twoplus_shifts, any_shifts) %>%
+  summarise(Freq = n()) %>%
+  ungroup()
+
+
+ggplot(data = signup_service_plot,
+       aes(axis1 = orient_loc.Primary, axis2 = orient_type.Primary, axis3 = twoplus_shifts,
+           weight = Freq)) +
+  scale_x_discrete(limits = c("Primary Orientation Location", "Type", "Did 2+ shifts"), expand = c(.1, .05)) +
+  geom_alluvium(aes(fill = any_shifts)) +
+  geom_stratum() + geom_text(stat = "stratum", label.strata = TRUE) +
+  theme_minimal() +
+  ggtitle("PAWS Volunteer patterns",
+          "stratified by whether they did any shifts")
+```
+
+OK - This is a start. It needs to be clarified a little.
 
 # Output
 
 I wrote the Rds with merged data to Data/merged.Rds for downstream use.
 ```{r save}
-saveRDS(dates, "../../Data/merged_dates.Rds")
+# saveRDS(signup_service, "../../Data/merged.Rds")
 ```
 
 
