@@ -183,7 +183,7 @@ service_clean <- service_clean %>%
 ```
 
 ```{r}
-knitr::kable(table(service_clean$assignment_group, exclude=NULL), caption = "New Assignment Variable")
+knitr::kable(table(service_clean$assignment_type, exclude=NULL), caption = "New Assignment Variable")
 ```
 
 ## Data manipulation
