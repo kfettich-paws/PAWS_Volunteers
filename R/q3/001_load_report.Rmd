@@ -1,5 +1,5 @@
 ---
-title: "PAWS Analysis with R-Ladies - Question 3"
+title: "PAWS Analysis with R-Ladies - Exploring and Manipulating the Data"
 author: "Alice Walsh"
 date: "3/16/2018"
 output: html_document
@@ -20,17 +20,23 @@ library(ggalluvial)
 What is the typical pattern for volunteer disengagement?
 
 I need to summarise the number of volunteers with various characteristics:  
+
 * did orientation, but no shifts
 * did orientation, had only 1 shift
 * did orientation, had 2+ shifts
 What factors are associated with these three groups? location, orientation type, zip code, days to first shift?
 
 For volunteers that do show up, what happens? Lets plot frequencies over the following factors:  
+
 * orientation type
 * orientation location
 * did a shift
 * did a second shift
 * shift types
+
+How do we define a "disengaged" volunteer?  
+
+* My idea: Length of time after last shift is > x months (test different x)
 
 # Procedure  
 * We have data from orientation sign up - orientation dates
@@ -238,6 +244,7 @@ service_summary <- service_clean %>%
   group_by(ID) %>%
   summarise(total_shifts = sum(no_show==FALSE),
             missed_shifts = sum(no_show==TRUE),
+            last_recorded_date = max(From.date),
             primary_type = names(sort(table(assignment_type), decreasing = T)[1]),
             primary_type_shifts = sort(table(assignment_type), decreasing = T)[1],
             primary_site = names(sort(table(Site), decreasing = T)[1]))
@@ -258,7 +265,7 @@ signup_service <- merge(signup_clean, service_summary, by = "ID", all.x = TRUE) 
   
 # Add in demographics from master
 final_data <- merge(signup_service, select(master_clean, ID, Status, city_clean, Zip), by = "ID")
-# Weirdly have some IDs not in master_clean that are in signup_service - these have early date entered
+# have some IDs not in master_clean that are in signup_service - these have early date entered
 ```
 
 ## Visualizations
@@ -282,11 +289,26 @@ ggplot(data = signup_service_plot,
 
 OK - This is a start. It needs to be clarified a little.
 
+How long since the last shift? This can help us decide a volunteer disengaged cutoff
+
+```{r hist_last}
+# Show curves for last service - need survival and survminer loaded
+final_data$total_time <- final_data$last_recorded_date - final_data$Orientation.Date.Primary
+final_data$days_since_last <- max(service_clean$From.date) - final_data$last_recorded_date
+
+model_data <- filter(final_data, any_shifts > 0)
+hist(as.numeric(model_data$days_since_last), 100,
+     main = "Days since last shift for those who did any shifts",
+     xlab = "Days")
+
+```
+
+
 # Output
 
 I wrote the Rds with merged data to Data/merged.Rds for downstream use.
 ```{r save}
-# saveRDS(signup_service, "../../Data/merged.Rds")
+saveRDS(final_data, "../../Data/merged.Rds")
 ```
 
 
