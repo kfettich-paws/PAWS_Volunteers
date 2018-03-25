@@ -110,6 +110,26 @@ signup_clean <- reshape(signup_clean,timevar="orientation",idvar="ID",direction=
 
 ```
 
+It is known that there are a handful of cases where Primary occured after Secondary orientation - swap those.
+
+```{r}
+signup_clean <- signup_clean %>%
+  mutate(sec_prim = Orientation.Date.Secondary - Orientation.Date.Primary) %>%
+  mutate(new.Date.Primary = case_when(
+    sec_prim < 0 ~ Orientation.Date.Secondary,
+    TRUE ~ Orientation.Date.Primary
+  ),
+  new.Date.Secondary = case_when(
+    sec_prim < 0 ~Orientation.Date.Primary,
+    TRUE ~ Orientation.Date.Secondary
+  )) %>%
+  mutate(sec_prim_new = new.Date.Secondary - new.Date.Primary) %>%
+  select( -Orientation.Date.Primary, -Orientation.Date.Secondary, -sec_prim ) %>%
+  rename(Orientation.Date.Primary= new.Date.Primary, Orientation.Date.Secondary= new.Date.Secondary)
+
+```
+
+
 ### Basic info on master table
 
 
@@ -266,13 +286,8 @@ signup_service <- merge(signup_clean, service_summary, by = "ID", all.x = TRUE) 
          tenplus_shifts = total_shifts >= 10)
   
 # Add in demographics from master
-final_data <- merge(signup_service, select(master_clean, ID, Status, city_clean, Zip), by = "ID")
+final_data <- merge(signup_service, select(master_clean, ID, Status, Date.entered, Start.date, city_clean, Zip), by = "ID")
 # have some IDs not in master_clean that are in signup_service - these have early date entered
-
-# did a manual clean here that might be controversial
-# changed dates for primary orientation for two volunteers that looked like incorrect years
-final_data[final_data$ID == "1384", "Orientation.Date.Primary"] <- as.Date("2017-01-21")
-final_data[final_data$ID == "1691", "Orientation.Date.Primary"] <- as.Date("2017-01-28")
 
 ```
 

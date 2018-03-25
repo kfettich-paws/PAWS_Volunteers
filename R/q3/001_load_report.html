@@ -317,6 +317,20 @@ signup &lt;- read.csv(signup_file, stringsAsFactors = F)</code></pre>
 <pre class="r"><code>signup_clean &lt;- reshape(signup_clean,timevar=&quot;orientation&quot;,idvar=&quot;ID&quot;,direction=&quot;wide&quot;)</code></pre>
 <pre><code>## Warning in reshapeWide(data, idvar = idvar, timevar = timevar, varying =
 ## varying, : multiple rows match for orientation=Secondary: first taken</code></pre>
+<p>It is known that there are a handful of cases where Primary occured after Secondary orientation - swap those.</p>
+<pre class="r"><code>signup_clean &lt;- signup_clean %&gt;%
+  mutate(sec_prim = Orientation.Date.Secondary - Orientation.Date.Primary) %&gt;%
+  mutate(new.Date.Primary = case_when(
+    sec_prim &lt; 0 ~ Orientation.Date.Secondary,
+    TRUE ~ Orientation.Date.Primary
+  ),
+  new.Date.Secondary = case_when(
+    sec_prim &lt; 0 ~Orientation.Date.Primary,
+    TRUE ~ Orientation.Date.Secondary
+  )) %&gt;%
+  mutate(sec_prim_new = new.Date.Secondary - new.Date.Primary) %&gt;%
+  select( -Orientation.Date.Primary, -Orientation.Date.Secondary, -sec_prim ) %&gt;%
+  rename(Orientation.Date.Primary= new.Date.Primary, Orientation.Date.Secondary= new.Date.Secondary)</code></pre>
 </div>
 <div id="basic-info-on-master-table" class="section level3">
 <h3>Basic info on master table</h3>
@@ -2240,13 +2254,8 @@ signup_service &lt;- merge(signup_clean, service_summary, by = &quot;ID&quot;, a
          tenplus_shifts = total_shifts &gt;= 10)
   
 # Add in demographics from master
-final_data &lt;- merge(signup_service, select(master_clean, ID, Status, city_clean, Zip), by = &quot;ID&quot;)
-# have some IDs not in master_clean that are in signup_service - these have early date entered
-
-# did a manual clean here that might be controversial
-# changed dates for primary orientation for two volunteers that looked like incorrect years
-final_data[final_data$ID == &quot;1384&quot;, &quot;Orientation.Date.Primary&quot;] &lt;- as.Date(&quot;2017-01-21&quot;)
-final_data[final_data$ID == &quot;1691&quot;, &quot;Orientation.Date.Primary&quot;] &lt;- as.Date(&quot;2017-01-28&quot;)</code></pre>
+final_data &lt;- merge(signup_service, select(master_clean, ID, Status, Date.entered, Start.date, city_clean, Zip), by = &quot;ID&quot;)
+# have some IDs not in master_clean that are in signup_service - these have early date entered</code></pre>
 </div>
 </div>
 <div id="visualizations" class="section level2">
