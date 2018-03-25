@@ -258,19 +258,21 @@ From the service table, derive variables for
 
 Should we filter out special events?
 
-```{r service_flags}
+```{r service_flags, warning=FALSE}
 
 service_summary <- service_clean %>%
   mutate(no_show = Absence > 0 ) %>%
   group_by(ID) %>%
   summarise(total_shifts = sum(no_show==FALSE),
             missed_shifts = sum(no_show==TRUE),
-            first_shift_date = min(From.date),
-            last_recorded_date = max(From.date),
+            first_shift_date =  min(From.date[no_show==FALSE], na.rm=T),
+            last_recorded_date = max(From.date[no_show==FALSE], na.rm=T),
+            time_bw_shifts = as.numeric((max(From.date[no_show==FALSE]) - min(From.date[no_show==FALSE]) )/n()),
             primary_type = names(sort(table(assignment_type), decreasing = T)[1]),
             primary_type_shifts = sort(table(assignment_type), decreasing = T)[1],
-            primary_site = names(sort(table(Site), decreasing = T)[1]))
-
+            primary_site = names(sort(table(Site), decreasing = T)[1])) 
+service_summary$time_bw_shifts[service_summary$total_shifts<=1] <- NA
+# Note that this throws a ton of warnings
 
 # Merge with Signup
 signup_service <- merge(signup_clean, service_summary, by = "ID", all.x = TRUE) %>%
