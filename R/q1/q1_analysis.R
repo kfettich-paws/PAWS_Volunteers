@@ -1,3 +1,7 @@
+
+library(dplyr)
+library(ggplot2)
+
 # import data
 
 master <- read.csv(paste0(getwd(),"/Data/master.csv"))
@@ -52,6 +56,55 @@ v.activity$shift1.to.shift2 <- difftime(v.activity$From.date.2,
 v.activity$shift2.to.shift3 <- difftime(v.activity$From.date.3,
                                        v.activity$From.date.2,
                                        units = "days")
+
+### what sort of orientations did volunteers participate in? 
+v.activity <- v.activity[v.activity$t.orientation.to.entered >0,]
+v <- v.activity[,c("ID", "Type.Primary")] %>% count(Type.Primary)
+ggplot(v, aes(x = Type.Primary, y = n)) + geom_bar(stat = "identity")
+
+# most volunteers attended the PAC cat orientation, followed by NE, and GF Basic + WD. 
+
+### overall, what is the timeline of a volunteer from orientation, to entered, to started in system, to shift 1?
+
+weird.1 <- v.activity[which(v.activity$start.to.shift1 <0),]
+v.activity <- v.activity[which(v.activity$start.to.shift1 >=0),]
+mean(v.activity$t.orientation.to.entered)
+quantile(v.activity$t.orientation.to.entered)
+mean(v.activity$t.entered.to.start)
+quantile(v.activity$t.entered.to.start)
+mean(v.activity$start.to.shift1)
+quantile(v.activity$start.to.shift1)
+
+# the typical volunteer is entered into the system 3 days after orientation, 
+# signs up on volgistics the same day,
+# and starts their first shift 20 days later.
+
+### by location, what is the timeline of a volunteer from orientation, to entered, to started in system, to shift 1?
+
+v.activity$attended.1 <- ifelse(v.activity$Absence.1 ==1 | 
+                                  is.na(v.activity$Absence.1),0,1)
+v.activity$attended.2 <- ifelse(v.activity$Absence.2 ==1 | 
+                                  is.na(v.activity$Absence.2),0,1)
+
+v <- na.omit(group_by(v.activity[,c("Present.Primary", "Site.1", "attended.1", "attended.2")], 
+                    Site.1, Present.Primary, attended.1, attended.2)) %>%
+  summarise (n = n()) 
+
+%>%
+  mutate(freq = n / sum(n))
+  summarise_at(.vars = vars(t.orientation.to.entered,
+                            t.entered.to.start,
+                            start.to.shift1,
+                            shift1.to.shift2,
+                            shift2.to.shift3),
+               .funs = c(median="median"))
+
+summarise(grouped, mean=mean())
+
+v <- v.activity[,c("ID", "Type.Primary", "t.orientation.to.entered")] %>% 
+  mean(t.orientation.to.entered)
+ggplot(v, aes(x = Type.Primary, y = n, fill = Assignment.1)) + geom_bar(stat = "identity")
+
 
 # compute averages
 v.activity <- v.activity[which(v.activity$t.orientation.to.entered >=0),]

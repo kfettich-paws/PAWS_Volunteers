@@ -1,0 +1,104 @@
+---
+title: "PAWS Analysis with R-Ladies - Volunteer engagement timeline"
+author: "Karla Fettich, Alice Walsh"
+date: "March 25, 2018"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_libs, warning=FALSE}
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tidyr))
+suppressPackageStartupMessages(library(ggplot2))
+```
+
+# Question
+What was the typical pattern of engagement, for volunteers who attended a PAWS orientation in 2017?
+
+# Data Preprocessing
+
+## Load Data
+```{r data_load}
+master_file <- '../../Data/master.csv'
+service_file <- '../../Data/service.csv'
+signup_file <- '../../Data/signupsheet.csv'
+
+master <- read.csv(master_file, quote="", stringsAsFactors = F)
+service <- read.csv(service_file, stringsAsFactors = F)
+signup <- read.csv(signup_file, stringsAsFactors = F)
+```
+
+The `r master_file` has `r nrow(master)` rows.
+The `r service_file` has `r nrow(service)` rows.
+The `r signup_file` has `r nrow(signup)` rows.
+
+### Basic info on signup table
+Signup table has information of the types of orientations.
+```{r basic_signup}
+knitr::kable(table(signup$Type), caption = "Type")
+knitr::kable(table(signup$NOT.Attending), caption = "Not Attending")
+knitr::kable(table(signup$Present), caption = "Present")
+knitr::kable(table(signup$orientation), caption = "Primary or Secondary Orientation")
+```
+
+Using Alice's code below to clen up the "Type" field, create a "location" field, and remove 1 "cancelled" orientation line.
+
+```{r}
+signup_clean <- signup %>%
+  filter(NOT.Attending != "CANCELLED") %>%
+  mutate(Type = case_when(
+    Type == "NE" | Type == "NE + NE" ~ "NE Basic",
+    Type == "GF Basic " ~ "GF Basic",
+    Type == "GF Basic  + GF WD" ~ "GF Basic + WD",
+    Type == "GF Basic + GF WD" ~ "GF Basic + WD",
+    TRUE ~ as.character(Type)
+  )) %>%
+  separate(Type, into = c("orient_loc", "orient_type"), sep = " ", extra = "merge", remove = FALSE) %>%
+  select(-NOT.Attending, -Present) %>% # dont need these
+  mutate(Orientation.Date = as.Date(Orientation.Date, format = "%m/%d/%y")) %>%
+  arrange(Orientation.Date)
+
+with(signup_clean, table(orient_type, orientation, exclude = NULL) )
+with(signup_clean, table(orient_loc, orientation, exclude = NULL) )
+```
+
+Rehsape dataset to have 1 line per volunteer (convert to wide); There were some cases where there were duplicate Secondary orientations for a single ID. Kept the earliest.
+
+```{r}
+signup_clean <- reshape(signup_clean,timevar="orientation",idvar="ID",direction="wide")
+```
+
+Identify entries where secondary orientation comes before primary; where this is the case, swap them. 
+
+```{r}
+swap.lines <- which(signup_clean$Orientation.Date.Primary > signup_clean$Orientation.Date.Secondary)
+
+primary <- signup_clean[swap.lines,c("Orientation.Date.Primary", "Type.Primary", "orient_loc.Primary", "orient_type.Primary")]
+signup_clean[swap.lines,c("Orientation.Date.Primary", "Type.Primary", "orient_loc.Primary", "orient_type.Primary")] <- signup_clean[swap.lines,c("Orientation.Date.Secondary", "Type.Secondary", "orient_loc.Secondary", "orient_type.Secondary")]
+signup_clean[swap.lines,c("Orientation.Date.Secondary", "Type.Secondary", "orient_loc.Secondary", "orient_type.Secondary")] <- primary[,c("Orientation.Date.Primary", "Type.Primary", "orient_loc.Primary", "orient_type.Primary")]
+
+with(signup_clean, table(orient_loc.Primary, orient_type.Primary, exclude = NULL) )
+
+```
+
+1. What is the typical wait time from attending their first orientation, to being entered into the system (to be able to sign up for shifs)? For this question, I will create groups based only on location of orientation, because this wait time depends on PAWS staff at each location.
+
+* What is this wait time for orientations that took place at the different locations (PAC, NE and GF)? 
+* What is this wait time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD)
+
+2. What is the typical time from being entered into the system (and therefore, being able to sign up for shifts) to demonstrating an interest in signing up for shifts (logging into the system for the first time)? For this question too, I will create groups based only on location of orientation.
+
+* What is this time for orientations that took place at the different locations (PAC, NE and GF)? 
+* What is this time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD )
+
+2. What is the typical time from demonstrating an interest in signing up for shifts (logging into the system for the first time) to shift 1? For this question, I will create groups based on location of orientation, and based on location of shift 1.
+
+* What is this time for orientations that took place at the different locations (PAC, NE and GF)? 
+* What is this time for first shifts that took place at the different locations (PAC, NE and GF)? 
+* What is this time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD )
+* What is this time for first shifts of different types at the same location? (Cat care, Dog care)
