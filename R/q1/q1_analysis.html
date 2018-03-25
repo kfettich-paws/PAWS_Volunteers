@@ -129,8 +129,8 @@ $(document).ready(function () {
 <pre class="r"><code>suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(ggplot2))</code></pre>
-<div id="question" class="section level1">
-<h1>Question</h1>
+<div id="main-research-question" class="section level1">
+<h1>Main Research Question</h1>
 <p>What was the typical pattern of engagement, for volunteers who attended a PAWS orientation in 2017?</p>
 </div>
 <div id="data-preprocessing" class="section level1">
@@ -298,31 +298,2144 @@ with(signup_clean, table(orient_loc.Primary, orient_type.Primary, exclude = NULL
 ##                GF     61        143   0   0   7
 ##                NE    167          0   0   0   0
 ##                PAC     0          0 278  63   0</code></pre>
+</div>
+<div id="basic-info-on-master-table" class="section level3">
+<h3>Basic info on master table</h3>
+<p>Can see that again the text fields like city are not clean. Therfore, clean the City variable and convert all zip code to 5 digit level. The zip codes are still messed up as some are not valid 5-digit codes. They might be missing a leading zero.</p>
+<pre class="r"><code>master_clean &lt;- master %&gt;%
+  mutate(city_clean = case_when(
+    grepl(&quot;Phil|phil&quot;, City) ~ &quot;Philadelphia&quot;,
+    TRUE ~ &quot;other&quot;
+  ),
+  Zip = case_when(
+    grepl(&quot;PA|NJ&quot;, Zip) ~ &quot;&quot;,
+    TRUE ~ as.character(Zip)
+  )) %&gt;%
+  separate(Zip, into=&quot;Zip&quot;, sep=&quot;-&quot;, extra = &quot;drop&quot;)</code></pre>
+<pre class="r"><code>knitr::kable(table(master_clean$Status, exclude=NULL), caption = &quot;Status&quot;)</code></pre>
+<table>
+<caption>Status</caption>
+<thead>
+<tr class="header">
+<th align="left">Var1</th>
+<th align="right">Freq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Active</td>
+<td align="right">1474</td>
+</tr>
+<tr class="even">
+<td align="left">Inactive</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">Prospect</td>
+<td align="right">2</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>knitr::kable(table(master_clean$city_clean, exclude=NULL), caption = &quot;City after cleaning&quot;)</code></pre>
+<table>
+<caption>City after cleaning</caption>
+<thead>
+<tr class="header">
+<th align="left">Var1</th>
+<th align="right">Freq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">other</td>
+<td align="right">350</td>
+</tr>
+<tr class="even">
+<td align="left">Philadelphia</td>
+<td align="right">1132</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>knitr::kable(table(master_clean$Zip, exclude=NULL), caption = &quot;Zip Codes after cleaning&quot;)</code></pre>
+<table>
+<caption>Zip Codes after cleaning</caption>
+<thead>
+<tr class="header">
+<th align="left">Var1</th>
+<th align="right">Freq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="right">138</td>
+</tr>
+<tr class="even">
+<td align="left">11566</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">17070</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">17109</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">17363</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">17870</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">18901</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">18902</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">18914</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">18940</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">18969</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">18974</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">18976</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19001</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">19002</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">19003</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">19004</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">19006</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">19007</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19012</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">19018</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">19020</td>
+<td align="right">11</td>
+</tr>
+<tr class="odd">
+<td align="left">19021</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">19025</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19026</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">19027</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">19030</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">19031</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19033</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19038</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">19040</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19041</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19044</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">19046</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">19047</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">19050</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">19053</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19054</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19055</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19056</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19060</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19064</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">19066</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19067</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">19072</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">19073</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19074</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19076</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19078</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19079</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">19081</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19082</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">19083</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">19090</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">19094</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19095</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19096</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">19102</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">19103</td>
+<td align="right">58</td>
+</tr>
+<tr class="even">
+<td align="left">19104</td>
+<td align="right">122</td>
+</tr>
+<tr class="odd">
+<td align="left">19106</td>
+<td align="right">92</td>
+</tr>
+<tr class="even">
+<td align="left">19107</td>
+<td align="right">33</td>
+</tr>
+<tr class="odd">
+<td align="left">19111</td>
+<td align="right">42</td>
+</tr>
+<tr class="even">
+<td align="left">19114</td>
+<td align="right">38</td>
+</tr>
+<tr class="odd">
+<td align="left">19115</td>
+<td align="right">37</td>
+</tr>
+<tr class="even">
+<td align="left">19116</td>
+<td align="right">21</td>
+</tr>
+<tr class="odd">
+<td align="left">19118</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">19119</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">19120</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">19121</td>
+<td align="right">25</td>
+</tr>
+<tr class="odd">
+<td align="left">19122</td>
+<td align="right">22</td>
+</tr>
+<tr class="even">
+<td align="left">19123</td>
+<td align="right">18</td>
+</tr>
+<tr class="odd">
+<td align="left">19124</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">19125</td>
+<td align="right">22</td>
+</tr>
+<tr class="odd">
+<td align="left">19126</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19127</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">19128</td>
+<td align="right">39</td>
+</tr>
+<tr class="even">
+<td align="left">19129</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">19130</td>
+<td align="right">72</td>
+</tr>
+<tr class="even">
+<td align="left">19131</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">19132</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">19133</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">19134</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">19135</td>
+<td align="right">13</td>
+</tr>
+<tr class="odd">
+<td align="left">19136</td>
+<td align="right">24</td>
+</tr>
+<tr class="even">
+<td align="left">19137</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">19138</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">19139</td>
+<td align="right">16</td>
+</tr>
+<tr class="odd">
+<td align="left">19140</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19141</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">19142</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19143</td>
+<td align="right">35</td>
+</tr>
+<tr class="odd">
+<td align="left">19144</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="left">19145</td>
+<td align="right">42</td>
+</tr>
+<tr class="odd">
+<td align="left">19146</td>
+<td align="right">76</td>
+</tr>
+<tr class="even">
+<td align="left">19147</td>
+<td align="right">74</td>
+</tr>
+<tr class="odd">
+<td align="left">19148</td>
+<td align="right">55</td>
+</tr>
+<tr class="even">
+<td align="left">19149</td>
+<td align="right">23</td>
+</tr>
+<tr class="odd">
+<td align="left">19150</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">19151</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">19152</td>
+<td align="right">27</td>
+</tr>
+<tr class="even">
+<td align="left">19153</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">19154</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td align="left">19348</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19382</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19403</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">19406</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19422</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">19426</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">19428</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19438</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19440</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19444</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19446</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19454</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">19468</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19703</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">19810</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19926</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">7003</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">7866</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">8002</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">8016</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">8034</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">8043</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">8052</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">8057</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">8060</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">8062</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">8075</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">8077</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">8080</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">8083</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">8086</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">8088</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">8096</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">8102</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">8103</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">8104</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">8106</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">8107</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">8108</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">8109</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">8110</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">8221</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">8234</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">84107</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">8648</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">91939</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">95405</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="basic-info-on-service-table" class="section level3">
+<h3>Basic info on service table</h3>
+<p>Look at min/max dates</p>
+<pre class="r"><code>service &lt;- service %&gt;%
+  mutate(From.date = as.Date(From.date, format = &quot;%m-%d-%Y&quot;),
+         To.date = as.Date(To.date, format = &quot;%m-%d-%Y&quot;))
+
+print(&quot;From.date&quot;)</code></pre>
+<pre><code>## [1] &quot;From.date&quot;</code></pre>
+<pre class="r"><code>summary(service$From.date)</code></pre>
+<pre><code>##         Min.      1st Qu.       Median         Mean      3rd Qu. 
+## &quot;2012-09-08&quot; &quot;2015-05-31&quot; &quot;2016-10-15&quot; &quot;2016-05-31&quot; &quot;2017-08-05&quot; 
+##         Max. 
+## &quot;2018-03-02&quot;</code></pre>
+<pre class="r"><code>print(&quot;To.date&quot;)</code></pre>
+<pre><code>## [1] &quot;To.date&quot;</code></pre>
+<pre class="r"><code>summary(service$To.date)</code></pre>
+<pre><code>##         Min.      1st Qu.       Median         Mean      3rd Qu. 
+## &quot;2012-09-08&quot; &quot;2015-05-31&quot; &quot;2016-10-15&quot; &quot;2016-05-31&quot; &quot;2017-08-05&quot; 
+##         Max. 
+## &quot;2018-03-02&quot;</code></pre>
+<p>Look at values for factors: We need to harmonize the site annotation from this table with that in the orientation table. There are also a ton of assignments that are special events. Let’s create one new category for those and lump them all together.</p>
+<pre class="r"><code>knitr::kable(table(service$Site, exclude=NULL), caption = &quot;Site&quot;)</code></pre>
+<table>
+<caption>Site</caption>
+<thead>
+<tr class="header">
+<th align="left">Var1</th>
+<th align="right">Freq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="right">1352</td>
+</tr>
+<tr class="even">
+<td align="left">Grays Ferry Clinic - GF</td>
+<td align="right">4249</td>
+</tr>
+<tr class="odd">
+<td align="left">Mutt Strut</td>
+<td align="right">197</td>
+</tr>
+<tr class="even">
+<td align="left">PAWS (Philadelphia Animal Welfare Society)</td>
+<td align="right">1939</td>
+</tr>
+<tr class="odd">
+<td align="left">PAWS Adoption Center - Old City</td>
+<td align="right">7474</td>
+</tr>
+<tr class="even">
+<td align="left">PAWS Grant Ave. Adoption Center/Wellness Clinic</td>
+<td align="right">6737</td>
+</tr>
+<tr class="odd">
+<td align="left">PAWS Off-site Adoption Locations</td>
+<td align="right">606</td>
+</tr>
+<tr class="even">
+<td align="left">PAWS off-site events</td>
+<td align="right">920</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>knitr::kable(table(service$Assignment, exclude=NULL), caption = &quot;Assignment&quot;)</code></pre>
+<table>
+<caption>Assignment</caption>
+<thead>
+<tr class="header">
+<th align="left">Var1</th>
+<th align="right">Freq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="right">1352</td>
+</tr>
+<tr class="even">
+<td align="left">*February 10th - 11:30-6pm: Event with St. Stephen’s Green (2 shifts)</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">*February 11th - 11:30-3pm: Pet Valu Roxborough</td>
+<td align="right">22</td>
+</tr>
+<tr class="even">
+<td align="left">*February 11th: 9:30-1:30pm - Tweetheart event with Nest</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">*February 3rd - 11:30-3pm: Adoption event with Shake Shack</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">*February 4th - 11:30-3pm: Adoption Day at PETCO Andorra</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">*February 7th - 4:30-8pm: Pittie Party at Trestle Inn</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">*March 3rd - 11:30-3pm: Adoption event with Petco Unleashed</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">*March 9th - 4:30-9pm: Fido Friday at the Flower Show</td>
+<td align="right">24</td>
+</tr>
+<tr class="even">
+<td align="left">*March17th - 11:30-3pm: PetSmart Adoption Event - South Philly PS</td>
+<td align="right">31</td>
+</tr>
+<tr class="odd">
+<td align="left">*PAWS 11th Annual Mutt Strut - October 14th (Rain Date - 10/15)</td>
+<td align="right">140</td>
+</tr>
+<tr class="even">
+<td align="left">1-4pm: Love Your Pet event (2/9)</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">10am - 1pm: Share the Love event (12/15)</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">10am - 3pm: DeBella Dog Walk (5/5)</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">11am-2pm: Spin-a-thon Adoption event (10/13)</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">11am-3pm: Plazapalooza with CNKP (5/4)</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">11am - 2pm: Santa PAWS at the Sporting Club (12/15)</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">11am - 3pm - PETCO Adoption Event (1/5)</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">11am - 3pm: Central Bark Adoption Event (2/23)</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">11am - 3pm: Igloo Grand Opening</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">11pm - 2pm: Food and Thought Lecture (11/14)</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">12pm-4pm: Harry Potter Day in Chestnut Hill (10/27)</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">1pm-3pm: Summit Park Pet Fair (10/21)</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">1pm - 4pm: Sip And Shop Event (4/21)</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">2pm - 6pm: Adoption event at Pet Valu (4/13)</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">3pm-6pm: Jake’s WayBack Burgers Anniversary (10/28)</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">4-7pm: Pumpkins for Puppies Event (10/21)</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">5pm - 7pm: First Friday event at 229 Arch (4/5)</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">6pm-8pm: Happy Hour at Dos Segundos (11/14)</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">6pm - 8pm: Holiday Mixer to benefit PAWS (12/6)</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">8am - 1pm: Holiday Sale (12/2)</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">Administrative tasks</td>
+<td align="right">1924</td>
+</tr>
+<tr class="odd">
+<td align="left">April 11th - 12:30pm-5pm: Party Animals: A FUNdraiser for PAWS</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">April 11th - 5-7pm: Shake Shack event</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">April 16th - 12:30-3:30pm: Tails from the Crypt walking tour</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">April 17th - 4:30-7 p.m.: Cantina Dos Segundos event</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">April 17th - 7pm-11pm: Matt &amp; Kim Concert</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">April 17th - 9:30am - 5pm: Cherry Blossom Festival (Multiple shifts)</td>
+<td align="right">11</td>
+</tr>
+<tr class="odd">
+<td align="left">April 1st - 11:30-3pm: Adoption event at Unleashed by PETCO</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">April 23rd - 11:30-5pm: Adoption event with Waffles and Wedges</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">April 24th - 11:30-3: Adoption event at Pet Valu Grant Ave.</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">April 26th - 10:30am-3pm: Adoption Event Pet Valu Bala</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">April 26th - 12:30pm - 3pm: Afternoon Tea and Fashion Show</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">April 27th - 2-5pm: Adoption Event at Pet Valu Ardmore</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">April 29th - 9:30am-1pm: Kid’s Day at YMCA</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">April 2nd - 5:30-8pm: Penn’s Animal Law fundraiser/happy hour</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">April 30th- 10:30-5pm: East Passyunk Flavors of the Avenue</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">April 5th - 1-4pm: Adoption event with Greensgrow</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">April 5th - 12-3 pm: ‘Welcome back’ event at South Philly PetSmart</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">August 14th- 11:30-2pm: Adoption event at Bankwerx from Conestoga Bank</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">August 14th - 11:30-3pm: PAWS event with TD Bank</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">August 15th - 1:30pm-4pm: Back to School Community event</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">August 17th - 4pm - 7pm: Camden Riversharks Game</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">August 18th - 6-9:30pm: Pups &amp; Pints - Bingo and Happy Hour!</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">August 1st - 6:30-9pm: National Night out with Phila Police</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">August 26th - 11am-1:30pm: Student Activities &amp; Community Service Fair</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">August 27th - 3-6pm:Pet Social at Franklin Square</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">August 28th- 4-9pm: Phillies Bark at the Park event</td>
+<td align="right">29</td>
+</tr>
+<tr class="odd">
+<td align="left">August 29th - 5:30-9pm: Made in America Kickoff - Urban Saloon</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">August 2nd -4:30-8pm: Dog days of Summer</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">August 3rd: 11am-6pm: 2nd Street Festival (Multiple shifts)</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">August 4th - 11am-6pm: 2nd Street Festival (TWO shifts)</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">August 4th - 4:30-7pm: Yappy Hour at the Oval</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">Cat Care Volunteer - GF</td>
+<td align="right">1416</td>
+</tr>
+<tr class="odd">
+<td align="left">Cat Care Volunteer - Grant Ave.</td>
+<td align="right">4972</td>
+</tr>
+<tr class="even">
+<td align="left">Cat Care Volunteer - PAC</td>
+<td align="right">5274</td>
+</tr>
+<tr class="odd">
+<td align="left">Cat Pawsitive Program Volunteer - Grant Ave. Location</td>
+<td align="right">100</td>
+</tr>
+<tr class="even">
+<td align="left">Cat Pawsitive Program Volunteers - OLD CITY</td>
+<td align="right">36</td>
+</tr>
+<tr class="odd">
+<td align="left">Cat Socialization Team</td>
+<td align="right">1087</td>
+</tr>
+<tr class="even">
+<td align="left">Dec 2nd, 10th &amp; 17th- 9am-9pm (varied shifts): Gift wrapping fundraiser</td>
+<td align="right">34</td>
+</tr>
+<tr class="odd">
+<td align="left">December 10th - 1:30-5pm: Tree Lighting at Morris Hotel</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">December 10th: 11:30-3pm: Rittenhouse Row Holiday Fashion Crawl</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">December 11th - 5:30-9pm: Fox &amp; Hound Grant Re-Opening Party</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">December 11th - 6-8:30 p.m.: Happy Hour for PAWS</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">December 13th: 4-9pm: Chickie and Pete’s fundraiser</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">December 14th - 4:30-8 p.m.: Jingle PAWS Happy Hour</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">December 21st - 11am - 2pm: Santa PAWS at TD Bank</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">December 2nd: 10am-6pm (TWO SHIFTS): Santa PAWS event</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">December 7th - 6:30-8pm: Tree Lighting at Morris House Hotel</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">December 7th &amp; 8th - 2-4 p.m.: Santa Paws at Hotel Palomar</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">December 7th &amp;14th: 11am - 4pm: PetSmart Santa Claws event</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">December 8th and 22nd - 4:30-8pm: PAWS at the Christmas Village</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">December 9th - 10:30am-3pm: Elwyn Seeds Holiday Party</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">Dog Care Volunteer - GF</td>
+<td align="right">1664</td>
+</tr>
+<tr class="odd">
+<td align="left">Dog Rescue Volunteer - GF</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">Dog Walking Volunteer - Grant Ave.</td>
+<td align="right">1632</td>
+</tr>
+<tr class="odd">
+<td align="left">Dog Walking Volunteer - PAC</td>
+<td align="right">1589</td>
+</tr>
+<tr class="even">
+<td align="left">Feb 17th - 10-3pm: Lunar New Year event with Seaport Museum</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">February 12th - Adoption event at Free Library</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">February 13-15th - Varying shifts - Tattoo Arts Convention</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">February 13th &amp; 14th - 11am-3pm: Adoption event with PetSmart</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">February 15th - 12-4pm: CNKP’s Soulmate Skate event</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">February 18th - 12:30-4pm: Doggies’ Day Out Event</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">February 19th - 11:30am-2pm Pet Pantry with CNKP</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">February 24th - 5:30-7:30 p.m.: Meow Mixer for PAWS</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">Foster Care Administrative Assistant</td>
+<td align="right">75</td>
+</tr>
+<tr class="odd">
+<td align="left">Grant Mentee Shift (for shadowing only)</td>
+<td align="right">30</td>
+</tr>
+<tr class="even">
+<td align="left">Gray’s Ferry Mentee Shift for dog care (for shadowing only)</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">Holiday event at Trust - various dates/times</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">January 14th - 11:30a-3pm: Adoption event with The Fairmount</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">January 17th - 7pm - 11pm: Stick Figure Concert/Benefit show</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">January 18th - 12-3pm: Adoption Event with ZipCar</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">January 18th - 4:30-8pm: Happy Hour with Stratus Rooftop Lounge</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">January 20th and 27th - 5-8p.m.: Johnny Rockets Fundraiser</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">July 29th- 12:30-4pm: South Kensington Summer Festival</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">July 10th - 11:30am - 3pm: Chestnut Hill Petapalooza</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">July 11th - 12-3pm: Adoption event at Liberty Vet Pet</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">July 11th - July 14th: Acro-Cats Show (Mutiple days/shifts!)</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">July 1st: 6:30-9pm - Movies in Rittenhouse (Welcome America)</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">July 22nd - 10:30-5pm: Brewerytown Boozehounds Festival</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">July 22nd - 1130-6pm: Block party/ Art event with Victory Brewing</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">July 23rd - VARIOUS SHIFTS - Clear The Shelters event at NE location</td>
+<td align="right">11</td>
+</tr>
+<tr class="odd">
+<td align="left">July 23rd: VARIOUS SHIFTS - Clear the Shelters event -Old City location</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">July 24th - 5-8pm: Adoption Event with Steel Pony</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">July 25th - 6pm-12am: Arts in the Industry (Fundraiser for PAWS)</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">July 26th - 6-9 p.m.: Lucky’s Adoption event and Weiner Race</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">July 26th - 7:30-9:00 p.m.: Movie in the Park</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">July 27th - 10 a.m. - 2 p.m.: Adoption event in Pretzel Park</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">July 4th - 2-4:30 p.m.: BBQ event at Morris Hotel</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">July 4th: 10am-6pm (TWO SHIFTS) - Party on the Parkway</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">July 5th - 12-6pm: Philly Pride Annual Reminders Block Party (3 shifts)</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">July 6th: 11am-6pm (TWO SHIFTS): Taste of Philadelphia</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">July 6th: 12-6 p.m. (TWO shifts) - Old City: Inside Out</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">July 7th-9th: (various times each day) - Kittydelphia event</td>
+<td align="right">14</td>
+</tr>
+<tr class="odd">
+<td align="left">June 10th - 1-3pm: PAWSome Doubles Event</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">June 10th - 10:30am-2pm: Church of St. Alban June Fair</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">June 10th - 2:30-5pm: Beer week event with Victory Brewing</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">June 10th - 9am-2pm: Adoption Day on the Battleship NJ</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">June 11th - 2:30-6pm: Fundraising event with Craftsman Row Saloon</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">June 15th - 16th - All Paws on Deck: MULTIPLE SHIFTS</td>
+<td align="right">12</td>
+</tr>
+<tr class="odd">
+<td align="left">June 15th: 4:30-9pm: Stroll the Street in Manayunk</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">June 18th - 11:30am - 3pm: Philly Pride Parade</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">June 18th - 11am-6pm: Philly Pride Festival (multiple shifts)</td>
+<td align="right">12</td>
+</tr>
+<tr class="even">
+<td align="left">June 1st - 12:30pm - 5pm: The Weiss is Right fundraising event</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">June 20th - 10:30am-2pm: Adoption event with Club Metro</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">June 21st - 10am - 2pm: Adoption event at Hyperion Bank</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">June 22nd - 11am - 1pm: Fundraiser at 1682 Square Restaurant</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">June 24th - 12-3pm: Adoption event with Lord &amp; Taylor</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">June 24th - 12-3pm: Adoption Event with PETCO Ardmore</td>
+<td align="right">25</td>
+</tr>
+<tr class="even">
+<td align="left">June 2nd - 1pm - 3pm: PAWSome Doubles</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">June 30th - 5:30pm-9pm: Unleashed Art Show and PAWS fundraiser</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">June 4 - 4-6pm: London Grill Dunk Tank</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">June 4th - 1:30-4pm: Beer week event with Yards Brewery and Garage Bar</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">June 5th - 9:30am-3pm: Sunday Funday with World of Animals</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">June 6th - 7:30-11 p.m.: 4th Annual PAWS Benefit Concert</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">June 6th: 7-9pm - PAWS Happy Hour at Cavanaugh’s</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">June 8th - 9:30am - 12pm: Harleys 4 Hounds (Part 1)</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">June 9th - 11am - 6pm: Philly Pride Festival and Parade</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">March 11th - 6-9:30pm: Wine Dinner for PAWS</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">March 22nd - 5-9pm: Bark in the Bowl - Philadelphia Wings game w/RedPaw</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">March 26th - 6-9pm: Bourbon Battle at The Trestle Inn</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">March 31st - 9:30am - 12pm: Health Fair (Information Event)</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">March 5th - 4:45-9p.m.: Adoption event with the Flyers</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">May 11th - 8a.m. - 4p.m. Old Pine Flea Market (TWO shifts)</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">May 18th - 10am - 12pm: Doggie Ball</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">May 18th - 11am - 4pm (split into 2 shifts): Super Adoption Day</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">May 20th - 11:30am-3pm: Lord and Taylor Adoption event</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">May 21st - 10 - 6pm (Multiple shifts): Trenton Avenue Arts Festival</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">May 30th &amp; 31st: Adoption Weekend at NE PAWS Adoption Center</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">May 30th &amp; 31st: Adoption Weekend at PAWS Old City Adoption Center</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">May 6th - 10:30am-6pm: South St. Spring Festival (2 shifts)</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">May 9th - 5-9pm: Raven Lounge Happy Hour</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">Multiple Sundays/month - 12pm - 3pm.: PETCO Ardmore Adoption event</td>
+<td align="right">34</td>
+</tr>
+<tr class="even">
+<td align="left">November 11th - 11am - 3pm: Adoption Event at The Bone Appetite</td>
+<td align="right">52</td>
+</tr>
+<tr class="odd">
+<td align="left">November 16th - 12-3 pm: Adoption event with Post Properties</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">November 18th - 11:30am-2pm: Adoption Day with Domus Apartments</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">November 23rd - 12-3: CNKP event</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">November 25th-28th: Best Friends Mega Adoption event (Grant Ave.)</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">November 3rd - 9am-12pm: Yellow Ribbon Family Day</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">November 5th - 11:00am-2pm: CNKP Pet Pantry &amp; Help Desk Event</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">November 7th - 12pm-6pm: Halfway to Cinco Party (TWO shifts)</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">October 12th - 6-9:30 p.m.: Roller Derby event</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">October 13th - 12-6pm (TWO shifts): Outfest</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">October 18th - 10:30am - 3pm: Schuylkill Fall Festival</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">October 1st: 9am-12pm: Doggie Yoga with 1100 Social</td>
+<td align="right">19</td>
+</tr>
+<tr class="even">
+<td align="left">October 20 - 9:30am-1pm: Paws for a Cause</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">October 21st - 12:30pm-3pm: Summit Park’s Barktoberfest</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">October 22nd - 7-9pm: Sip and Shop at the Cafe (Adoption event)</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">October 24th - 5-9pm: PAWS night with the Flyers</td>
+<td align="right">14</td>
+</tr>
+<tr class="even">
+<td align="left">October 25th - 5:30-8pm: Event with Free Library</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">October 26 - 11 a.m. - 4 p.m.: East Passyunk Fall Fest &amp; Spooky Saturday</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">October 26th - 6-10 p.m.: Stella Rossa Fundraising event</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">October 28th - 10:30am-2pm: Howl-O-Ween Parade and Adoption Event</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">October 29th - 12-3pm: Adoption event with TD Bank (Broad &amp; Jackson)</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">October 2nd - 5:30 - 9p.m.: Fabulous Shoe Night</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">October 2nd - Chefs’ Night for PAWS (VARIOUS shifts!)</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">October 2nd: 10am-3pm: Doggie Daycare Grand opening</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">October 31st - 12pm-4pm: Halloween event at Pretzel Park</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">October 4th: 11am-1pm: Community Pet Day</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">October 5th - 12 - 6pm: Roxtober Fest</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">October 7th - 12-2pm: Adoption event with Ardmore Animal Hospital</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">October 8th - 12-3pm: Adoption event at Korman Rushwood</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">October 9th - 11am-6pm: Old City Festival (multiple shifts)</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">October 9th - 12-6pm: OutFest (multiple shifts)</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">PAC Adoptions Assistant</td>
+<td align="right">444</td>
+</tr>
+<tr class="even">
+<td align="left">PAC Cat Mentee Shift (for shadowing only)</td>
+<td align="right">20</td>
+</tr>
+<tr class="odd">
+<td align="left">PAC Dog Mentee Shift (for shadowing only)</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">PAC Orientations</td>
+<td align="right">32</td>
+</tr>
+<tr class="odd">
+<td align="left">PAC Rockstar</td>
+<td align="right">43</td>
+</tr>
+<tr class="even">
+<td align="left">PAC Transport Volunteer</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">PAC Veterinary Tech Volunteer</td>
+<td align="right">27</td>
+</tr>
+<tr class="even">
+<td align="left">PAWS 11th Annual Mutt Strut - October 14, 2017 (Rain Date - 10/15)</td>
+<td align="right">40</td>
+</tr>
+<tr class="odd">
+<td align="left">PAWS 6th Annual Mutt Strut - November 3rd</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td align="left">PAWS Mutt Strut Set-up - October 10, 2014</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">PAWS Mutt Strut set-up - October 18, 2013</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">PAWS PETCO-Grant</td>
+<td align="right">18</td>
+</tr>
+<tr class="odd">
+<td align="left">PAWS South Philly PetSmart</td>
+<td align="right">588</td>
+</tr>
+<tr class="even">
+<td align="left">PAWS Volunteer Meeting</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">Saturdays in December - 12:30-5pm: Gift Wrapping event in Old City</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">Second Wknd (monthly) - 11am - 3pm: Adoption Weekend at PETCO Grant</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">September 10th - 11:30 a.m. - 3 p.m.: Adoption Day with Pet Valu</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">September 10th - 5:30-9:30 p.m.: Bark in the Park with the Phillies</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">September 11th - 10:30am-2pm: United Behavioral Employee Health Fair</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">September 12th - 8:30am - 12pm: Adoption event with Unite Fitness</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">September 13th: 10am-4pm: Greenfest Philly (VARIOUS SHIFTS)</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">September 14th and 15th - 11am - 3pm: PetSmart Adoption Weekend</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">September 16th - 10:30-3pm: Adoption event Phila History Museum</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">September 16th - 7-9pm: Private fundraiser in donor’s home</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">September 18th - 11am-5pm: PAWS On Passyunk</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">September 1st - 5-7pm: Sidewalk Sale at PAWS Old City</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">September 20th - 12-2pm: Adoption event with TD Bank (Old City)</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">September 21st - 12-3 p.m.: Adoption Event at Julian Abele Park</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">September 21th - 11am-4pm: Adoption Day with Salon Glam</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">September 24th - 9am-12pm: Monster Milers Rescue Run</td>
+<td align="right">11</td>
+</tr>
+<tr class="odd">
+<td align="left">September 25th - 5-9 p.m.: Saks 5th Avenue Fashion show for PAWS</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">September 28 - 10:00-3:30: Greensgrow Farms Fall Festival</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">September 28th - 4:30-7pm: Yappy Hour</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">September 29th - 7:30am - 12p.m.: Rescue Run</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">September 2nd - 11am-4pm: Puppies and Portraitures</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">September 5th - 7-10 p.m.: Jack Daniels birthday party with PAWS</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">September 7th: 12-3 p.m.:Adoption event with Free People</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">September 8th - 12 pm - 3 pm: Adoption event at TD Bank</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">September 9th - 11am-4pm: CNKP Super Adoption Day (2 shifts)</td>
+<td align="right">14</td>
+</tr>
+<tr class="even">
+<td align="left">Veterinary Tech Volunteer shift - Grant Ave</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">Voicemail Volunteers</td>
+<td align="right">13</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>knitr::kable(table(service$No.Call.No.Show, exclude=NULL), caption = &quot;No.Call.No.Show&quot;)</code></pre>
+<table>
+<caption>No.Call.No.Show</caption>
+<thead>
+<tr class="header">
+<th align="left">Var1</th>
+<th align="right">Freq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">0</td>
+<td align="right">23367</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="right">105</td>
+</tr>
+<tr class="odd">
+<td align="left">2</td>
+<td align="right">2</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>knitr::kable(table(service$Call.Email.to.miss.shift, exclude=NULL), caption = &quot;Call.Email.to.miss.shift&quot;)</code></pre>
+<table>
+<caption>Call.Email.to.miss.shift</caption>
+<thead>
+<tr class="header">
+<th align="left">Var1</th>
+<th align="right">Freq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">0</td>
+<td align="right">23159</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="right">311</td>
+</tr>
+<tr class="odd">
+<td align="left">2</td>
+<td align="right">4</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>knitr::kable(table(service$Absence, exclude=NULL), caption = &quot;Absence&quot;)</code></pre>
+<table>
+<caption>Absence</caption>
+<thead>
+<tr class="header">
+<th align="left">Var1</th>
+<th align="right">Freq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">0</td>
+<td align="right">23055</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="right">412</td>
+</tr>
+<tr class="odd">
+<td align="left">2</td>
+<td align="right">7</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>service_clean &lt;- service %&gt;%
+  mutate(assignment_group = case_when(
+    Assignment == &quot;Cat Care Volunteer - PAC&quot; ~ &quot;Cat Care Volunteer - PAC&quot;,
+    Assignment == &quot;Cat Care Volunteer - Grant Ave.&quot; ~ &quot;Cat Care Volunteer - Grant Ave.&quot;,
+    Assignment == &quot;Administrative tasks&quot; ~ &quot;Administrative tasks - &quot;,
+    Assignment == &quot;Foster Care Administrative Assistant&quot; ~ &quot;Foster Care Administrative Assistant - &quot;,
+    Assignment == &quot;Dog Care Volunteer - GF&quot; ~ &quot;Dog Care Volunteer - GF&quot;,
+    Assignment == &quot;Dog Walking Volunteer - Grant Ave.&quot; ~ &quot;Dog Walking Volunteer - Grant Ave.&quot;,
+    Assignment == &quot;Dog Walking Volunteer - PAC&quot; ~ &quot;Dog Walking Volunteer - PAC&quot;,
+    Assignment == &quot;Cat Care Volunteer - GF&quot; ~ &quot;Cat Care Volunteer - GF&quot;,
+    Assignment == &quot;Cat Socialization Team&quot; ~ &quot;Cat Socialization Team - &quot;,
+    Assignment == &quot;PAWS South Philly PetSmart&quot; ~ &quot; - PAWS South Philly PetSmart&quot;,
+    Assignment == &quot;PAC Adoptions Assistant&quot; ~ &quot;Adoptions Assistant - PAC&quot;,
+    Assignment == &quot;Cat Pawsitive Program Volunteer - Grant Ave. Location&quot; ~ &quot;Cat Pawsitive Program Volunteer - Grant Ave.&quot;,
+    Assignment == &quot;PAC Dog Mentee Shift (for shadowing only)&quot; ~ &quot;Dog Mentee Shift - PAC&quot;,
+    Assignment == &quot;PAC Cat Mentee Shift (for shadowing only)&quot; ~ &quot;Cat Mentee Shift - PAC&quot;,
+    Assignment == &quot;Dog Rescue Volunteer - GF&quot; ~ &quot;Dog Rescue Volunteer - GF&quot;,
+    Assignment == &quot;Veterinary Tech Volunteer shift - Grant Ave&quot; ~ &quot;Veterinary Tech Volunteer - Grant Ave.&quot;,
+    Assignment == &quot;PAC Veterinary Tech Volunteer&quot; ~ &quot;Veterinary Tech Volunteer - PAC&quot;,
+    Assignment == &quot;PAC Orientations&quot; ~ &quot;Orientations - PAC&quot;,
+    Assignment == &quot;PAC Transport Volunteer&quot; ~ &quot;Transport Volunteer - PAC&quot;,
+    Assignment == &quot;Grant Mentee Shift (for shadowing only)&quot; ~ &quot;Mentee Shift - Grant Ave.&quot;,
+    Assignment == &quot;Cat Pawsitive Program Volunteers - OLD CITY&quot; ~ &quot;Cat Pawsitive Program Volunteer - PAC&quot;,
+    Assignment == &quot;Voicemail Volunteers&quot; ~ &quot;Voicemail Volunteers - &quot;,
+    Assignment == &quot;Gray's Ferry Mentee Shift for dog care (for shadowing only)&quot; ~ &quot;Dog Mentee Shift - GF&quot;,
+    grepl(&quot;Mutt Strut&quot;, Assignment) ~ &quot;Mutt Strut&quot;,
+    TRUE ~ &quot;other_event&quot;
+  ))
+
+# Should also sep location and task here
+service_clean &lt;- service_clean %&gt;%
+  separate(assignment_group, into = c(&quot;assignment_type&quot;, &quot;location&quot;), sep = &quot; - &quot;)</code></pre>
+<pre><code>## Warning: Expected 2 pieces. Missing pieces filled with `NA` in 2532 rows
+## [57, 64, 357, 402, 405, 410, 420, 426, 458, 461, 464, 466, 471, 472, 474,
+## 478, 482, 483, 486, 488, ...].</code></pre>
+<pre class="r"><code>knitr::kable(table(service_clean$assignment_type, exclude=NULL), caption = &quot;New Assignment Variable&quot;)</code></pre>
+<table>
+<caption>New Assignment Variable</caption>
+<thead>
+<tr class="header">
+<th align="left">Var1</th>
+<th align="right">Freq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="right">588</td>
+</tr>
+<tr class="even">
+<td align="left">Administrative tasks</td>
+<td align="right">1924</td>
+</tr>
+<tr class="odd">
+<td align="left">Adoptions Assistant</td>
+<td align="right">444</td>
+</tr>
+<tr class="even">
+<td align="left">Cat Care Volunteer</td>
+<td align="right">11662</td>
+</tr>
+<tr class="odd">
+<td align="left">Cat Mentee Shift</td>
+<td align="right">20</td>
+</tr>
+<tr class="even">
+<td align="left">Cat Pawsitive Program Volunteer</td>
+<td align="right">136</td>
+</tr>
+<tr class="odd">
+<td align="left">Cat Socialization Team</td>
+<td align="right">1087</td>
+</tr>
+<tr class="even">
+<td align="left">Dog Care Volunteer</td>
+<td align="right">1664</td>
+</tr>
+<tr class="odd">
+<td align="left">Dog Mentee Shift</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">Dog Rescue Volunteer</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">Dog Walking Volunteer</td>
+<td align="right">3221</td>
+</tr>
+<tr class="even">
+<td align="left">Foster Care Administrative Assistant</td>
+<td align="right">75</td>
+</tr>
+<tr class="odd">
+<td align="left">Mentee Shift</td>
+<td align="right">30</td>
+</tr>
+<tr class="even">
+<td align="left">Mutt Strut</td>
+<td align="right">197</td>
+</tr>
+<tr class="odd">
+<td align="left">Orientations</td>
+<td align="right">32</td>
+</tr>
+<tr class="even">
+<td align="left">other_event</td>
+<td align="right">2335</td>
+</tr>
+<tr class="odd">
+<td align="left">Transport Volunteer</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">Veterinary Tech Volunteer</td>
+<td align="right">30</td>
+</tr>
+<tr class="odd">
+<td align="left">Voicemail Volunteers</td>
+<td align="right">13</td>
+</tr>
+</tbody>
+</table>
+<p>Transform service_clean to wide, so it can be merged with the other datasets; also assign shift number</p>
+<pre class="r"><code>service_clean &lt;- service_clean[order(service_clean$ID, service_clean$From.date),]
+service_clean$shift &lt;- sequence(rle(as.character(service_clean$ID))$lengths)
+service_clean &lt;- reshape(service_clean,timevar=&quot;shift&quot;,idvar=&quot;ID&quot;,direction=&quot;wide&quot;)</code></pre>
+<p>Combine master, orientation and service files, and keep only those entries where orientation occurred after Jan 2017</p>
+<pre class="r"><code>v.activity &lt;- merge(master_clean,signup_clean, by=&quot;ID&quot;)
+v.activity &lt;- merge(v.activity,service_clean, by=&quot;ID&quot;)
+
+print(&quot;Orientation.Date.Primary&quot;)</code></pre>
+<pre><code>## [1] &quot;Orientation.Date.Primary&quot;</code></pre>
+<pre class="r"><code>summary(v.activity$Orientation.Date.Primary)</code></pre>
+<pre><code>##         Min.      1st Qu.       Median         Mean      3rd Qu. 
+## &quot;2017-01-03&quot; &quot;2017-03-30&quot; &quot;2017-07-16&quot; &quot;2017-07-19&quot; &quot;2017-11-05&quot; 
+##         Max. 
+## &quot;2018-02-11&quot;</code></pre>
+<p>Calculate time between dates of interest.</p>
+<ol style="list-style-type: decimal">
+<li>Time from attending their first orientation, to being entered into the system</li>
+</ol>
+<pre class="r"><code>v.activity$Orientation.Date.Primary &lt;- strptime(as.character(v.activity$Orientation.Date.Primary), &quot;%Y-%m-%d&quot;)
+v.activity$Date.entered &lt;- strptime(as.character(v.activity$Date.entered), &quot;%m-%d-%Y&quot;)
+
+v.activity$t.orientation.to.entered &lt;- difftime(v.activity$Date.entered,
+                                                v.activity$Orientation.Date.Primary, units=&quot;days&quot;)
+quantile(v.activity$t.orientation.to.entered, na.rm = TRUE)</code></pre>
+<pre><code>## Time differences in days
+##    0%   25%   50%   75%  100% 
+## -1544     1     2     8   377</code></pre>
+<p>There seems that there are some people who are marked as having an orientation after they were entered into the system.</p>
+<pre class="r"><code>v.activity[which(v.activity$t.orientation.to.entered &lt;0 ),c(&quot;Orientation.Date.Primary&quot;,&quot;Date.entered&quot;)]</code></pre>
+<pre><code>##     Orientation.Date.Primary Date.entered
+## 11                2017-02-05   2013-05-14
+## 27                2017-02-26   2015-12-30
+## 36                2017-05-09   2017-01-23
+## 94                2017-12-05   2017-12-04
+## 99                2017-03-26   2016-04-28
+## 141               2017-07-18   2016-12-08
+## 230               2017-10-17   2013-07-26
+## 254               2017-02-19   2015-08-07
+## 298               2017-07-16   2016-07-09</code></pre>
+<p>I will remove these people because several of them probably did a ‘refresher’ orientation (the ones that were entered into the system years ago); for others, the timeline doesn’t match with what it should be (orientation first, then entered into system).</p>
+<pre class="r"><code>v.activity &lt;- v.activity[-c(which(v.activity$t.orientation.to.entered &lt;0)),]</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Time from being entered into the system (and therefore, being able to sign up for shifts) to demonstrating an interest in signing up for shifts (logging into the system for the first time)</li>
+</ol>
+<pre class="r"><code>v.activity$Start.date &lt;- strptime(as.character(v.activity$Start.date), &quot;%m-%d-%Y&quot;)
+
+v.activity$t.entered.to.start &lt;- difftime(v.activity$Start.date, 
+                                          v.activity$Date.entered,
+                                          units=&quot;days&quot;)
+quantile(v.activity$t.entered.to.start, na.rm = TRUE)</code></pre>
+<pre><code>## Time differences in days
+##   0%  25%  50%  75% 100% 
+##    0    0    0    0    3</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Time from demonstrating an interest in signing up for shifts (logging into the system for the first time) to shift 1</li>
+</ol>
+<pre class="r"><code>v.activity$From.date.1 &lt;- strptime(as.character(v.activity$From.date.1), &quot;%Y-%m-%d&quot;)
+
+v.activity$t.start.to.shift1 &lt;- difftime(v.activity$From.date.1, 
+                                         v.activity$Start.date,
+                                          units=&quot;days&quot;)
+quantile(v.activity$t.start.to.shift1, na.rm = TRUE)</code></pre>
+<pre><code>## Time differences in days
+##     0%    25%    50%    75%   100% 
+## -29.00   4.00  10.00  25.75 401.00</code></pre>
+<p>There are some people in here whose 1st shift comes before they logged into the system. These people will be removed, because they are not following the typical process (orientation, then being added to the system, then signing up for a shift via the system, then attending shift1). We may want to reconsider this action, as removing them completely from analysis means we are not deriving any useful info from them. Luckily, there aren’t many cases like this.</p>
+<pre class="r"><code>v.activity[which(v.activity$t.start.to.shift1 &lt;0 ),c(&quot;Orientation.Date.Primary&quot;, &quot;Start.date&quot;,&quot;From.date.1&quot;)]</code></pre>
+<pre><code>##     Orientation.Date.Primary Start.date From.date.1
+## 30                2017-06-11 2017-06-13  2017-06-11
+## 37                2017-02-19 2017-02-27  2017-02-12
+## 110               2017-01-15 2017-01-20  2017-01-01
+## 117               2017-01-15 2017-01-17  2017-01-04
+## 139               2017-02-14 2017-02-22  2017-02-01
+## 164               2017-03-12 2017-03-25  2017-03-18
+## 170               2017-05-07 2017-05-16  2017-05-15
+## 190               2017-04-11 2017-04-12  2017-04-11
+## 195               2017-08-08 2017-08-10  2017-08-08
+## 215               2017-10-17 2017-10-21  2017-10-17
+## 225               2017-03-21 2017-03-22  2017-03-21
+## 277               2017-01-22 2017-01-26  2016-12-28
+## 305               2017-08-27 2017-08-28  2017-08-05
+## 345               2018-01-16 2018-01-25  2018-01-22</code></pre>
+<pre class="r"><code>v.activity &lt;- v.activity[-c(which(v.activity$t.start.to.shift1 &lt;0)),]</code></pre>
+</div>
+</div>
+</div>
+<div id="analysis" class="section level1">
+<h1>Analysis</h1>
 <ol style="list-style-type: decimal">
 <li>What is the typical wait time from attending their first orientation, to being entered into the system (to be able to sign up for shifs)? For this question, I will create groups based only on location of orientation, because this wait time depends on PAWS staff at each location.</li>
 </ol>
+<pre class="r"><code>quantile(as.numeric(v.activity$t.orientation.to.entered), na.rm = TRUE, c(seq(0,1,0.1)))</code></pre>
+<pre><code>##        0%       10%       20%       30%       40%       50%       60% 
+##   0.00000   1.00000   1.00000   1.00000   2.00000   2.00000   4.00000 
+##       70%       80%       90%      100% 
+##   6.00000   9.00000  15.04167 377.00000</code></pre>
+<p>It looks like the top 10% of values are unusually high. This will skew the mean, so a more accurate representation of the typical wait time is the median, at 2 days.</p>
 <ul>
 <li>What is this wait time for orientations that took place at the different locations (PAC, NE and GF)?</li>
+</ul>
+<pre class="r"><code>v.activity[,c(&quot;orient_loc.Primary&quot;,&quot;t.orientation.to.entered&quot;)] %&gt;% 
+  group_by(orient_loc.Primary) %&gt;% 
+  summarise(Min=min(t.orientation.to.entered, na.rm=TRUE),
+            Max=max(t.orientation.to.entered, na.rm=TRUE),
+            Median=median(t.orientation.to.entered, na.rm=TRUE))</code></pre>
+<pre><code>## # A tibble: 3 x 4
+##   orient_loc.Primary Min    Max    Median
+##   &lt;chr&gt;              &lt;time&gt; &lt;time&gt; &lt;time&gt;
+## 1 GF                 1      35     3     
+## 2 NE                 1      368    10    
+## 3 PAC                0      377    1</code></pre>
+<ul>
 <li>What is this wait time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD)</li>
 </ul>
+<pre class="r"><code>v.activity[,c(&quot;orient_loc.Primary&quot;, &quot;orient_type.Primary&quot;, &quot;t.orientation.to.entered&quot;)] %&gt;% 
+  group_by(orient_loc.Primary, orient_type.Primary) %&gt;% 
+  summarise(Min=min(t.orientation.to.entered, na.rm=TRUE),
+            Max=max(t.orientation.to.entered, na.rm=TRUE),
+            Median=median(t.orientation.to.entered, na.rm=TRUE))</code></pre>
+<pre><code>## # A tibble: 6 x 5
+## # Groups:   orient_loc.Primary [?]
+##   orient_loc.Primary orient_type.Primary Min    Max    Median          
+##   &lt;chr&gt;              &lt;chr&gt;               &lt;time&gt; &lt;time&gt; &lt;time&gt;          
+## 1 GF                 Basic               1      13     3               
+## 2 GF                 Basic + WD          1      35     3               
+## 3 GF                 WD                  2      18     6.47916666666667
+## 4 NE                 Basic               1      368    10              
+## 5 PAC                Cat                 0      377    1               
+## 6 PAC                Dog                 1      31     1</code></pre>
+<p>The time it takes for volunteers to be entered into the system after attending orientation at each location are pretty consistent within the location, across orientation types. The GF WD orientation is a bit of an odd-man-out, because WD (“working dog”) orientation is always done AFTER basic orientation, so people who take this orientation only (rather than Basic + WD) are either volunteers who are already in the system because they attended the “Basic” orientation on its own, or exceptions.</p>
 <ol start="2" style="list-style-type: decimal">
 <li>What is the typical time from being entered into the system (and therefore, being able to sign up for shifts) to demonstrating an interest in signing up for shifts (logging into the system for the first time)? For this question too, I will create groups based only on location of orientation.</li>
 </ol>
+<pre class="r"><code>quantile(as.numeric(v.activity$t.entered.to.start), na.rm = TRUE, c(seq(0,1,0.1)))</code></pre>
+<pre><code>##   0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100% 
+##    0    0    0    0    0    0    0    0    0    1    3</code></pre>
+<p>It looks like the vast majority of people log into the volunteer management system on the day they are added.</p>
 <ul>
 <li>What is this time for orientations that took place at the different locations (PAC, NE and GF)?</li>
+</ul>
+<pre class="r"><code>v.activity[,c(&quot;orient_loc.Primary&quot;,&quot;t.entered.to.start&quot;)] %&gt;% 
+  group_by(orient_loc.Primary) %&gt;% 
+  summarise(Min=min(t.entered.to.start, na.rm=TRUE),
+            Max=max(t.entered.to.start, na.rm=TRUE),
+            Median=median(t.entered.to.start, na.rm=TRUE))</code></pre>
+<pre><code>## # A tibble: 3 x 4
+##   orient_loc.Primary Min    Max    Median
+##   &lt;chr&gt;              &lt;time&gt; &lt;time&gt; &lt;time&gt;
+## 1 GF                 0      2      0     
+## 2 NE                 0      3      0     
+## 3 PAC                0      2      0</code></pre>
+<ul>
 <li>What is this time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD )</li>
 </ul>
-<ol start="2" style="list-style-type: decimal">
+<pre class="r"><code>v.activity[,c(&quot;orient_loc.Primary&quot;, &quot;orient_type.Primary&quot;, &quot;t.entered.to.start&quot;)] %&gt;% 
+  group_by(orient_loc.Primary, orient_type.Primary) %&gt;% 
+  summarise(Min=min(t.entered.to.start, na.rm=TRUE),
+            Max=max(t.entered.to.start, na.rm=TRUE),
+            Median=median(t.entered.to.start, na.rm=TRUE))</code></pre>
+<pre><code>## # A tibble: 6 x 5
+## # Groups:   orient_loc.Primary [?]
+##   orient_loc.Primary orient_type.Primary Min    Max    Median
+##   &lt;chr&gt;              &lt;chr&gt;               &lt;time&gt; &lt;time&gt; &lt;time&gt;
+## 1 GF                 Basic               0      1      0     
+## 2 GF                 Basic + WD          0      2      0     
+## 3 GF                 WD                  0      1      0     
+## 4 NE                 Basic               0      3      0     
+## 5 PAC                Cat                 0      2      0     
+## 6 PAC                Dog                 0      0      0</code></pre>
+<p>Nothing particularly unexpected here - people log into the system on the same day they are added.</p>
+<ol start="3" style="list-style-type: decimal">
 <li>What is the typical time from demonstrating an interest in signing up for shifts (logging into the system for the first time) to shift 1? For this question, I will create groups based on location of orientation, and based on location of shift 1.</li>
 </ol>
+<pre class="r"><code>quantile(as.numeric(v.activity$t.start.to.shift1), na.rm = TRUE, c(seq(0,1,0.1)))</code></pre>
+<pre><code>##        0%       10%       20%       30%       40%       50%       60% 
+##   0.00000   3.00000   4.00000   5.00000   7.00000  10.50000  13.00000 
+##       70%       80%       90%      100% 
+##  20.00000  42.99167 102.03333 401.00000</code></pre>
+<p>Again, it looks like there are some extreme values, so the median is likely a more representative value than the mean. Based on that, it looks like the typical PAWS volunteer waits for 10.5 days before attending their first shift.</p>
 <ul>
 <li>What is this time for orientations that took place at the different locations (PAC, NE and GF)?</li>
+</ul>
+<pre class="r"><code>v.activity[,c(&quot;orient_loc.Primary&quot;,&quot;t.start.to.shift1&quot;)] %&gt;% 
+  group_by(orient_loc.Primary) %&gt;% 
+  summarise(Min=min(t.start.to.shift1, na.rm=TRUE),
+            Max=max(t.start.to.shift1, na.rm=TRUE),
+            Median=median(t.start.to.shift1, na.rm=TRUE))</code></pre>
+<pre><code>## # A tibble: 3 x 4
+##   orient_loc.Primary Min    Max              Median
+##   &lt;chr&gt;              &lt;time&gt; &lt;time&gt;           &lt;time&gt;
+## 1 GF                 1      401              11    
+## 2 NE                 0      326.041666666667 10    
+## 3 PAC                0      362              10</code></pre>
+<ul>
 <li>What is this time for first shifts that took place at the different locations (PAC, NE and GF)?</li>
+</ul>
+<pre class="r"><code>v.activity[,c(&quot;location.1&quot;,&quot;t.start.to.shift1&quot;)] %&gt;% 
+  group_by(location.1) %&gt;% 
+  summarise(Min=min(t.start.to.shift1, na.rm=TRUE),
+            Max=max(t.start.to.shift1, na.rm=TRUE),
+            Median=median(t.start.to.shift1, na.rm=TRUE))</code></pre>
+<pre><code>## # A tibble: 5 x 4
+##   location.1 Min    Max              Median          
+##   &lt;chr&gt;      &lt;time&gt; &lt;time&gt;           &lt;time&gt;          
+## 1 &quot;&quot;         5      250.041666666667 113.958333333333
+## 2 GF         1      401              11              
+## 3 Grant Ave. 0      326.041666666667 9               
+## 4 PAC        0      362              10              
+## 5 &lt;NA&gt;       5      109              15</code></pre>
+<ul>
 <li>What is this time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD )</li>
+</ul>
+<pre class="r"><code>v.activity[,c(&quot;orient_loc.Primary&quot;, &quot;orient_type.Primary&quot;, &quot;t.start.to.shift1&quot;)] %&gt;% 
+  group_by(orient_loc.Primary, orient_type.Primary) %&gt;% 
+  summarise(Min=min(t.start.to.shift1, na.rm=TRUE),
+            Max=max(t.start.to.shift1, na.rm=TRUE),
+            Median=median(t.start.to.shift1, na.rm=TRUE))</code></pre>
+<pre><code>## # A tibble: 6 x 5
+## # Groups:   orient_loc.Primary [?]
+##   orient_loc.Primary orient_type.Primary Min    Max              Median
+##   &lt;chr&gt;              &lt;chr&gt;               &lt;time&gt; &lt;time&gt;           &lt;time&gt;
+## 1 GF                 Basic               1      401              13    
+## 2 GF                 Basic + WD          1      347              11    
+## 3 GF                 WD                  3      95               6.5   
+## 4 NE                 Basic               0      326.041666666667 10    
+## 5 PAC                Cat                 1      362              11    
+## 6 PAC                Dog                 0      221.041666666667 7.5</code></pre>
+<ul>
 <li>What is this time for first shifts of different types at the same location? (Cat care, Dog care)</li>
 </ul>
-</div>
-</div>
+<pre class="r"><code>v.activity[,c(&quot;location.1&quot;, &quot;assignment_type.1&quot;, &quot;t.start.to.shift1&quot;)] %&gt;% 
+  group_by(location.1, assignment_type.1) %&gt;% 
+  summarise(Min=min(t.start.to.shift1, na.rm=TRUE),
+            Max=max(t.start.to.shift1, na.rm=TRUE),
+            Median=median(t.start.to.shift1, na.rm=TRUE))</code></pre>
+<pre><code>## # A tibble: 14 x 5
+## # Groups:   location.1 [?]
+##    location.1 assignment_type.1               Min       Max      Median   
+##    &lt;chr&gt;      &lt;chr&gt;                           &lt;time&gt;    &lt;time&gt;   &lt;time&gt;   
+##  1 &quot;&quot;         Administrative tasks            5         250.041~ 113.9583~
+##  2 GF         Cat Care Volunteer              2         401      10.5     
+##  3 GF         Dog Care Volunteer              1         371      11       
+##  4 GF         Dog Mentee Shift                11        12       11.5     
+##  5 Grant Ave. Cat Care Volunteer              0         326.041~ 9        
+##  6 Grant Ave. Dog Walking Volunteer           1         155.041~ 10.5     
+##  7 Grant Ave. Mentee Shift                    4         20.0416~ 5        
+##  8 PAC        Cat Care Volunteer              1         362      10       
+##  9 PAC        Cat Mentee Shift                2         72       7.5      
+## 10 PAC        Cat Pawsitive Program Volunteer 22        65       43.5     
+## 11 PAC        Dog Walking Volunteer           0         302.041~ 8        
+## 12 PAC        Veterinary Tech Volunteer       137.0416~ 137.041~ 137.0416~
+## 13 &lt;NA&gt;       Mutt Strut                      5         11       8        
+## 14 &lt;NA&gt;       other_event                     5         109      16</code></pre>
 </div>
 
 
