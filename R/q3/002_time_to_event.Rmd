@@ -5,6 +5,11 @@ date: "3/23/2018"
 output: html_document
 ---
 
+```{r, echo=FALSE, include=FALSE}
+rm(list = ls()) # can modify this if we are passing parameters into rmarkdown, etc.
+set.seed(1234)
+options(stringsAsFactors = FALSE)
+```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -12,9 +17,18 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r load_libs, warning=FALSE, message=FALSE}
 # This code works when you are using RStudio project. Paths are relative and stuff
-suppressPackageStartupMessages(library(tidyverse))
 library(survival)
 library(survminer)
+library(RColorBrewer)
+suppressPackageStartupMessages(library(tidyverse))
+
+```
+
+```{r additional_setup, include=FALSE}
+# I like to change the default color palette
+scale_color_discrete <- function(...) {scale_color_manual(..., values = brewer.pal(n=9, name = "Set1"))}
+scale_fill_discrete <- function(...) {scale_fill_manual(..., values = brewer.pal(n=9, name = "Set1"))}
+
 ```
 
 # Question
@@ -51,27 +65,52 @@ final_data <- readRDS("../../Data/merged.Rds")
 ```
 
 # Analysis
-Let's try time-to-event analysis - like survival curves used in cancer studies.
+Let's try time-to-event analysis. Here we will look at data for volunteers who did orientation between Jan 1, 2017 and August 1, 2017. For this analysis, only volunteers that did at least one shift are considered and a volunteer is defined as "disengaged" if greater than 90 days passes without volunteering.
 
-```{r kaplan-meier}
-# Show curves for last service - need survival and survminer loaded
+```{r calc_diffs}
 final_data$total_time <- final_data$last_recorded_date - final_data$Orientation.Date.Primary
 final_data$days_since_last <- as.numeric(as.Date("2018-03-02") - final_data$last_recorded_date)
 final_data$censor <- 0
 final_data$censor[final_data$days_since_last > 90] <- 1 
-  
-  
-model_data <- filter(final_data, any_shifts > 0)
+```
+
+```{r kaplan-meier}
+# Show curves for last service - need survival and survminer loaded
+
+model_data <- filter(final_data, any_shifts > 0, Orientation.Date.Primary <= "2017-08-01")
 surv.model <- Surv(model_data$total_time, model_data$censor)
 surv.fit <- survfit(surv.model ~ only_one_shift, data = model_data)
-ggsurvplot(surv.fit, ylab = "Volunteer Engagment Prob", xlab = "Time (days)")  
+ggsurvplot(surv.fit, data = model_data,
+           surv.median.line = "hv", 
+           pval = TRUE, conf.int = TRUE,
+           ylab = "Volunteer Engagement Prob",
+           xlab = "Time (days)",
+           title = "Compare whether only did one shift",
+           legend.title = "", legend.labs = levels(factor(model_data$only_one_shift)))  
 
 
-model_data <- filter(final_data, any_shifts > 0 & primary_type %in% c("Cat Care Volunteer", "Dog Care Volunteer","other_event"))
+model_data <- filter(final_data, any_shifts > 0,
+                     Orientation.Date.Primary <= "2017-08-01",
+                     primary_type %in% c("Cat Care Volunteer", "Dog Care Volunteer","other_event"))
 surv.model <- Surv(model_data$total_time, model_data$censor)
 surv.fit <- survfit(surv.model ~ primary_type, data = model_data)
-ggsurvplot(surv.fit, ylab = "Volunteer Engagment Prob", xlab = "Time (days)")  
+ggsurvplot(surv.fit, data = model_data,
+           surv.median.line = "hv", 
+           pval = TRUE, conf.int = FALSE,
+           ylab = "Volunteer Engagement Prob", xlab = "Time (days)",
+           title = "Compare primary assignments",
+           legend.title = "", legend.labs = levels(factor(model_data$primary_type)))  
   
+
+model_data <- filter(final_data, any_shifts > 0, Orientation.Date.Primary <= "2017-08-01")
+surv.model <- Surv(model_data$total_time, model_data$censor)
+surv.fit <- survfit(surv.model ~ orient_loc.Primary, data = model_data)
+ggsurvplot(surv.fit, data = model_data,
+           surv.median.line = "hv", 
+           pval = TRUE, conf.int = FALSE,
+           ylab = "Volunteer Engagement Prob", xlab = "Time (days)",
+           title = "Compare primary orientation location",
+           legend.title = "", legend.labs = levels(factor(model_data$orient_loc.Primary))) 
 ```
 
 
