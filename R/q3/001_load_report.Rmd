@@ -201,22 +201,36 @@ knitr::kable(table(service$Absence, exclude=NULL), caption = "Absence")
 
 ```
 
-```{r}
+```{r cleanup_assignments}
 service_clean <- service %>%
   mutate(assignment_group = case_when(
     Assignment == "Cat Care Volunteer - PAC" ~ "Cat Care Volunteer - PAC",
     Assignment == "Cat Care Volunteer - Grant Ave." ~ "Cat Care Volunteer - Grant Ave.",
     Assignment == "Administrative tasks" ~ "Administrative tasks - ",
+    Assignment == "Foster Care Administrative Assistant" ~ "Foster Care Administrative Assistant - ",
     Assignment == "Dog Care Volunteer - GF" ~ "Dog Care Volunteer - GF",
     Assignment == "Dog Walking Volunteer - Grant Ave." ~ "Dog Walking Volunteer - Grant Ave.",
+    Assignment == "Dog Walking Volunteer - PAC" ~ "Dog Walking Volunteer - PAC",
     Assignment == "Cat Care Volunteer - GF" ~ "Cat Care Volunteer - GF",
     Assignment == "Cat Socialization Team" ~ "Cat Socialization Team - ",
     Assignment == "PAWS South Philly PetSmart" ~ " - PAWS South Philly PetSmart",
     Assignment == "PAC Adoptions Assistant" ~ "Adoptions Assistant - PAC",
     Assignment == "Cat Pawsitive Program Volunteer - Grant Ave. Location" ~ "Cat Pawsitive Program Volunteer - Grant Ave.",
+    Assignment == "PAC Dog Mentee Shift (for shadowing only)" ~ "Dog Mentee Shift - PAC",
+    Assignment == "PAC Cat Mentee Shift (for shadowing only)" ~ "Cat Mentee Shift - PAC",
+    Assignment == "Dog Rescue Volunteer - GF" ~ "Dog Rescue Volunteer - GF",
+    Assignment == "Veterinary Tech Volunteer shift - Grant Ave" ~ "Veterinary Tech Volunteer - Grant Ave.",
+    Assignment == "PAC Veterinary Tech Volunteer" ~ "Veterinary Tech Volunteer - PAC",
+    Assignment == "PAC Orientations" ~ "Orientations - PAC",
+    Assignment == "PAC Transport Volunteer" ~ "Transport Volunteer - PAC",
+    Assignment == "Grant Mentee Shift (for shadowing only)" ~ "Mentee Shift - Grant Ave.",
+    Assignment == "Cat Pawsitive Program Volunteers - OLD CITY" ~ "Cat Pawsitive Program Volunteer - PAC",
+    Assignment == "Voicemail Volunteers" ~ "Voicemail Volunteers - ",
+    Assignment == "Gray's Ferry Mentee Shift for dog care (for shadowing only)" ~ "Dog Mentee Shift - GF",
     grepl("Mutt Strut", Assignment) ~ "Mutt Strut",
     TRUE ~ "other_event"
   ))
+
 
 # Should also sep location and task here
 service_clean <- service_clean %>%
@@ -225,7 +239,12 @@ service_clean <- service_clean %>%
 ```
 
 ```{r}
-knitr::kable(table(service_clean$assignment_type, exclude=NULL), caption = "New Assignment Variable")
+service_clean %>%
+  group_by(assignment_type) %>%
+  summarise(Freq = n()) %>%
+  arrange(desc(Freq)) %>%
+  knitr::kable( caption = "New Assignment Variable")
+# knitr::kable(table(service_clean$assignment_type, exclude=NULL), caption = "New Assignment Variable")
 ```
 
 ## Data manipulation
