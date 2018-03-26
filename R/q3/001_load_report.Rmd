@@ -315,6 +315,7 @@ final_data <- merge(signup_service, select(master_clean, ID, Status, Date.entere
 ## Visualizations
 ```{r plot}
 signup_service_plot <- final_data %>%
+  filter(Orientation.Date.Primary <= "2017-08-01") %>%
   group_by(orient_loc.Primary, orient_type.Primary, primary_type, any_shifts) %>%
   summarise(Freq = n()) %>%
   ungroup()
@@ -335,21 +336,47 @@ OK - This is a start. It needs to be clarified a little.
 
 How long since the last shift? This can help us decide a volunteer disengaged cutoff
 ```{r calc_diffs}
-final_data$total_time <- final_data$last_recorded_date - final_data$Orientation.Date.Primary
-final_data$time_to_first <- final_data$first_shift_date - final_data$Orientation.Date.Primary
+final_data$total_time <- as.numeric(final_data$last_recorded_date - final_data$Orientation.Date.Primary)
+final_data$time_to_first <- as.numeric(final_data$first_shift_date - final_data$Orientation.Date.Primary)
+final_data$time_last_to_first <- as.numeric(final_data$last_recorded_date - final_data$first_shift_date)
 final_data$days_since_last <- as.numeric(as.Date("2018-03-02") - final_data$last_recorded_date)
 
 ```
 
 ```{r hist_last}
 
-model_data <- filter(final_data, any_shifts > 0)
+model_data <- filter(final_data, total_shifts > 0)
 hist(as.numeric(model_data$days_since_last), 100,
      main = "Days since last shift for those who did any shifts",
      xlab = "Days")
 
+
 ```
 
+```{r}
+median(filter(final_data, total_shifts > 0)$days_since_last)
+
+median(filter(final_data, total_shifts > 0)$time_bw_shifts, na.rm = T)
+
+```
+
+So looking at all the data including recent orientations (where data is censored), the median days since last shift is around a month, and the median time between shifts is about a week.
+
+```{r}
+ggplot(filter(final_data, total_shifts > 0), aes(x = Orientation.Date.Primary, y = days_since_last)) +
+  geom_point() +
+  geom_hline(yintercept = 90, color = "red") + 
+  theme_bw()
+
+ggplot(filter(final_data, total_shifts > 0), aes(x = as.Date("2018-03-02") -Orientation.Date.Primary, y = days_since_last)) +
+  geom_point() +
+  geom_hline(yintercept = 90, color = "red") + 
+  geom_abline(slope = 1, intercept = -90, color = "blue") + 
+  theme_bw()
+```
+
+OK. Based on this plot, I propose to use >90 days (red line) as a cutoff for when a volunteer is disengaged. 
+I will restrict look at data before a certain date (maybe Sept 01 2017) because we don't know if these volunteers will become disengaged.
 
 # Output
 

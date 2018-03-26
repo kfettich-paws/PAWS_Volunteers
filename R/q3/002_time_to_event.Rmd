@@ -25,7 +25,7 @@ suppressPackageStartupMessages(library(tidyverse))
 ```
 
 ```{r additional_setup, include=FALSE}
-# I like to change the default color palette
+# I like to change the default color palette - doesn't apply to ggsurvplot for some reason?
 scale_color_discrete <- function(...) {scale_color_manual(..., values = brewer.pal(n=9, name = "Set1"))}
 scale_fill_discrete <- function(...) {scale_fill_manual(..., values = brewer.pal(n=9, name = "Set1"))}
 
@@ -67,50 +67,132 @@ final_data <- readRDS("../../Data/merged.Rds")
 # Analysis
 Let's try time-to-event analysis. Here we will look at data for volunteers who did orientation between Jan 1, 2017 and August 1, 2017. For this analysis, only volunteers that did at least one shift are considered and a volunteer is defined as "disengaged" if greater than 90 days passes without volunteering.
 
-```{r calc_diffs}
-final_data$total_time <- final_data$last_recorded_date - final_data$Orientation.Date.Primary
-final_data$days_since_last <- as.numeric(as.Date("2018-03-02") - final_data$last_recorded_date)
-final_data$censor <- 0
-final_data$censor[final_data$days_since_last > 90] <- 1 
+```{r calc_disengage}
+final_data$event <- 0
+final_data$event[final_data$days_since_last > 90] <- 1 
+
+# create factor for whether they reported for shift within 14 days
+final_data$first_shift_group <- case_when(
+  as.numeric(final_data$time_to_first) <= 14 ~ "<= 14 days",
+  as.numeric(final_data$time_to_first) <= 60 ~ "14 to 60 days",
+  as.numeric(final_data$time_to_first) > 60 ~ "> 60 days"
+)
+final_data$first_shift_group <- factor(final_data$first_shift_group,
+                                       levels = c("<= 14 days", "14 to 60 days", "> 60 days"))
+
+final_data$timebw_shift_group <- case_when(
+  as.numeric(final_data$time_bw_shifts) <= 7 ~ "<= 7 days",
+  as.numeric(final_data$time_bw_shifts) <= 14 ~ "7 to 14 days",
+  as.numeric(final_data$time_bw_shifts) > 14 ~ "> 14 days"
+)
+final_data$timebw_shift_group <- factor(final_data$timebw_shift_group, 
+                                        levels = c("<= 7 days", "7 to 14 days", "> 14 days"))
+
+final_data %>%
+  filter(Orientation.Date.Primary <= "2017-09-01", total_shifts > 0) %>%
+  group_by(first_shift_group) %>%
+  summarise(mean_shifts = mean(total_shifts),
+            mean_missed_shifts = mean(missed_shifts),
+            freq = n()) %>%
+  knitr::kable(caption = "Summary of time orientation to first shift")
+
+final_data %>%
+  filter(Orientation.Date.Primary <= "2017-09-01", total_shifts > 0 ) %>%
+  group_by(timebw_shift_group) %>%
+  summarise(mean_shifts = mean(total_shifts),
+            mean_missed_shifts = mean(missed_shifts),
+            freq = n()) %>%
+  knitr::kable(caption = "Summary of time between shifts")
 ```
 
-```{r kaplan-meier}
-# Show curves for last service - need survival and survminer loaded
 
-model_data <- filter(final_data, any_shifts > 0, Orientation.Date.Primary <= "2017-08-01")
-surv.model <- Surv(model_data$total_time, model_data$censor)
+## Plot volunteers time between first shift and disengagement (time_last_to_first)
+
+```{r kaplan-meier1}
+model_data <- filter(final_data, total_shifts > 1, Orientation.Date.Primary <= "2017-09-01")
+surv.model <- Surv(model_data$time_last_to_first, model_data$event)
+
+surv.fit <- survfit(surv.model ~ first_shift_group, data = model_data)
+ggsurvplot(surv.fit, data = model_data,
+           surv.median.line = "hv", 
+           pval = TRUE, conf.int = TRUE, cumevents = TRUE,
+           ylab = "Volunteer Engagement Prob",
+           palette = brewer.pal(n=9, "Set1"),
+           xlab = "Time From First to Last Shift (days)",
+           title = "Compare how soon after orientation volunteered",
+           legend.title = "", legend.labs = levels(factor(model_data$first_shift_group)))  
+
+surv.fit <- survfit(surv.model ~ timebw_shift_group, data = model_data)
+ggsurvplot(surv.fit, data = model_data,
+           surv.median.line = "hv", 
+           pval = TRUE, conf.int = TRUE, cumevents = TRUE,
+           ylab = "Volunteer Engagement Prob",
+           palette = brewer.pal(n=9, "Set1"),
+           xlab = "Time From First to Last Shift (days)",
+           title = "Compare ave time between shifts",
+           legend.title = "", legend.labs = levels(factor(model_data$timebw_shift_group)))  
+
+```
+
+I don't understand this, but it looks like volunteers that come frequently also drop out faster than those that come on average less frequently.
+
+```{r kaplan-meier}
+# Could plot either total_time - time from orientation to last shift
+# or time_last_to_first - time from first shift to last shift
+
+model_data <- filter(final_data, total_shifts > 0, Orientation.Date.Primary <= "2017-09-01")
+surv.model <- Surv(model_data$total_time, model_data$event)
 surv.fit <- survfit(surv.model ~ only_one_shift, data = model_data)
 ggsurvplot(surv.fit, data = model_data,
            surv.median.line = "hv", 
-           pval = TRUE, conf.int = TRUE,
+           pval = TRUE, conf.int = TRUE, cumevents = TRUE,
            ylab = "Volunteer Engagement Prob",
-           xlab = "Time (days)",
+           palette = brewer.pal(n=9, "Set1"),
+           xlab = "Time From Orientation to Last Shift (days)",
            title = "Compare whether only did one shift",
            legend.title = "", legend.labs = levels(factor(model_data$only_one_shift)))  
 
+# top assignments:
+top_assign <- names(sort(table(final_data$primary_type),decreasing = T))[1:3]
+model_data <- filter(final_data, total_shifts > 1,
+                     Orientation.Date.Primary <= "2017-09-01",
+                     primary_type %in% top_assign)
 
-model_data <- filter(final_data, any_shifts > 0,
-                     Orientation.Date.Primary <= "2017-08-01",
-                     primary_type %in% c("Cat Care Volunteer", "Dog Care Volunteer","other_event"))
-surv.model <- Surv(model_data$total_time, model_data$censor)
+surv.model <- Surv(model_data$time_last_to_first, model_data$event)
 surv.fit <- survfit(surv.model ~ primary_type, data = model_data)
 ggsurvplot(surv.fit, data = model_data,
            surv.median.line = "hv", 
-           pval = TRUE, conf.int = FALSE,
-           ylab = "Volunteer Engagement Prob", xlab = "Time (days)",
+           pval = TRUE, conf.int = FALSE, cumevents = TRUE,
+           palette = brewer.pal(n=9, "Set1"),
+           ylab = "Volunteer Engagement Prob", xlab = "Time From First to Last Shift (days)",
            title = "Compare primary assignments",
            legend.title = "", legend.labs = levels(factor(model_data$primary_type)))  
   
 
-model_data <- filter(final_data, any_shifts > 0, Orientation.Date.Primary <= "2017-08-01")
-surv.model <- Surv(model_data$total_time, model_data$censor)
+model_data <- filter(final_data, total_shifts > 1, Orientation.Date.Primary <= "2017-09-01")
+surv.model <- Surv(model_data$time_last_to_first, model_data$event)
 surv.fit <- survfit(surv.model ~ orient_loc.Primary, data = model_data)
 ggsurvplot(surv.fit, data = model_data,
            surv.median.line = "hv", 
-           pval = TRUE, conf.int = FALSE,
-           ylab = "Volunteer Engagement Prob", xlab = "Time (days)",
+           pval = TRUE, conf.int = FALSE, cumevents = TRUE,
+           palette = brewer.pal(n=9, "Set1"),
+           ylab = "Volunteer Engagement Prob", xlab = "Time From First to Last Shift (days)",
            title = "Compare primary orientation location",
            legend.title = "", legend.labs = levels(factor(model_data$orient_loc.Primary))) 
+
+
+model_data <- filter(final_data, total_shifts > 1, Orientation.Date.Primary <= "2017-09-01")
+surv.model <- Surv(model_data$time_last_to_first, model_data$event)
+surv.fit <- survfit(surv.model ~ city_clean, data = model_data)
+ggsurvplot(surv.fit, data = model_data,
+           surv.median.line = "hv", 
+           pval = TRUE, conf.int = FALSE, cumevents = TRUE,
+           palette = brewer.pal(n=9, "Set1"),
+           ylab = "Volunteer Engagement Prob", xlab = "Time From First to Last Shift (days)",
+           title = "Compare primary orientation location",
+           legend.title = "", legend.labs = levels(factor(model_data$city_clean))) 
 ```
 
+There is not a clear trend for orientation location or whether someone lives in philadelphia or outside philadelphia.
+There is a trend that volunteers that typically volunteer as dog walking volunteers stay engaged longer than cat care of dog care volunteers. Cat care is at all three sites, dog care only at Grays Ferry and dog walking is either PAC or NE.
 
