@@ -380,9 +380,14 @@ I will restrict look at data before a certain date (maybe Sept 01 2017) because 
 
 # Output
 
-I wrote the Rds with merged data to Data/merged.Rds for downstream use.
+I wrote files for downstream use.
+
+* a Rds with merged data to Data/merged.Rds
+* a Rds with cleaned service data to Data/service_clean.Rds
+
 ```{r save}
 saveRDS(final_data, "../../Data/merged.Rds")
+saveRDS(service_clean, "../../Data/service_clean.Rds")
 ```
 
 
