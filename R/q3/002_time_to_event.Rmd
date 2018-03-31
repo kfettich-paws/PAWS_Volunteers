@@ -81,9 +81,9 @@ final_data$first_shift_group <- factor(final_data$first_shift_group,
                                        levels = c("<= 14 days", "14 to 60 days", "> 60 days"))
 
 final_data$timebw_shift_group <- case_when(
-  as.numeric(final_data$time_bw_shifts) <= 7 ~ "<= 7 days",
-  as.numeric(final_data$time_bw_shifts) <= 14 ~ "7 to 14 days",
-  as.numeric(final_data$time_bw_shifts) > 14 ~ "> 14 days"
+  as.numeric(final_data$time_bw_median) <= 7 ~ "<= 7 days",
+  as.numeric(final_data$time_bw_median) <= 14 ~ "7 to 14 days",
+  as.numeric(final_data$time_bw_median) > 14 ~ "> 14 days"
 )
 final_data$timebw_shift_group <- factor(final_data$timebw_shift_group, 
                                         levels = c("<= 7 days", "7 to 14 days", "> 14 days"))
@@ -129,12 +129,12 @@ ggsurvplot(surv.fit, data = model_data,
            ylab = "Volunteer Engagement Prob",
            palette = brewer.pal(n=9, "Set1"),
            xlab = "Time From First to Last Shift (days)",
-           title = "Compare ave time between shifts",
+           title = "Compare median time between shifts",
            legend.title = "", legend.labs = levels(factor(model_data$timebw_shift_group)))  
 
 ```
 
-I don't understand this, but it looks like volunteers that come frequently also drop out faster than those that come on average less frequently.
+We don't see a strong trend that volunteers leave sooner if they tend to volunteer more frequently or if they first volunteer soon or later after they complete orientation.
 
 ```{r kaplan-meier}
 # Could plot either total_time - time from orientation to last shift
