@@ -24,6 +24,7 @@ I need to summarise the number of volunteers with various characteristics:
 * did orientation, but no shifts
 * did orientation, had only 1 shift
 * did orientation, had 2+ shifts
+
 What factors are associated with these three groups? location, orientation type, zip code, days to first shift?
 
 For volunteers that do show up, what happens? Lets plot frequencies over the following factors:  
@@ -267,6 +268,9 @@ length(unique(signup_clean$ID))
 length(intersect(signup_clean$ID, intersect(service_clean$ID, master_clean$ID)))
 ```
 
+98% of volunteers in the signup data are also in the master data. However, only ~55% are in the service data.
+Is this because of the way the service data was downloaded?
+
 ### Derive service flags
 From the service table, derive variables for   
 
@@ -376,7 +380,30 @@ ggplot(filter(final_data, total_shifts > 0), aes(x = as.Date("2018-03-02") -Orie
 ```
 
 OK. Based on this plot, I propose to use >90 days (red line) as a cutoff for when a volunteer is disengaged. 
-I will restrict look at data before a certain date (maybe Sept 01 2017) because we don't know if these volunteers will become disengaged.
+I will restrict to looking at data before a certain date (maybe Sept 01 2017) because we don't know if these volunteers will become disengaged.
+
+## Summary stats
+For volunteers that did orientation between Jan 01 2017 and Sept 01 2017:
+
+* How many did orientation, but no shifts?
+* How many did orientation, had only 1 shift?
+* How many did orientation, had 2+ shifts?
+
+```{r summarise}
+end_summary <- final_data  %>%
+  filter(Orientation.Date.Primary >= "2017-01-01", Orientation.Date.Primary < "2017-09-01") %>%
+  summarise(total_volunteers = n(),
+            volunteered_ever = paste( round(100* sum(total_shifts>0)/n(),1) ,"%"),
+            volunteered_onlyonce = paste( round(100* sum(total_shifts==1)/n(),1),"%"),
+            twoplus = paste( round(100* sum(twoplus_shifts==TRUE)/n(), 1), "%"),
+            tenplus = paste( round(100* sum(tenplus_shifts==TRUE)/n(), 1), "%"),
+            ave_shifts = round( mean(total_shifts), 2),
+            ave_missed_shifts = round( mean(missed_shifts), 2))
+
+knitr::kable(t(end_summary), caption="Overall Summary")
+
+```
+
 
 # Output
 
