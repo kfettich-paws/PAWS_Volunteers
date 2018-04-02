@@ -265,9 +265,9 @@ signup &lt;- read.csv(signup_file, stringsAsFactors = F)</code></pre>
   separate(Type, into = c(&quot;orient_loc&quot;, &quot;orient_type&quot;), sep = &quot; &quot;, extra = &quot;merge&quot;, remove = FALSE) %&gt;%
   select(-NOT.Attending, -Present) %&gt;% # dont need these
   mutate(Orientation.Date = as.Date(Orientation.Date, format = &quot;%m/%d/%y&quot;)) %&gt;%
-  arrange(Orientation.Date)</code></pre>
-<pre><code>## Warning: package 'bindrcpp' was built under R version 3.4.3</code></pre>
-<pre class="r"><code>with(signup_clean, table(orient_type, orientation, exclude = NULL) )</code></pre>
+  arrange(Orientation.Date)
+
+with(signup_clean, table(orient_type, orientation, exclude = NULL) )</code></pre>
 <pre><code>##             orientation
 ## orient_type  Primary Secondary
 ##   Basic          226        11
@@ -2297,21 +2297,37 @@ quantile(v.activity$t.start.to.shift1, na.rm = TRUE)</code></pre>
 <ul>
 <li>What is this wait time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD)</li>
 </ul>
-<pre class="r"><code>v.activity[,c(&quot;orient_loc.Primary&quot;, &quot;orient_type.Primary&quot;, &quot;t.orientation.to.entered&quot;)] %&gt;% 
+<pre class="r"><code>v &lt;- v.activity[,c(&quot;orient_loc.Primary&quot;, &quot;orient_type.Primary&quot;, &quot;t.orientation.to.entered&quot;)] %&gt;% 
   group_by(orient_loc.Primary, orient_type.Primary) %&gt;% 
   summarise(Min=min(t.orientation.to.entered, na.rm=TRUE),
             Max=max(t.orientation.to.entered, na.rm=TRUE),
-            Median=median(t.orientation.to.entered, na.rm=TRUE))</code></pre>
-<pre><code>## # A tibble: 6 x 5
-## # Groups:   orient_loc.Primary [?]
-##   orient_loc.Primary orient_type.Primary Min    Max    Median          
-##   &lt;chr&gt;              &lt;chr&gt;               &lt;time&gt; &lt;time&gt; &lt;time&gt;          
-## 1 GF                 Basic               1      13     3               
-## 2 GF                 Basic + WD          1      35     3               
-## 3 GF                 WD                  2      18     6.47916666666667
-## 4 NE                 Basic               1      368    10              
-## 5 PAC                Cat                 0      377    1               
-## 6 PAC                Dog                 1      31     1</code></pre>
+            Median=median(t.orientation.to.entered, na.rm=TRUE))
+
+v &lt;- v[v$orient_type.Primary != &quot;WD&quot;,] %&gt;% 
+  group_by(orient_loc.Primary) %&gt;% 
+  do(rbind(.,c(.$orient_loc.Primary,rep(NA,NCOL(v)-1)))) %&gt;%
+  ungroup() %&gt;% 
+  data.frame()
+v$orient_type.Primary &lt;- paste0(v$orient_loc.Primary,&quot; - &quot;, v$orient_type.Primary)
+v$orient_type.Primary[c(3,5,8)] &lt;- &quot;&quot;
+v$Median[c(3,5,8)] &lt;- 0
+v &lt;- v[1:7,]
+v &lt;- v[c(6:7,3,1:2,5,4),]
+v$row &lt;- 1:7
+v$Median &lt;- as.numeric(as.character(v$Median))
+
+p &lt;- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
+  ggtitle(&quot;Days between orientation and date entered into Volgistics&quot;) + 
+  geom_bar(stat=&quot;identity&quot;, fill=&quot;steelblue&quot;) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
+  scale_x_discrete(name = &quot;Orientation Location and Type&quot;, breaks = v$row, labels = as.character(v$orient_type.Primary)) + 
+  scale_y_continuous(name=&quot;Number of Days&quot;, limits=c(0, 10), breaks = c(0:10))
+  
+png(&quot;days_orientation_to_system.png&quot;, width=800, height=400)
+p
+dev.off()</code></pre>
+<pre><code>## png 
+##   2</code></pre>
 <p>The time it takes for volunteers to be entered into the system after attending orientation at each location are pretty consistent within the location, across orientation types. The GF WD orientation is a bit of an odd-man-out, because WD (“working dog”) orientation is always done AFTER basic orientation, so people who take this orientation only (rather than Basic + WD) are either volunteers who are already in the system because they attended the “Basic” orientation on its own, or exceptions.</p>
 <ol start="2" style="list-style-type: decimal">
 <li>What is the typical time from being entered into the system (and therefore, being able to sign up for shifts) to demonstrating an interest in signing up for shifts (logging into the system for the first time)? For this question too, I will create groups based only on location of orientation.</li>
@@ -2395,29 +2411,47 @@ quantile(v.activity$t.start.to.shift1, na.rm = TRUE)</code></pre>
 <ul>
 <li>What is this time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD )</li>
 </ul>
-<pre class="r"><code>v.activity[,c(&quot;orient_loc.Primary&quot;, &quot;orient_type.Primary&quot;, &quot;t.start.to.shift1&quot;)] %&gt;% 
+<pre class="r"><code>v &lt;- v.activity[,c(&quot;orient_loc.Primary&quot;, &quot;orient_type.Primary&quot;, &quot;t.start.to.shift1&quot;)] %&gt;% 
   group_by(orient_loc.Primary, orient_type.Primary) %&gt;% 
   summarise(Min=min(t.start.to.shift1, na.rm=TRUE),
             Max=max(t.start.to.shift1, na.rm=TRUE),
-            Median=median(t.start.to.shift1, na.rm=TRUE))</code></pre>
-<pre><code>## # A tibble: 6 x 5
-## # Groups:   orient_loc.Primary [?]
-##   orient_loc.Primary orient_type.Primary Min    Max              Median
-##   &lt;chr&gt;              &lt;chr&gt;               &lt;time&gt; &lt;time&gt;           &lt;time&gt;
-## 1 GF                 Basic               1      401              13    
-## 2 GF                 Basic + WD          1      347              11    
-## 3 GF                 WD                  3      95               6.5   
-## 4 NE                 Basic               0      326.041666666667 10    
-## 5 PAC                Cat                 1      362              11    
-## 6 PAC                Dog                 0      221.041666666667 7.5</code></pre>
+            Median=median(t.start.to.shift1, na.rm=TRUE))
+
+v &lt;- v[v$orient_type.Primary != &quot;WD&quot;,] %&gt;% 
+  group_by(orient_loc.Primary) %&gt;% 
+  do(rbind(.,c(.$orient_loc.Primary,rep(NA,NCOL(v)-1)))) %&gt;%
+  ungroup() %&gt;% 
+  data.frame()
+
+v$orient_type.Primary &lt;- paste0(v$orient_loc.Primary,&quot; - &quot;, v$orient_type.Primary)
+v$orient_type.Primary[c(3,5,8)] &lt;- &quot;&quot;
+v$Median[c(3,5,8)] &lt;- 0
+v &lt;- v[1:7,]
+v &lt;- v[c(6:7,3,1:2,5,4),]
+v$row &lt;- 1:7
+v$Median &lt;- as.numeric(as.character(v$Median))
+
+p &lt;- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
+  ggtitle(&quot;Days between first sign-in to Volgistics and date of first shift&quot;) + 
+  geom_bar(stat=&quot;identity&quot;, fill=&quot;steelblue&quot;) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
+  scale_x_discrete(name = &quot;Orientation Location and Type&quot;, breaks = v$row, labels = as.character(v$orient_type.Primary)) + 
+  scale_y_continuous(name=&quot;Number of Days&quot;, limits=c(0, 15), breaks = c(0:15))
+  
+png(&quot;days_login_to_shift1.png&quot;, width=800, height=400)
+p
+dev.off()</code></pre>
+<pre><code>## png 
+##   2</code></pre>
 <ul>
 <li>What is this time for first shifts of different types at the same location? (Cat care, Dog care)</li>
 </ul>
-<pre class="r"><code>v.activity[,c(&quot;location.1&quot;, &quot;assignment_type.1&quot;, &quot;t.start.to.shift1&quot;)] %&gt;% 
+<pre class="r"><code>shift1.by.location &lt;- v.activity[,c(&quot;location.1&quot;, &quot;assignment_type.1&quot;, &quot;t.start.to.shift1&quot;)] %&gt;% 
   group_by(location.1, assignment_type.1) %&gt;% 
   summarise(Min=min(t.start.to.shift1, na.rm=TRUE),
             Max=max(t.start.to.shift1, na.rm=TRUE),
-            Median=median(t.start.to.shift1, na.rm=TRUE))</code></pre>
+            Median=median(t.start.to.shift1, na.rm=TRUE))
+shift1.by.location</code></pre>
 <pre><code>## # A tibble: 14 x 5
 ## # Groups:   location.1 [?]
 ##    location.1 assignment_type.1               Min       Max      Median   
@@ -2436,6 +2470,33 @@ quantile(v.activity$t.start.to.shift1, na.rm = TRUE)</code></pre>
 ## 12 PAC        Veterinary Tech Volunteer       137.0416~ 137.041~ 137.0416~
 ## 13 &lt;NA&gt;       Mutt Strut                      5         11       8        
 ## 14 &lt;NA&gt;       other_event                     5         109      16</code></pre>
+<pre class="r"><code>v &lt;- shift1.by.location
+v &lt;- v %&gt;% 
+  group_by(location.1) %&gt;% 
+  do(rbind(.,c(.$location.1,rep(NA,NCOL(v)-1)))) %&gt;%
+  ungroup() %&gt;% 
+  data.frame()
+v$assignment_type.1 &lt;- paste0(v$location.1,&quot; - &quot;, v$assignment_type.1)
+v$assignment_type.1[c(2,6,10,16,19)] &lt;- &quot;&quot;
+v$Median[c(2,6,10,16,19)] &lt;- 0
+v &lt;- v[1:18,]
+v &lt;- v[c(1:2,11:16,3:10,17:18),]
+v$row &lt;- 1:18
+v &lt;- v[c(3:6,8:18),]
+v$Median &lt;- as.numeric(as.character(v$Median))
+
+p &lt;- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
+  ggtitle(&quot;Days between first sign-in to Volgistics and date of first shift&quot;) + 
+  geom_bar(stat=&quot;identity&quot;, fill=&quot;steelblue&quot;) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
+  scale_x_discrete(name = &quot;First Shift Location and Type&quot;, breaks = v$row, labels = as.character(v$assignment_type.1)) + 
+  scale_y_continuous(name=&quot;Number of Days&quot;, limits=c(0, 50), breaks = seq(0, 50,5))
+  
+png(&quot;days_login_to_shift1_byShiftLoc.png&quot;, width=800, height=400)
+p
+dev.off()</code></pre>
+<pre><code>## png 
+##   2</code></pre>
 </div>
 
 

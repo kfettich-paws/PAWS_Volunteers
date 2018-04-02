@@ -276,11 +276,36 @@ v.activity[,c("orient_loc.Primary","t.orientation.to.entered")] %>%
 * What is this wait time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD)
 
 ```{r}
-v.activity[,c("orient_loc.Primary", "orient_type.Primary", "t.orientation.to.entered")] %>% 
+v <- v.activity[,c("orient_loc.Primary", "orient_type.Primary", "t.orientation.to.entered")] %>% 
   group_by(orient_loc.Primary, orient_type.Primary) %>% 
   summarise(Min=min(t.orientation.to.entered, na.rm=TRUE),
             Max=max(t.orientation.to.entered, na.rm=TRUE),
             Median=median(t.orientation.to.entered, na.rm=TRUE))
+
+v <- v[v$orient_type.Primary != "WD",] %>% 
+  group_by(orient_loc.Primary) %>% 
+  do(rbind(.,c(.$orient_loc.Primary,rep(NA,NCOL(v)-1)))) %>%
+  ungroup() %>% 
+  data.frame()
+v$orient_type.Primary <- paste0(v$orient_loc.Primary," - ", v$orient_type.Primary)
+v$orient_type.Primary[c(3,5,8)] <- ""
+v$Median[c(3,5,8)] <- 0
+v <- v[1:7,]
+v <- v[c(6:7,3,1:2,5,4),]
+v$row <- 1:7
+v$Median <- as.numeric(as.character(v$Median))
+
+p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
+  ggtitle("Days between orientation and date entered into Volgistics") + 
+  geom_bar(stat="identity", fill="steelblue") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
+  scale_x_discrete(name = "Orientation Location and Type", breaks = v$row, labels = as.character(v$orient_type.Primary)) + 
+  scale_y_continuous(name="Number of Days", limits=c(0, 10), breaks = c(0:10))
+  
+png("days_orientation_to_system.png", width=800, height=400)
+p
+dev.off()
+
 ```
 
 The time it takes for volunteers to be entered into the system after attending orientation at each location are pretty consistent within the location, across orientation types. The GF WD orientation is a bit of an odd-man-out, because WD ("working dog") orientation is always done AFTER basic orientation, so people who take this orientation only (rather than Basic + WD) are either volunteers who are already in the system because they attended the "Basic" orientation on its own, or exceptions. 
@@ -346,20 +371,73 @@ v.activity[,c("location.1","t.start.to.shift1")] %>%
 * What is this time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD )
 
 ```{r}
-v.activity[,c("orient_loc.Primary", "orient_type.Primary", "t.start.to.shift1")] %>% 
+v <- v.activity[,c("orient_loc.Primary", "orient_type.Primary", "t.start.to.shift1")] %>% 
   group_by(orient_loc.Primary, orient_type.Primary) %>% 
   summarise(Min=min(t.start.to.shift1, na.rm=TRUE),
             Max=max(t.start.to.shift1, na.rm=TRUE),
             Median=median(t.start.to.shift1, na.rm=TRUE))
+
+v <- v[v$orient_type.Primary != "WD",] %>% 
+  group_by(orient_loc.Primary) %>% 
+  do(rbind(.,c(.$orient_loc.Primary,rep(NA,NCOL(v)-1)))) %>%
+  ungroup() %>% 
+  data.frame()
+
+v$orient_type.Primary <- paste0(v$orient_loc.Primary," - ", v$orient_type.Primary)
+v$orient_type.Primary[c(3,5,8)] <- ""
+v$Median[c(3,5,8)] <- 0
+v <- v[1:7,]
+v <- v[c(6:7,3,1:2,5,4),]
+v$row <- 1:7
+v$Median <- as.numeric(as.character(v$Median))
+
+p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
+  ggtitle("Days between first sign-in to Volgistics and date of first shift") + 
+  geom_bar(stat="identity", fill="steelblue") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
+  scale_x_discrete(name = "Orientation Location and Type", breaks = v$row, labels = as.character(v$orient_type.Primary)) + 
+  scale_y_continuous(name="Number of Days", limits=c(0, 15), breaks = c(0:15))
+  
+png("days_login_to_shift1.png", width=800, height=400)
+p
+dev.off()
+
 ```
 
 * What is this time for first shifts of different types at the same location? (Cat care, Dog care)
 
 ```{r}
-v.activity[,c("location.1", "assignment_type.1", "t.start.to.shift1")] %>% 
+shift1.by.location <- v.activity[,c("location.1", "assignment_type.1", "t.start.to.shift1")] %>% 
   group_by(location.1, assignment_type.1) %>% 
   summarise(Min=min(t.start.to.shift1, na.rm=TRUE),
             Max=max(t.start.to.shift1, na.rm=TRUE),
             Median=median(t.start.to.shift1, na.rm=TRUE))
+shift1.by.location
+v <- shift1.by.location
+v <- v %>% 
+  group_by(location.1) %>% 
+  do(rbind(.,c(.$location.1,rep(NA,NCOL(v)-1)))) %>%
+  ungroup() %>% 
+  data.frame()
+v$assignment_type.1 <- paste0(v$location.1," - ", v$assignment_type.1)
+v$assignment_type.1[c(2,6,10,16,19)] <- ""
+v$Median[c(2,6,10,16,19)] <- 0
+v <- v[1:18,]
+v <- v[c(1:2,11:16,3:10,17:18),]
+v$row <- 1:18
+v <- v[c(3:6,8:18),]
+v$Median <- as.numeric(as.character(v$Median))
+
+p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
+  ggtitle("Days between first sign-in to Volgistics and date of first shift") + 
+  geom_bar(stat="identity", fill="steelblue") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
+  scale_x_discrete(name = "First Shift Location and Type", breaks = v$row, labels = as.character(v$assignment_type.1)) + 
+  scale_y_continuous(name="Number of Days", limits=c(0, 50), breaks = seq(0, 50,5))
+  
+png("days_login_to_shift1_byShiftLoc.png", width=800, height=400)
+p
+dev.off()
+
 ```
 
