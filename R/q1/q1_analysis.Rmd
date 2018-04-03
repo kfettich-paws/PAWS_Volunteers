@@ -1,0 +1,443 @@
+---
+title: "PAWS Analysis with R-Ladies - Volunteer engagement timeline"
+author: "Karla Fettich, Alice Walsh"
+date: "March 25, 2018"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_libs, warning=FALSE}
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(tidyr))
+suppressPackageStartupMessages(library(ggplot2))
+```
+
+# Main Research Question
+What was the typical pattern of engagement, for volunteers who attended a PAWS orientation in 2017?
+
+# Data Preprocessing
+
+## Load Data
+```{r data_load}
+master_file <- '../../Data/master.csv'
+service_file <- '../../Data/service.csv'
+signup_file <- '../../Data/signupsheet.csv'
+
+master <- read.csv(master_file, quote="", stringsAsFactors = F)
+service <- read.csv(service_file, stringsAsFactors = F)
+signup <- read.csv(signup_file, stringsAsFactors = F)
+```
+
+The `r master_file` has `r nrow(master)` rows.
+The `r service_file` has `r nrow(service)` rows.
+The `r signup_file` has `r nrow(signup)` rows.
+
+### Basic info on signup table
+
+Signup table has information of the types of orientations.
+```{r basic_signup}
+knitr::kable(table(signup$Type), caption = "Type")
+knitr::kable(table(signup$NOT.Attending), caption = "Not Attending")
+knitr::kable(table(signup$Present), caption = "Present")
+knitr::kable(table(signup$orientation), caption = "Primary or Secondary Orientation")
+```
+
+Using Alice's code below to clen up the "Type" field, create a "location" field, and remove 1 "cancelled" orientation line.
+
+```{r}
+signup_clean <- signup %>%
+  filter(NOT.Attending != "CANCELLED") %>%
+  mutate(Type = case_when(
+    Type == "NE" | Type == "NE + NE" ~ "NE Basic",
+    Type == "GF Basic " ~ "GF Basic",
+    Type == "GF Basic  + GF WD" ~ "GF Basic + WD",
+    Type == "GF Basic + GF WD" ~ "GF Basic + WD",
+    TRUE ~ as.character(Type)
+  )) %>%
+  separate(Type, into = c("orient_loc", "orient_type"), sep = " ", extra = "merge", remove = FALSE) %>%
+  select(-NOT.Attending, -Present) %>% # dont need these
+  mutate(Orientation.Date = as.Date(Orientation.Date, format = "%m/%d/%y")) %>%
+  arrange(Orientation.Date)
+
+with(signup_clean, table(orient_type, orientation, exclude = NULL) )
+with(signup_clean, table(orient_loc, orientation, exclude = NULL) )
+```
+
+Rehsape dataset to have 1 line per volunteer (convert to wide); There were some cases where there were duplicate Secondary orientations for a single ID. Kept the earliest.
+
+```{r}
+signup_clean <- reshape(signup_clean,timevar="orientation",idvar="ID",direction="wide")
+```
+
+Identify entries where secondary orientation comes before primary; where this is the case, swap them. 
+
+```{r}
+swap.lines <- which(signup_clean$Orientation.Date.Primary > signup_clean$Orientation.Date.Secondary)
+
+primary <- signup_clean[swap.lines,c("Orientation.Date.Primary", "Type.Primary", "orient_loc.Primary", "orient_type.Primary")]
+signup_clean[swap.lines,c("Orientation.Date.Primary", "Type.Primary", "orient_loc.Primary", "orient_type.Primary")] <- signup_clean[swap.lines,c("Orientation.Date.Secondary", "Type.Secondary", "orient_loc.Secondary", "orient_type.Secondary")]
+signup_clean[swap.lines,c("Orientation.Date.Secondary", "Type.Secondary", "orient_loc.Secondary", "orient_type.Secondary")] <- primary[,c("Orientation.Date.Primary", "Type.Primary", "orient_loc.Primary", "orient_type.Primary")]
+
+with(signup_clean, table(orient_loc.Primary, orient_type.Primary, exclude = NULL) )
+
+```
+
+### Basic info on master table
+
+Can see that again the text fields like city are not clean. Therfore, clean the City variable and convert all zip code to 5 digit level. The zip codes are still messed up as some are not valid 5-digit codes. They might be missing a leading zero.
+
+```{r clean_city}
+master_clean <- master %>%
+  mutate(city_clean = case_when(
+    grepl("Phil|phil", City) ~ "Philadelphia",
+    TRUE ~ "other"
+  ),
+  Zip = case_when(
+    grepl("PA|NJ", Zip) ~ "",
+    TRUE ~ as.character(Zip)
+  )) %>%
+  separate(Zip, into="Zip", sep="-", extra = "drop")
+
+```
+
+```{r basic_master}
+knitr::kable(table(master_clean$Status, exclude=NULL), caption = "Status")
+knitr::kable(table(master_clean$city_clean, exclude=NULL), caption = "City after cleaning")
+knitr::kable(table(master_clean$Zip, exclude=NULL), caption = "Zip Codes after cleaning")
+```
+
+### Basic info on service table
+Look at min/max dates
+```{r basic_service}
+service <- service %>%
+  mutate(From.date = as.Date(From.date, format = "%m-%d-%Y"),
+         To.date = as.Date(To.date, format = "%m-%d-%Y"))
+
+print("From.date")
+summary(service$From.date)
+print("To.date")
+summary(service$To.date)
+```
+
+Look at values for factors:
+We need to harmonize the site annotation from this table with that in the orientation table.
+There are also a ton of assignments that are special events. Let's create one new category for those and lump them all together. 
+```{r}
+knitr::kable(table(service$Site, exclude=NULL), caption = "Site")
+knitr::kable(table(service$Assignment, exclude=NULL), caption = "Assignment")
+knitr::kable(table(service$No.Call.No.Show, exclude=NULL), caption = "No.Call.No.Show")
+knitr::kable(table(service$Call.Email.to.miss.shift, exclude=NULL), caption = "Call.Email.to.miss.shift")
+knitr::kable(table(service$Absence, exclude=NULL), caption = "Absence")
+
+```
+
+```{r}
+service_clean <- service %>%
+  mutate(assignment_group = case_when(
+    Assignment == "Cat Care Volunteer - PAC" ~ "Cat Care Volunteer - PAC",
+    Assignment == "Cat Care Volunteer - Grant Ave." ~ "Cat Care Volunteer - Grant Ave.",
+    Assignment == "Administrative tasks" ~ "Administrative tasks - ",
+    Assignment == "Foster Care Administrative Assistant" ~ "Foster Care Administrative Assistant - ",
+    Assignment == "Dog Care Volunteer - GF" ~ "Dog Care Volunteer - GF",
+    Assignment == "Dog Walking Volunteer - Grant Ave." ~ "Dog Walking Volunteer - Grant Ave.",
+    Assignment == "Dog Walking Volunteer - PAC" ~ "Dog Walking Volunteer - PAC",
+    Assignment == "Cat Care Volunteer - GF" ~ "Cat Care Volunteer - GF",
+    Assignment == "Cat Socialization Team" ~ "Cat Socialization Team - ",
+    Assignment == "PAWS South Philly PetSmart" ~ " - PAWS South Philly PetSmart",
+    Assignment == "PAC Adoptions Assistant" ~ "Adoptions Assistant - PAC",
+    Assignment == "Cat Pawsitive Program Volunteer - Grant Ave. Location" ~ "Cat Pawsitive Program Volunteer - Grant Ave.",
+    Assignment == "PAC Dog Mentee Shift (for shadowing only)" ~ "Dog Mentee Shift - PAC",
+    Assignment == "PAC Cat Mentee Shift (for shadowing only)" ~ "Cat Mentee Shift - PAC",
+    Assignment == "Dog Rescue Volunteer - GF" ~ "Dog Rescue Volunteer - GF",
+    Assignment == "Veterinary Tech Volunteer shift - Grant Ave" ~ "Veterinary Tech Volunteer - Grant Ave.",
+    Assignment == "PAC Veterinary Tech Volunteer" ~ "Veterinary Tech Volunteer - PAC",
+    Assignment == "PAC Orientations" ~ "Orientations - PAC",
+    Assignment == "PAC Transport Volunteer" ~ "Transport Volunteer - PAC",
+    Assignment == "Grant Mentee Shift (for shadowing only)" ~ "Mentee Shift - Grant Ave.",
+    Assignment == "Cat Pawsitive Program Volunteers - OLD CITY" ~ "Cat Pawsitive Program Volunteer - PAC",
+    Assignment == "Voicemail Volunteers" ~ "Voicemail Volunteers - ",
+    Assignment == "Gray's Ferry Mentee Shift for dog care (for shadowing only)" ~ "Dog Mentee Shift - GF",
+    grepl("Mutt Strut", Assignment) ~ "Mutt Strut",
+    TRUE ~ "other_event"
+  ))
+
+# Should also sep location and task here
+service_clean <- service_clean %>%
+  separate(assignment_group, into = c("assignment_type", "location"), sep = " - ")
+
+```
+
+```{r}
+knitr::kable(table(service_clean$assignment_type, exclude=NULL), caption = "New Assignment Variable")
+```
+
+Transform service_clean to wide, so it can be merged with the other datasets; also assign shift number
+
+```{r}
+service_clean <- service_clean[order(service_clean$ID, service_clean$From.date),]
+service_clean$shift <- sequence(rle(as.character(service_clean$ID))$lengths)
+service_clean <- reshape(service_clean,timevar="shift",idvar="ID",direction="wide")
+```
+
+Combine master, orientation and service files, and keep only those entries where orientation occurred after Jan 2017
+
+```{r}
+v.activity <- merge(master_clean,signup_clean, by="ID")
+v.activity <- merge(v.activity,service_clean, by="ID")
+
+print("Orientation.Date.Primary")
+summary(v.activity$Orientation.Date.Primary)
+```
+
+Calculate time between dates of interest.
+
+1. Time from attending their first orientation, to being entered into the system
+
+```{r}
+v.activity$Orientation.Date.Primary <- strptime(as.character(v.activity$Orientation.Date.Primary), "%Y-%m-%d")
+v.activity$Date.entered <- strptime(as.character(v.activity$Date.entered), "%m-%d-%Y")
+
+v.activity$t.orientation.to.entered <- difftime(v.activity$Date.entered,
+                                                v.activity$Orientation.Date.Primary, units="days")
+quantile(v.activity$t.orientation.to.entered, na.rm = TRUE)
+
+```
+
+There seems that there are some people who are marked as having an orientation after they were entered into the system. 
+
+```{r}
+v.activity[which(v.activity$t.orientation.to.entered <0 ),c("Orientation.Date.Primary","Date.entered")]
+```
+
+I will remove these people because several of them probably did a 'refresher' orientation (the ones that were entered into the system years ago); for others, the timeline doesn't match with what it should be (orientation first, then entered into system).
+
+```{r}
+v.activity <- v.activity[-c(which(v.activity$t.orientation.to.entered <0)),]
+```
+
+
+2. Time from being entered into the system (and therefore, being able to sign up for shifts) to demonstrating an interest in signing up for shifts (logging into the system for the first time)
+
+```{r}
+v.activity$Start.date <- strptime(as.character(v.activity$Start.date), "%m-%d-%Y")
+
+v.activity$t.entered.to.start <- difftime(v.activity$Start.date, 
+                                          v.activity$Date.entered,
+                                          units="days")
+quantile(v.activity$t.entered.to.start, na.rm = TRUE)
+
+```
+
+3. Time from demonstrating an interest in signing up for shifts (logging into the system for the first time) to shift 1
+
+```{r}
+v.activity$From.date.1 <- strptime(as.character(v.activity$From.date.1), "%Y-%m-%d")
+
+v.activity$t.start.to.shift1 <- difftime(v.activity$From.date.1, 
+                                         v.activity$Start.date,
+                                          units="days")
+quantile(v.activity$t.start.to.shift1, na.rm = TRUE)
+```
+
+There are some people in here whose 1st shift comes before they logged into the system. These people will be removed, because they are not following the typical process (orientation, then being added to the system, then signing up for a shift via the system, then attending shift1). We may want to reconsider this action, as removing them completely from analysis means we are not deriving any useful info from them. Luckily, there aren't many cases like this.
+
+```{r}
+v.activity[which(v.activity$t.start.to.shift1 <0 ),c("Orientation.Date.Primary", "Start.date","From.date.1")]
+
+v.activity <- v.activity[-c(which(v.activity$t.start.to.shift1 <0)),]
+```
+
+
+# Analysis
+
+1. What is the typical wait time from attending their first orientation, to being entered into the system (to be able to sign up for shifs)? For this question, I will create groups based only on location of orientation, because this wait time depends on PAWS staff at each location.
+
+```{r}
+quantile(as.numeric(v.activity$t.orientation.to.entered), na.rm = TRUE, c(seq(0,1,0.1)))
+```
+
+It looks like the top 10% of values are unusually high. This will skew the mean, so a more accurate representation of the typical wait time is the median, at `r median(as.numeric(v.activity$t.orientation.to.entered), na.rm = TRUE)` days. 
+
+* What is this wait time for orientations that took place at the different locations (PAC, NE and GF)? 
+
+```{r}
+v.activity[,c("orient_loc.Primary","t.orientation.to.entered")] %>% 
+  group_by(orient_loc.Primary) %>% 
+  summarise(Min=min(t.orientation.to.entered, na.rm=TRUE),
+            Max=max(t.orientation.to.entered, na.rm=TRUE),
+            Median=median(t.orientation.to.entered, na.rm=TRUE))
+```
+
+* What is this wait time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD)
+
+```{r}
+v <- v.activity[,c("orient_loc.Primary", "orient_type.Primary", "t.orientation.to.entered")] %>% 
+  group_by(orient_loc.Primary, orient_type.Primary) %>% 
+  summarise(Min=min(t.orientation.to.entered, na.rm=TRUE),
+            Max=max(t.orientation.to.entered, na.rm=TRUE),
+            Median=median(t.orientation.to.entered, na.rm=TRUE))
+
+v <- v[v$orient_type.Primary != "WD",] %>% 
+  group_by(orient_loc.Primary) %>% 
+  do(rbind(.,c(.$orient_loc.Primary,rep(NA,NCOL(v)-1)))) %>%
+  ungroup() %>% 
+  data.frame()
+v$orient_type.Primary <- paste0(v$orient_loc.Primary," - ", v$orient_type.Primary)
+v$orient_type.Primary[c(3,5,8)] <- ""
+v$Median[c(3,5,8)] <- 0
+v <- v[1:7,]
+v <- v[c(6:7,3,1:2,5,4),]
+v$row <- 1:7
+v$Median <- as.numeric(as.character(v$Median))
+
+p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
+  ggtitle("Days between orientation and date entered into Volgistics") + 
+  geom_bar(stat="identity", fill="steelblue") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
+  scale_x_discrete(name = "Orientation Location and Type", breaks = v$row, labels = as.character(v$orient_type.Primary)) + 
+  scale_y_continuous(name="Number of Days", limits=c(0, 10), breaks = c(0:10))
+  
+png("days_orientation_to_system.png", width=800, height=400)
+p
+dev.off()
+
+```
+
+The time it takes for volunteers to be entered into the system after attending orientation at each location are pretty consistent within the location, across orientation types. The GF WD orientation is a bit of an odd-man-out, because WD ("working dog") orientation is always done AFTER basic orientation, so people who take this orientation only (rather than Basic + WD) are either volunteers who are already in the system because they attended the "Basic" orientation on its own, or exceptions. 
+
+2. What is the typical time from being entered into the system (and therefore, being able to sign up for shifts) to demonstrating an interest in signing up for shifts (logging into the system for the first time)? For this question too, I will create groups based only on location of orientation.
+
+```{r}
+quantile(as.numeric(v.activity$t.entered.to.start), na.rm = TRUE, c(seq(0,1,0.1)))
+```
+
+It looks like the vast majority of people log into the volunteer management system on the day they are added. 
+
+* What is this time for orientations that took place at the different locations (PAC, NE and GF)? 
+
+```{r}
+v.activity[,c("orient_loc.Primary","t.entered.to.start")] %>% 
+  group_by(orient_loc.Primary) %>% 
+  summarise(Min=min(t.entered.to.start, na.rm=TRUE),
+            Max=max(t.entered.to.start, na.rm=TRUE),
+            Median=median(t.entered.to.start, na.rm=TRUE))
+```
+
+* What is this time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD )
+
+```{r}
+v.activity[,c("orient_loc.Primary", "orient_type.Primary", "t.entered.to.start")] %>% 
+  group_by(orient_loc.Primary, orient_type.Primary) %>% 
+  summarise(Min=min(t.entered.to.start, na.rm=TRUE),
+            Max=max(t.entered.to.start, na.rm=TRUE),
+            Median=median(t.entered.to.start, na.rm=TRUE))
+```
+
+Nothing particularly unexpected here - people log into the system on the same day they are added.
+
+3. What is the typical time from demonstrating an interest in signing up for shifts (logging into the system for the first time) to shift 1? For this question, I will create groups based on location of orientation, and based on location of shift 1.
+
+```{r}
+quantile(as.numeric(v.activity$t.start.to.shift1), na.rm = TRUE, c(seq(0,1,0.1)))
+```
+
+Again, it looks like there are some extreme values, so the median is likely a more representative value than the mean. Based on that, it looks like the typical PAWS volunteer waits for `r median(as.numeric(v.activity$t.start.to.shift1), na.rm = TRUE)` days before attending their first shift.
+
+* What is this time for orientations that took place at the different locations (PAC, NE and GF)? 
+
+```{r}
+v.activity[,c("orient_loc.Primary","t.start.to.shift1")] %>% 
+  group_by(orient_loc.Primary) %>% 
+  summarise(Min=min(t.start.to.shift1, na.rm=TRUE),
+            Max=max(t.start.to.shift1, na.rm=TRUE),
+            Median=median(t.start.to.shift1, na.rm=TRUE))
+```
+
+* What is this time for first shifts that took place at the different locations (PAC, NE and GF)? 
+
+```{r}
+v.activity[,c("location.1","t.start.to.shift1")] %>% 
+  group_by(location.1) %>% 
+  summarise(Min=min(t.start.to.shift1, na.rm=TRUE),
+            Max=max(t.start.to.shift1, na.rm=TRUE),
+            Median=median(t.start.to.shift1, na.rm=TRUE))
+```
+
+* What is this time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD )
+
+```{r}
+v <- v.activity[,c("orient_loc.Primary", "orient_type.Primary", "t.start.to.shift1")] %>% 
+  group_by(orient_loc.Primary, orient_type.Primary) %>% 
+  summarise(Min=min(t.start.to.shift1, na.rm=TRUE),
+            Max=max(t.start.to.shift1, na.rm=TRUE),
+            Median=median(t.start.to.shift1, na.rm=TRUE))
+
+v <- v[v$orient_type.Primary != "WD",] %>% 
+  group_by(orient_loc.Primary) %>% 
+  do(rbind(.,c(.$orient_loc.Primary,rep(NA,NCOL(v)-1)))) %>%
+  ungroup() %>% 
+  data.frame()
+
+v$orient_type.Primary <- paste0(v$orient_loc.Primary," - ", v$orient_type.Primary)
+v$orient_type.Primary[c(3,5,8)] <- ""
+v$Median[c(3,5,8)] <- 0
+v <- v[1:7,]
+v <- v[c(6:7,3,1:2,5,4),]
+v$row <- 1:7
+v$Median <- as.numeric(as.character(v$Median))
+
+p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
+  ggtitle("Days between first sign-in to Volgistics and date of first shift") + 
+  geom_bar(stat="identity", fill="steelblue") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
+  scale_x_discrete(name = "Orientation Location and Type", breaks = v$row, labels = as.character(v$orient_type.Primary)) + 
+  scale_y_continuous(name="Number of Days", limits=c(0, 15), breaks = c(0:15))
+  
+png("days_login_to_shift1.png", width=800, height=400)
+p
+dev.off()
+
+```
+
+* What is this time for first shifts of different types at the same location? (Cat care, Dog care)
+
+```{r}
+shift1.by.location <- v.activity[,c("location.1", "assignment_type.1", "t.start.to.shift1")] %>% 
+  group_by(location.1, assignment_type.1) %>% 
+  summarise(Min=min(t.start.to.shift1, na.rm=TRUE),
+            Max=max(t.start.to.shift1, na.rm=TRUE),
+            Median=median(t.start.to.shift1, na.rm=TRUE))
+shift1.by.location
+v <- shift1.by.location
+v <- v %>% 
+  group_by(location.1) %>% 
+  do(rbind(.,c(.$location.1,rep(NA,NCOL(v)-1)))) %>%
+  ungroup() %>% 
+  data.frame()
+v$assignment_type.1 <- paste0(v$location.1," - ", v$assignment_type.1)
+v$assignment_type.1[c(2,6,10,16,19)] <- ""
+v$Median[c(2,6,10,16,19)] <- 0
+v <- v[1:18,]
+v <- v[c(1:2,11:16,3:10,17:18),]
+v$row <- 1:18
+v <- v[c(3:6,8:18),]
+v$Median <- as.numeric(as.character(v$Median))
+
+p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
+  ggtitle("Days between first sign-in to Volgistics and date of first shift") + 
+  geom_bar(stat="identity", fill="steelblue") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
+  scale_x_discrete(name = "First Shift Location and Type", breaks = v$row, labels = as.character(v$assignment_type.1)) + 
+  scale_y_continuous(name="Number of Days", limits=c(0, 50), breaks = seq(0, 50,5))
+  
+png("days_login_to_shift1_byShiftLoc.png", width=800, height=400)
+p
+dev.off()
+
+```
+
