@@ -36,31 +36,33 @@ The data used for this round of analyses included 3 datasets:
 # Results
 ## Typical volunteer engagement timelines
 
-The time it takes for volunteers to be entered into the system after attending orientation at each location is consistent within each location, regardless of orientation type (cat vs. dog at PAC; basic vs basic + WD at GF). Typically, at PAC, volunteers who attend their first orientation were entered into the system the following day; at Grays Ferry, 3 days later; and at Grant Ave, 10 days later. 
+In 2017, new volunteer orientation attendance differed among the 3 PAWS locations. New volunteers who attended their first orientation at Grays Ferry tended to do so mostly in March/April and October/November. At PAC, there appears to be a stable new volunteer orientation attendance, with slower months being June, July and September. In contrast, Grant Ave had new volunteer orientation attendance peaks in April, May, July, September and October. 
+
+![](GF_orientationByMonth.png)
+![](PAC_orientationByMonth.png)
+![](NE_orientationByMonth.png)
+
+Once they attended orientation, new volunteers were entered into Volgistics 1 day later at PAC, 3 days later at Grays Ferry, and 10 days later at Grant Ave. Once entered into the system, the majority of new volunteers across all locations signed into Volgistics on the same day. 
 
 ![Median number of days between when a volunteer attends orientation and when a volunteer is entered into Volgistics](days_orientation_to_system.png)
 
-Furthermore, across all locations, volunteers sign into Volgistics on the day they are added to the system. 
+New volunteers who completed PAC orientation typically began their service 9 days later (dog) and 14 days later (cat). At Grays Ferry, volunteers from both basic and basic + WD orientations typlically started their service 17 days later, while at Grant Ave, volunteers began their service 21 days after orientation.  
 
-With regard to how long it takes for a volunteer to attend their first shift, the typical timeline varies by orientation location and type. Volunteers who attend the PAC Cat orientation begin their first shift 11 days after signing on to the system (that is, 12 days after orientation), while volunteers who attend the PAC Dog orientation attend their first shift 7.5 days after logging into the system (i.e., 8.5 days after orientation). 
+![](days_orientation_to_shift1.png)
 
-At Grays Ferry, volunteers who attend only the Basic orientation begin their first shift 13 days after signing on to the system (that is, 16 days after orientation), while volunteers who attend the combined Basic & Working Dog orientation attend their first shift 11 days after logging into the system (i.e., 14 days after orientation).
+The typical duration between orientation and shift 1 also depended on first shift type. For new volunteers who started their service doing administrative tasks, the typical time between orientation and shift 1 was 114 days. Similarly, for first shifts that were vet tech shifts, this duration was 137 days from first login to Volgistics. These numbers are disproportionately high compared to other volunteer assignments and are therefore not shown in the graph below.  
 
-At Grant Ave, volunteers who attend orientation begin their first shift 10 days after signing on to the system (that is, 20 days after orientation).
+![Median number of days between orienntation and the date of their first shift](days_orientation_to_shift1_byShiftLoc.png)
 
-![Median number of days between when a volunteer logs into Volgistics for the first time and the date of their first shift](days_login_to_shift1.png)
+At PAC, time to first shift was longest for volunteers who started their service in the Cat Pawsitive Program (49 days from orientation), while this duration was only 13 days for Cat Care volunteer and Cat Mentee shifts, and 11 days for Dog Walking Volunteer shifts. 
 
-The typical duration between a volunteer's first orientation and their first shift also depends on what their first shift is. The median time between first time logging on to Volgistics and first shift, where first shift was administrative tasks, was 114 days. Similarly, the median wait time for vet tech volunteers at PAC was 137 days from first login to Volgistics. These numbers are disproportionately high compared to other volunteer assignments and are therefore not shown in the graph below.  
+At Grays Ferry, new volunteers signed up for dog mentee shifts took longest to begin their service after orientation (20 days), followed by dog care volunteer shifts (17 days) and cat care volunteers (14 days).
 
-At PAC, time to first shift is longest for volunteers who have their first shift in the Cat Pawsitive Program (43.5 days from login), while first shifts for Cat Care volunteers are only 10 days after login, Cat Mentees only 7.5 days after login, and dog walking volnteers start their first shift 8 days after login. 
+At Grant Ave, new volunteers signed up for mentee shifts also took longest to begin their service after orientation (23 days), followed by dog and cat care volunteers (20 days).
 
-At Grays Ferry, there is no observable difference between the different types of wait-to-first-shift: Cat Care - 10.5 days, Dog Care - 11 days, Dog Mentee - 11.5 days.
+Finally, for volunteers who began their service at an event, the time between orientation and beginning of service was typically 22 days (Mutt Strut) and 24 days (other event).
 
-At Grant Ave, first shifts that are mentees typically begin their service 5 days after login, while Cat Care volunteers begin 9 days after login and Dog Care volunteers begin 10.5 days after login. 
 
-Finally, for volunteers who begin their service at an event, the wait time is typically 8 days for Mutt Strut and 16 days for other events.
-
-![Median number of days between when a volunteer logs into Volgistics for the first time and the date of their first, based on their first shift shift](days_login_to_shift1_byShiftLoc.png)
 
 
 \newpage

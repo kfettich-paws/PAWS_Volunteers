@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=pdflatex 2017.1.26)  2 APR 2018 16:06
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=pdflatex 2017.1.26)  11 APR 2018 21:37
 entering extended mode
 **./2018-04-14_Report.tex
 (2018-04-14_Report.tex
@@ -968,49 +968,66 @@ G,.JBIG2,.JB2,.eps]
 ) [1
 
 {C:/Users/karla/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2]
-<days_orientation_to_system.png, id=62, 803.0pt x 401.5pt>
+<GF_orientationByMonth.png, id=62, 803.0pt x 250.9375pt>
+File: GF_orientationByMonth.png Graphic file (type png)
+<use GF_orientationByMonth.png>
+Package pdftex.def Info: GF_orientationByMonth.png  used on input line 151.
+(pdftex.def)             Requested size: 469.7715pt x 146.80357pt.
+<PAC_orientationByMonth.png, id=63, 803.0pt x 250.9375pt>
+File: PAC_orientationByMonth.png Graphic file (type png)
+<use PAC_orientationByMonth.png>
+Package pdftex.def Info: PAC_orientationByMonth.png  used on input line 152.
+(pdftex.def)             Requested size: 469.7715pt x 146.80357pt.
+<NE_orientationByMonth.png, id=64, 803.0pt x 250.9375pt>
+File: NE_orientationByMonth.png Graphic file (type png)
+<use NE_orientationByMonth.png>
+Package pdftex.def Info: NE_orientationByMonth.png  used on input line 153.
+(pdftex.def)             Requested size: 469.7715pt x 146.80357pt.
+<days_orientation_to_system.png, id=65, 803.0pt x 401.5pt>
 File: days_orientation_to_system.png Graphic file (type png)
 <use days_orientation_to_system.png>
-Package pdftex.def Info: days_orientation_to_system.png  used on input line 152
+Package pdftex.def Info: days_orientation_to_system.png  used on input line 162
 .
 (pdftex.def)             Requested size: 469.7715pt x 234.88573pt.
-<days_login_to_shift1.png, id=63, 803.0pt x 401.5pt>
-File: days_login_to_shift1.png Graphic file (type png)
-<use days_login_to_shift1.png>
-Package pdftex.def Info: days_login_to_shift1.png  used on input line 180.
+<days_orientation_to_shift1.png, id=66, 803.0pt x 401.5pt>
+File: days_orientation_to_shift1.png Graphic file (type png)
+<use days_orientation_to_shift1.png>
+Package pdftex.def Info: days_orientation_to_shift1.png  used on input line 175
+.
 (pdftex.def)             Requested size: 469.7715pt x 234.88573pt.
-[3 <./days_orientation_to_system.png>]
-<days_login_to_shift1_byShiftLoc.png, id=70, 803.0pt x 401.5pt>
-File: days_login_to_shift1_byShiftLoc.png Graphic file (type png)
-<use days_login_to_shift1_byShiftLoc.png>
-Package pdftex.def Info: days_login_to_shift1_byShiftLoc.png  used on input lin
-e 212.
+[3 <./GF_orientationByMonth.png> <./PAC_orientationByMonth.png> <./NE_orientati
+onByMonth.png>] [4 <./days_orientation_to_system.png> <./days_orientation_to_sh
+ift1.png>]
+<days_orientation_to_shift1_byShiftLoc.png, id=82, 803.0pt x 401.5pt>
+File: days_orientation_to_shift1_byShiftLoc.png Graphic file (type png)
+<use days_orientation_to_shift1_byShiftLoc.png>
+Package pdftex.def Info: days_orientation_to_shift1_byShiftLoc.png  used on inp
+ut line 189.
 (pdftex.def)             Requested size: 469.7715pt x 234.88573pt.
-[4 <./days_login_to_shift1.png>] [5 <./days_login_to_shift1_byShiftLoc.png>] [6
-]
-<R-LadiesGlobal.png, id=87, 36.135pt x 36.135pt>
+[5 <./days_orientation_to_shift1_byShiftLoc.png>] [6] [7]
+<R-LadiesGlobal.png, id=98, 36.135pt x 36.135pt>
 File: R-LadiesGlobal.png Graphic file (type png)
 <use R-LadiesGlobal.png>
-Package pdftex.def Info: R-LadiesGlobal.png  used on input line 230.
+Package pdftex.def Info: R-LadiesGlobal.png  used on input line 223.
 (pdftex.def)             Requested size: 36.13654pt x 36.13654pt.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 238.
-[7 <./R-LadiesGlobal.png>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 238.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 231.
+[8 <./R-LadiesGlobal.png>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 231.
 (2018-04-14_Report.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 238.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 238.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 231.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 231.
 Package rerunfilecheck Info: File `2018-04-14_Report.out' has not changed.
 (rerunfilecheck)             Checksum: 605C7BA275A7DB8054A7ACF015A68E48;1420.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 238.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 231.
  ) 
 Here is how much of TeX's memory you used:
- 12152 strings out of 493333
- 176805 string characters out of 3139194
- 275180 words of memory out of 3000000
- 15506 multiletter control sequences out of 15000+200000
- 31344 words of font info for 42 fonts, out of 3000000 for 9000
+ 12159 strings out of 493333
+ 177172 string characters out of 3139194
+ 274180 words of memory out of 3000000
+ 15518 multiletter control sequences out of 15000+200000
+ 31095 words of font info for 39 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 32i,5n,38p,308b,340s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 32i,5n,38p,308b,342s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Users/karla/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/lm/lm-ec.en
 c}<C:/Users/karla/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/lm/lmbx1
 0.pfb><C:/Users/karla/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/lm/l
@@ -1018,9 +1035,9 @@ mbx12.pfb><C:/Users/karla/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/
 lm/lmr10.pfb><C:/Users/karla/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/publ
 ic/lm/lmr17.pfb><C:/Users/karla/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/p
 ublic/lm/lmri12.pfb>
-Output written on 2018-04-14_Report.pdf (7 pages, 166734 bytes).
+Output written on 2018-04-14_Report.pdf (8 pages, 180674 bytes).
 PDF statistics:
- 119 PDF objects out of 1000 (max. 8388607)
- 26 named destinations out of 1000 (max. 500000)
- 6245 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 129 PDF objects out of 1000 (max. 8388607)
+ 27 named destinations out of 1000 (max. 500000)
+ 6260 words of extra memory for PDF output out of 10000 (max. 10000000)
 
