@@ -113,6 +113,7 @@ model_data <- filter(final_data, total_shifts > 1, Orientation.Date.Primary <= "
 surv.model <- Surv(model_data$time_last_to_first, model_data$event)
 
 surv.fit <- survfit(surv.model ~ first_shift_group, data = model_data)
+surv.fit
 ggsurvplot(surv.fit, data = model_data,
            surv.median.line = "hv", 
            pval = TRUE, conf.int = TRUE, cumevents = TRUE,
@@ -123,6 +124,7 @@ ggsurvplot(surv.fit, data = model_data,
            legend.title = "", legend.labs = levels(factor(model_data$first_shift_group)))  
 
 surv.fit <- survfit(surv.model ~ timebw_shift_group, data = model_data)
+surv.fit
 ggsurvplot(surv.fit, data = model_data,
            surv.median.line = "hv", 
            pval = TRUE, conf.int = TRUE, cumevents = TRUE,
@@ -143,6 +145,7 @@ We don't see a strong trend that volunteers leave sooner if they tend to volunte
 model_data <- filter(final_data, total_shifts > 0, Orientation.Date.Primary <= "2017-09-01")
 surv.model <- Surv(model_data$total_time, model_data$event)
 surv.fit <- survfit(surv.model ~ only_one_shift, data = model_data)
+surv.fit
 ggsurvplot(surv.fit, data = model_data,
            surv.median.line = "hv", 
            pval = TRUE, conf.int = TRUE, cumevents = TRUE,
@@ -160,6 +163,7 @@ model_data <- filter(final_data, total_shifts > 1,
 
 surv.model <- Surv(model_data$time_last_to_first, model_data$event)
 surv.fit <- survfit(surv.model ~ primary_type, data = model_data)
+surv.fit
 ggsurvplot(surv.fit, data = model_data,
            surv.median.line = "hv", 
            pval = TRUE, conf.int = FALSE, cumevents = TRUE,
@@ -172,6 +176,7 @@ ggsurvplot(surv.fit, data = model_data,
 model_data <- filter(final_data, total_shifts > 1, Orientation.Date.Primary <= "2017-09-01")
 surv.model <- Surv(model_data$time_last_to_first, model_data$event)
 surv.fit <- survfit(surv.model ~ orient_loc.Primary, data = model_data)
+surv.fit
 ggsurvplot(surv.fit, data = model_data,
            surv.median.line = "hv", 
            pval = TRUE, conf.int = FALSE, cumevents = TRUE,
@@ -184,6 +189,7 @@ ggsurvplot(surv.fit, data = model_data,
 model_data <- filter(final_data, total_shifts > 1, Orientation.Date.Primary <= "2017-09-01")
 surv.model <- Surv(model_data$time_last_to_first, model_data$event)
 surv.fit <- survfit(surv.model ~ city_clean, data = model_data)
+surv.fit
 ggsurvplot(surv.fit, data = model_data,
            surv.median.line = "hv", 
            pval = TRUE, conf.int = FALSE, cumevents = TRUE,
@@ -194,5 +200,6 @@ ggsurvplot(surv.fit, data = model_data,
 ```
 
 There is not a clear trend for orientation location or whether someone lives in philadelphia or outside philadelphia.
+
 There is a trend that volunteers that typically volunteer as dog walking volunteers stay engaged longer than cat care of dog care volunteers. Cat care is at all three sites, dog care only at Grays Ferry and dog walking is either PAC or NE.
 
