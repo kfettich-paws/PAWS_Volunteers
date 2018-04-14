@@ -2,7 +2,9 @@
 title: "PAWS Analysis with R-Ladies - Exploring and Manipulating the Data"
 author: "Alice Walsh"
 date: "3/16/2018"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
