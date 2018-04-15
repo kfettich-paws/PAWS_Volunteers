@@ -2,12 +2,14 @@
 title: "PAWS Volunteer Engagement Patterns"
 author: "R-Ladies Philadelphia"
 date: "April 15, 2018"
-output: pdf_document
+output: 
+  pdf_document: default
+  html_document: default
   
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 # Executive Summary
@@ -62,11 +64,28 @@ At Grant Ave, new volunteers signed up for mentee shifts also took longest to be
 
 Finally, for volunteers who began their service at an event, the time between orientation and beginning of service was typically 22 days (Mutt Strut) and 24 days (other event).
 
+## Volunteer disengagement
 
+Defintion of a "disengaged" volunteer: 
 
+* For the purpose of this analysis, we considered a volunteer was disengaged (i.e., stopped volunteering) if the length of time after their last shift was > 90 days ago.
+
+All analysis was performed for volunteers that did orientation between Jan 01 2017 and Sept 01 2017. From this volunteer pool, initial results suggest that approximately 50% of orientation attendees at any location disengage after orientation. Specifically, 55% of orientation attendees at Grays Ferry (71 attendees) have no record of service, while this number stands at 50.5% (46 attendees) at Grant Ave, and 46.8% (94 attendees) at PAC.
+
+Only a small percentage of orientation attendees had only 1 shift recorded (4.7% at Grays Ferry = 6 volunteers; 6.6% at Grant Ave = 6 volunteers; 7.5% at PAC = 15 volunteers). The majority of volunteers served 2 or more shifts, across all locations. 
+
+![Number of volunteers by service level, per location](Engagement_by_ShiftCount.png)
+
+Interestingly, taken across all locations, the delay between orientation and shift 1 is not sufficient to estimate when or which volunteers become disengaged. In this dataset, we did not observe a significant relationship between the delay between orientation and volunteering and how long the volunteer continues to volunteer at PAWS. Furthermore, we found that whether a volunteer serves multiple times a week, once every 2 weeks, or more sporadically than every 2 weeks, this pattern is not an indicator for disengagement. 
+
+We also examined disengagement patterns between volunteers whose primary assignment is 'cat care', 'dog care', and 'dog walking'. The data suggest that dog walking volunteers (PAC or NE) are more likely to serve for a overall duration than cat care (all locations) and dog care (GF) volunteers. Furthermore, the risk of losing dog walking volunteers is highest within the first 60 days, while the risk of losing cat care and dog care volunteers is highest in the first 100 days of service.
+
+![Probability that a volunteer remains ative after a given number of days, based on their assignment](EngagementProbs.png)
 
 \newpage
-# Recommendations
+# Conclusions and Recommendations
+
+We did not extensively examine all the patterns of volunteer disengagement and factors that led to a volunteer leaving. Overall, the largest drop-out appears to be that volunteers never show up after doing the orientation. If a volunteer does show up, then they tend to volunteer more than once. The Gray's Ferry location is having the hardest time retaining volunteers and their volunteers tend to volunteer less than other locations.
 
 \newpage
 # Next steps
