@@ -1,0 +1,179 @@
+---
+title: "q02_report"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## What is the typical volunteer behavior in the first month? In the first 2 months?
+
+How soon do volunteers attend a shift after orientation? How about their 2nd and 3rd shifts?
+
+```{r}
+require(dplyr)
+require(ggplot2)
+
+
+master_file <- "./Data/master.csv"
+service_file <- "./Data/service.csv"
+orient_file <- "./Data/signupsheet.csv"
+
+dfmaster <- read.csv(master_file)
+dfService <- read.csv(service_file)
+dfOrient <- read.csv(orient_file)
+
+
+
+dfOrient$Orientation.Date <- as.Date(dfOrient$Orientation.Date, format = "%m/%d/%y")
+dfService$From.date  <- as.Date(dfService$From.date, format = "%m-%d-%Y")
+
+shifts <- dfService[order(dfService$From.date), c("ID", "From.date")]
+shifts <- group_by(shifts, ID)
+shifts <- data.frame(mutate(shifts, count=seq(n())))
+
+# FIRST SHIFT----
+
+shifts.1 <- shifts[shifts$count == 1,]
+df.1 <- merge(dfOrient, shifts.1, by="ID")
+
+df.1$diff <- as.numeric(df.1$From.date - df.1$Orientation.Date)
+df.1$diff[df.1$diff < 0] <- NA
+
+# SECOND SHIFT----
+
+shifts.2 <- shifts[shifts$count == 2,]
+df.2 <- merge(dfOrient, shifts.2, by="ID")
+
+df.2$diff <- as.numeric(df.2$From.date - df.2$Orientation.Date)
+df.2$diff[df.2$diff < 0] <- NA
+
+
+# THIRD SHIFT----
+
+shifts.3 <- shifts[shifts$count == 3,]
+df.3 <- merge(dfOrient, shifts.3, by="ID")
+
+df.3$diff <- as.numeric(df.3$From.date - df.3$Orientation.Date)
+df.3$diff[df.3$diff < 0] <- NA
+
+
+```
+
+
+
+```{r, echo=FALSE}
+# PLOT SHIFT # RELATIVE TO ORIENTATION DATE
+
+
+ggplot() +
+  geom_bar(data=df.1, aes(x=diff, fill="red"), alpha=0.5) +
+  geom_bar(data=df.2, aes(x=diff, fill="blue"), alpha=0.5) +
+  geom_bar(data=df.3, aes(x=diff, fill="green"), alpha=0.5) +
+  xlim(c(0,60)) +
+  ylab("Number of Volunteers") +
+  xlab("Number of days after orientation") +
+  scale_fill_identity(name="shift number:",
+              guide="legend", labels=c("red"="first", "blue"="second", "green"="third"))
+```
+
+A large number of volunteers attend a shift within the first 3 weeks of orientation.
+
+
+## Bonus: What areas are volunteers drawn from?
+
+```{r}
+require(zipcode)
+
+df <- read.csv(master_file)
+location <- read.csv(orient_file)
+location <- location[, c("ID", "Type")]
+levels(location$Type) <- c("GF", "GF", "GF", "GF", "GF", "NE", "NE", "PAC", "PAC")
+df <- merge(df, location, by = "ID")
+
+
+ind <- which(colnames(df)=="City" | colnames(df)=="State")
+df <- df[, -ind]
+
+df$Zip <- clean.zipcodes(df$Zip)
+
+data(zipcode)
+
+df <- merge(df, zipcode, by.x="Zip", by.y="zip")
+
+#remove data points outside of trisate area
+df <- df[df$state == "DE" | df$state == "PA" | df$state == "NJ",]
+
+states <- map_data("state", region=c("pennsylvania", "new jersey", "delaware"))
+counties <- map_data("county", region=c("pennsylvania", "new jersey", "delaware"))
+
+#df$hours.grp <- cut(df$Life.hours, summary(df$Life.hours)[c(1,3,6)], include.lowest=T)
+df$hours.grp <- cut(df$Life.hours, c(0,4,max(df$Life.hours, na.rm=T)), include.lowest=T)
+df.map <- df[!is.na(df$hours.grp),]
+
+
+```
+
+Plot #1: 
+Where do PAWS volunteers reside and how many volunteers from each area recorded more than 4 hours vs 4 or less?
+```{r, echo=FALSE}
+
+ggplot() + 
+  geom_polygon(data=states, aes(x=long, y=lat, group=group, fill=region), alpha=1) +
+  geom_path(data=counties, aes(x=long, y=lat, group=group), color="red") +
+  coord_quickmap(xlim=c(-75.7, -74.9), ylim=c(39.7, 40.4)) + #region
+  geom_count(data=df.map, aes(x=longitude, y=latitude, color=hours.grp), 
+             alpha=0.8, position="jitter") +
+  scale_fill_brewer(palette="Greys", direction=-1) +
+  scale_color_brewer(palette="Set1")
+
+
+```
+
+Zoom in on Philly:
+
+```{r, echo=FALSE}
+
+ggplot() + 
+  geom_polygon(data=states, aes(x=long, y=lat, group=group, fill=region), alpha=1) +
+  geom_path(data=counties, aes(x=long, y=lat, group=group), color="red") +
+  coord_quickmap(xlim=c(-75.4, -74.8), ylim=c(39.8, 40.2)) + #zoom
+  geom_count(data=df.map, aes(x=longitude, y=latitude, color=hours.grp), 
+             alpha=0.8, position="jitter") +
+  scale_fill_brewer(palette="Greys", direction=-1) +
+  scale_color_brewer(palette="Set1")
+
+```
+
+Plot #2: Which orientation location did volunteers attend?
+
+```{r, echo=FALSE}
+
+df.map <- df[!is.na(df$Type),]
+ggplot() + 
+  geom_polygon(data=states, aes(x=long, y=lat, group=group, fill=region), alpha=1) +
+  geom_path(data=counties, aes(x=long, y=lat, group=group), color="red") +
+  coord_quickmap(xlim=c(-75.7, -74.9), ylim=c(39.7, 40.4)) + #region
+  geom_count(data=df.map, aes(x=longitude, y=latitude, color=Type), 
+             alpha=0.8, position="jitter") +
+  scale_fill_brewer(palette="Greys", direction=-1) +
+  scale_color_brewer(palette="Set1")
+
+  
+```
+
+Zoom in on Philly:
+
+```{r, echo=FALSE}
+
+ggplot() + 
+  geom_polygon(data=states, aes(x=long, y=lat, group=group, fill=region), alpha=1) +
+  geom_path(data=counties, aes(x=long, y=lat, group=group), color="red") +
+  coord_quickmap(xlim=c(-75.4, -74.8), ylim=c(39.8, 40.2)) + #zoom
+  geom_count(data=df.map, aes(x=longitude, y=latitude, color=Type), 
+             alpha=0.8, position="jitter") +
+  scale_fill_brewer(palette="Greys", direction=-1) +
+  scale_color_brewer(palette="Set1")
+
+```
