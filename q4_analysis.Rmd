@@ -1,0 +1,334 @@
+---
+title: "q4_analysis"
+author: "Katerina Placek"
+date: "4/12/2018"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_libs, warning=FALSE, include=FALSE}
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(reshape))
+suppressPackageStartupMessages(library(tidyr))
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(leaps))
+suppressPackageStartupMessages(library(pheatmap))
+suppressPackageStartupMessages(library(glmnet))
+```
+
+
+# load in cleaned data
+```{r load_data, include=FALSE}
+load(file = "../../PAWS_cleaned.rda")
+load(file = "../../service_clean_wide.rda")
+```
+
+```{r names, include=FALSE}
+names(master_clean)
+names(service_clean)
+names(signup_clean)
+```
+
+With the service_clean data, I first want to see how many times an individual volunteered over the last year. 
+```{r nVolunteer}
+freq_ID <- as.data.frame(ftable(service_clean$ID))
+
+
+freq_ID %>% 
+  summarise(Min=min(Freq, na.rm=TRUE),
+            Max=max(Freq, na.rm=TRUE),
+            Median=median(Freq, na.rm=TRUE))
+
+
+```
+
+There's an individual with 1082 times Volunteering... possibly a mistake? Let's see what is different about this individual.
+```{r}
+maxIndex <- which.max(freq_ID$Freq)
+freq_ID[maxIndex,]
+
+service_clean_2027 <- subset(service_clean, service_clean$ID=="2027")
+as.data.frame(ftable(service_clean_2027$Assignment))
+```
+
+It looks like the majority of issues occur when Assignment="". Let's remove individuals with Assignment="" from the main service_clean dataset and re-check our descriptive statistics.
+```{r}
+service_clean <- subset(service_clean, service_clean$Assignment != "")
+
+freq_ID <- as.data.frame(ftable(service_clean$ID))
+
+freq_ID %>% 
+  summarise(Min=min(Freq, na.rm=TRUE),
+            Max=max(Freq, na.rm=TRUE),
+            Median=median(Freq, na.rm=TRUE))
+
+freq_ID  <- dplyr::rename(freq_ID, ID = Var1)
+freq_ID  <- dplyr::rename(freq_ID, numTimeVolunteer = Freq)
+
+```
+
+
+I want to create a new variable for each location that includes the total number of times an individual volunteered at each of the four locations. I save this into a new dataframe.
+```{r location}
+service_clean$location[is.na(service_clean$location)] = "other"
+service_clean$location[service_clean$location==""] = "other"
+
+location <- as.data.frame(ftable(service_clean$ID~service_clean$location))
+
+location <- reshape(location,timevar="service_clean.location",idvar="service_clean.ID",direction="wide")
+
+location <- dplyr::rename(location, ID = service_clean.ID)
+
+location[, 2:6] <- sapply(location[, 2:6], function(x) { as.numeric(x > 0) })
+```
+
+Let's see what location achieves the greatest number of volunteer slots:
+```{r}
+data <- as.data.frame(ftable(service_clean$location))
+
+data$per <- data$Freq/sum(data$Freq)
+
+data <- data %>% 
+  arrange(desc(per))
+
+knitr::kable(data, caption = "Volunteering - More Than Once?")
+
+```
+
+I also want to create a new variable for each assignment that includes the total number of times an individual volunteered for that assignment. I also save this into a new dataframe.
+```{r assignment}
+service_clean$assignment_type[service_clean$assignment_type==""] = "other_event"
+
+assignment <- as.data.frame(ftable(service_clean$ID~service_clean$assignment_type))
+
+assignment <- reshape(assignment,timevar="service_clean.assignment_type",idvar="service_clean.ID",direction="wide")
+
+
+assignment <- dplyr::rename(assignment, ID = service_clean.ID)
+
+assignment[, 2:19] <- sapply(assignment[, 2:19], function(x) { as.numeric(x > 0) })
+```
+
+Here, I show a pie chart for frequency of assignment; it looks like Cat Care Volunteer is the most frequent assignment type in our dataset
+```{r pie}
+data <- as.data.frame(ftable(service_clean$assignment_type))
+
+data$per <- data$Freq/sum(data$Freq)
+
+data <- data %>% 
+  arrange(desc(per))
+
+data$label <- scales::percent(data$per)
+
+ggplot(data=data, aes("", per, fill = Var1)) +
+  geom_bar(width = 1, size = 1, stat = "identity") + 
+  coord_polar("y") +
+  theme_void()+
+  geom_text(aes(label=label), position = position_stack(vjust = 0.5))
+
+```
+
+
+Now, I merge all datasets together by ID.
+```{r merge}
+service_clean_wide <- service_clean_wide[,1:13]
+
+k_data <- merge(assignment,location, by = "ID")
+colnames(k_data) <- gsub("Freq.", "", colnames(k_data))
+
+k_data <- merge(k_data,master_clean, by = "ID")
+k_data <- merge(k_data, signup_clean, by = "ID")
+k_data <- merge(k_data, service_clean_wide, by = "ID")
+
+k_data <- merge(k_data, freq_ID, by = "ID")
+
+```
+
+
+Here, I include code from Alice/Karla to calculate:
+A) Time from attending their first orientation, to being entered into the system:
+```{r t.orientation.entered, include = FALSE}
+k_data$Orientation.Date.Primary <- strptime(as.character(k_data$Orientation.Date.Primary), "%Y-%m-%d")
+k_data$Date.entered <- strptime(as.character(k_data$Date.entered), "%m-%d-%Y")
+
+k_data$t.orientation.to.entered <- difftime(k_data$Date.entered,
+                                                k_data$Orientation.Date.Primary, units="days")
+quantile(k_data$t.orientation.to.entered, na.rm = TRUE)
+
+k_data <- k_data[-c(which(k_data$t.orientation.to.entered <0)),]
+```
+
+B)Time from being entered into the system (and therefore, being able to sign up for shifts) to demonstrating an interest in signing up for shifts (logging into the system for the first time)
+
+```{r t.entered.login, include = FALSE}
+k_data$Start.date <- strptime(as.character(k_data$Start.date), "%m-%d-%Y")
+
+k_data$t.entered.to.start <- difftime(k_data$Start.date, 
+                                          k_data$Date.entered,
+                                          units="days")
+quantile(k_data$t.entered.to.start, na.rm = TRUE)
+
+```
+
+C) Time from demonstrating an interest in signing up for shifts (logging into the system for the first time) to shift 1; Remove people whose 1st shift comes before they logged into the system.
+```{r t.start.shift1, include = FALSE}
+k_data$From.date.1 <- strptime(as.character(k_data$From.date.1), "%Y-%m-%d")
+
+k_data$t.start.to.shift1 <- difftime(k_data$From.date.1, 
+                                         k_data$Start.date,
+                                          units="days")
+quantile(k_data$t.start.to.shift1, na.rm = TRUE)
+
+k_data[which(k_data$t.start.to.shift1 <0 ),c("Orientation.Date.Primary", "Start.date","From.date.1")]
+
+k_data <- k_data[-c(which(k_data$t.start.to.shift1 <0)),]
+```
+
+
+D) Time from attending their first orientation to first shift:
+```{r t.orientation.shift1, include = FALSE}
+k_data$t.orientation.to.shift1 <- difftime(k_data$From.date.1,
+                                                k_data$Orientation.Date.Primary, units="days")
+quantile(k_data$t.orientation.to.shift1, na.rm = TRUE)
+```
+
+Now, can use backward/forward elimination, or LASSO (not sure if necessary, since n>p) to find variables that best predict whether someone is a repeat volunteer or not.
+
+Here, we create a binary dependent variable. How many individuals volunteered only once or were repeat volunteers?
+```{r}
+names(k_data)
+k_data$numTimeVolunteer2 <- ifelse(k_data$numTimeVolunteer > 1, "repeat", "once")
+knitr::kable(table(k_data$numTimeVolunteer2, exclude=NULL), caption = "Volunteering - More Than Once?")
+```
+
+Next, I subset the dataset to retain variables that likely inform our research question and to remove redundancies in the dataset 
+```{r}
+keep <- colnames(k_data[2:21])
+
+k_data_reg <- select(k_data, keep, YTD.hours, Absence, city_clean, orient_loc.Primary, orient_type.Primary, t.orientation.to.entered, t.entered.to.start, t.start.to.shift1, t.orientation.to.shift1, numTimeVolunteer, numTimeVolunteer2)
+
+summary(k_data_reg)
+
+```
+
+Next, lets look at a heatmap of correlation between variables with numeric values in our reduced dataset:
+```{r}
+k_data_heatmap <- select_if(k_data_reg, is.numeric)
+
+summary(k_data_heatmap)
+
+#remove variables with only values of 0 for prettier heatmap
+k_data_heatmap <- select(k_data_heatmap, -`Dog Rescue Volunteer`, -`Foster Care Administrative Assistant`, -Orientations, -`Transport Volunteer`, -`Voicemail Volunteers`)
+
+#lets also remove these variables from the main dataset
+k_data_reg <- select(k_data_reg, -`Dog Rescue Volunteer`, -`Foster Care Administrative Assistant`, -Orientations, -`Transport Volunteer`, -`Voicemail Volunteers`)
+
+plotData <-melt(cor(k_data_heatmap[sapply(k_data_heatmap, is.numeric)]))
+
+plotData <- plotData[complete.cases(plotData[,"value"]),]
+
+ggplot(plotData ,
+    aes(x = X1, y = X2, fill =value)) +
+    geom_tile() +
+    ylab("") +
+    xlab("") +
+    theme(legend.title = element_blank(),
+           axis.text.x = element_text(angle=90,hjust=1,vjust=1.0),
+           axis.text.y = element_text(size = 12))+
+scale_x_discrete(limits = rev(levels(plotData$X2))) + #Flip the x- or y-axis
+    scale_fill_gradient( low = "#56B1F7", high = "#132B43") +
+       guides(fill = guide_legend(title = "Correlation"))
+```
+
+Now to test some hypotheses:
+Do individuals from Philadelphia tend to volunteer more?
+```{r}
+(cityMod <- lm(numTimeVolunteer~city_clean, data = k_data_reg))
+summary(cityMod)
+```
+Whether someone is from Philadelphia or not doesn't seem to affect the number of times a person volunteers.
+
+Does length of time between orientation and shift1 affect the number of times a person volunteers?
+```{r orientation_shift1_time}
+(timeToVolunteerMod <- lm(numTimeVolunteer~ t.orientation.to.shift1, data = k_data_reg))
+summary(timeToVolunteerMod)
+```
+The greater the time between orientation and shift 1, the less number of times a volunteer showed up.
+
+Next, lets try feature selection using forward/backward selection.
+```{r forward}
+names(k_data_reg) 
+
+k_data_reg <- select(k_data_reg, -numTimeVolunteer2)
+
+(fit.forward <- regsubsets(numTimeVolunteer ~., k_data_reg, nvmax=60, method="forward"))
+
+```
+
+Next, lets try feature selection using backward selection.
+```{r backward}
+(fit.backward <- regsubsets(numTimeVolunteer ~., k_data_reg, nvmax=60, method="backward", really.big = TRUE))
+```
+
+Too many linear dependencies in the dataset to use forward or backward selection. Time to try LASSO?
+```{r lasso_setup}
+
+k_data_reg <-k_data_reg[complete.cases(k_data_reg),]
+#set dependent variable
+Y <- k_data_reg$numTimeVolunteer
+
+#set independent variable matrix
+X <- model.matrix(numTimeVolunteer~., data = k_data_reg)
+colnames(X)
+```
+
+Let's first see what our lambda options are:
+```{r all_lambdas}
+fit.lambda <- glmnet(X, Y, alpha=1)
+str(fit.lambda)
+fit.lambda$lambda # see the default proposal of lambda's
+plot(fit.lambda)
+```
+
+As L1Norm decreases in value, our lambda value is larger meaning a sparser solution for our analysis. Let's employ cross-validation to select an appropriate lamdba. 
+```{r cross_validate}
+fit.cv <- cv.glmnet(X, Y, alpha=1, nfolds=10 ) 
+plot(fit.cv$cvm, fit.cv$lambda, xlab=expression(lambda), ylab="mean cv errors") 
+fit.cv$cvm               # the mean cv error for each lambda
+#plot(fit.fl.cv$lambda, fit.fl.cv$cvm, xlab="lambda", ylab="mean cv errors")
+fit.cv$lambda.min        # lambda.min returns the min point amoth all the cvm. 
+fit.cv$nzero             # number of non-zero coeff's returned for each lambda
+plot(fit.cv$lambda, fit.cv$nzero, xlab="lambda", ylab="number of non-zeros") #as the value of lambda increases, the number of non-zero variables decreases
+
+plot(fit.cv) # this is suggesting we pick a value of lambda between the 2 dotted lines; The first vertical line is the lambda.min, or the λ which gives the smallest cvm. The second vertical line is lambda.1se, or largest λ whose cvm is within the cvsd bar for the lambda.min value.
+```
+Based on our cross-validation procedure, let's proceed our LASSO with our minimum lambda value. This should retain 11 variables from our original dataset.
+```{r}
+coef.min <- coef(fit.cv, s="lambda.min")
+coef.min <- coef.min[which(coef.min !=0),]   # get the non=zero coefficients
+coef.min  # the set of predictors chosen
+var.min <- rownames(as.matrix(coef.min)) 
+```
+This shows us the 11 variables LASSO has selected as most contributing to the number of times an individual has volunteered.
+
+We now enter these variables in a regression:
+```{r}
+(lm.input <- as.formula(paste("numTimeVolunteer", "~", paste(var.min[-1], collapse = "+")))) # prepare for lm fomula
+
+fit.min.lm <- lm(lm.input, data=k_data_reg)
+lm.output <- coef(fit.min.lm) # output lm estimates
+summary(fit.min.lm) 
+```
+Here, we can see that as we originally investigated, t.orientation.to.shift1 is highly negatively associated with the number of times an individual volunteers. 
+
+It appears that volunteers who have assignments Adoptions Assistant, Cat Care Volunteer, Cat Pawsitive Program Volunteer, Dog Walking Volunteer, Mutt Strut, Veterinary Tech Volunteer, and other_event are more likely to have greater number of times volunteering.
+
+Also, as we might expected, YTD.hours is highly positively associated with number of times volunteering.
+
+Next steps: logistic regression to analyze numTimeVolunteer2 (e.g. repeat or once only volunteering?)
+
