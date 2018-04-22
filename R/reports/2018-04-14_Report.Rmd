@@ -1,7 +1,7 @@
 ---
 title: "PAWS Volunteer Engagement Patterns"
 author: "R-Ladies Philadelphia"
-date: "April 15, 2018"
+date: "April 22, 2018"
 geometry: margin=2cm
 output: 
   pdf_document: default
@@ -14,6 +14,27 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 # Executive Summary
+PAWS locations often suffer from an insufficient number of volunteers available to cover the animal care needs. The core issue appears to be the engagement and retention of volunteers after orientation, rather than recruitment. The analyses in this report focused on PAWS volunteer data from 2017, and found that: 
+
+1. There is an opportunity to speed up the timeline from initial interest to first shift, which would increase the number of shifts served per volunteer
+2. Volunteers at PAC and Grays Ferry appear to come from similar areas (zip codes), and could potentially be incentivized to split their time between these two locations, 
+3. Approximately 50% of orientation attendees at any location disengage after orientation and do not continue to serve even 1 shift
+4. The risk of losing dog walking volunteers is highest within the first 60 days, while the risk of losing cat care and dog care volunteers is highest in the first 100 days of service
+
+Specific suggestions for actions based on these findings are provided at the conclusion of the report.
+
+# Contributors
+
+![](RLadiesPhilly.jpg)
+R-Ladies Philadelphia is the Philadelphia chapter of R-Ladies, a worldwide organization to promote gender diversity in the community of statisticians, data miners, and programmers using the R programming language. The following data scientists contributed to the analysis for this report:
+
+**Karla Fettich, PhD** is a psychologist and neuroscientist, and currently the Head of Algorithm Development at Orchestrall, Inc, where she develops algorithms to improve care in long-term care facilities. Karla served as the coordinator of the present R-Ladies / PAWS collaboration. 
+
+**Alice Walsh, PhD** is a computational biologist and currently the Head of Analytics Innovation in Bioinformatics at Bristol-Myers Squibb. 
+
+**Katerina Placek, MSc** is a neuroscience graduate student whose research focuses on anatomic and genetic factors underlying neural degeneration. 
+
+**Kristen Nicholson, PhD** is a biomedical engineer and clinal research scientist at the Rothman Institute. She is also the VP of operations and brewer at the Point Breeze Brewing Company. 
 
 \newpage
 # Problem definition and dataset
@@ -73,27 +94,33 @@ We also performed an initial analysis to assess what factors may contribute to a
 
 It is interesting to note that dog care volunteer shifts (which only exist at Grays Ferry and which struggle the most with lack of available volunteers) do not increase the likelihood that a volunteer will serve a higher number of shifts. This may indicate that there is something particularly challenging about these shifts. In order to solve the problem of volunteer availability at Grays Ferry, it may be worth examining what is different about the dog walking shifts at PAC and Grant Ave. It also may be worth considering introducing an incentives program for dog walking volunteers to serve a minimum number of shifts as dog care volunteers at Grays Ferry. 
 
+## Mapping of volunteers
+
+We explored where volunteers at each location come from. For the purpose of this analysis, we used zip codes to inform where volunteers live, and we limited the dataset to volunteers who completed orientations between January 1st, 2017 and September 1st, 2017, and who recorded at least 1 shift in Volgistics.
+
+![ZIP codes of volunteers at PAC](map_PAC.png)
+![ZIP codes of volunteers at GF](map_GF.png)
+![ZIP codes of volunteers at NE](map_NE.png)
+
+It appears to be the case that the Grant Ave location attracts volunteers from North Philadelphia and Northeast Philadelphia, while PAC and GF share a more localized pool of volunteers from the Center City, South Philadelphia and West Philadelphia area. Given this, one possibility to attract more volunteers to the Grays Ferry location may be to encourage PAC volunteers to also serve at Grays Ferry. 
 
 # Results: Disengagement
 
 In this section, we considered a volunteer to be disengaged if more than 90 days passed since the date of their last recorded shift. All analyses in this section were performed for volunteers that did orientation between Jan 01 2017 and Sept 01 2017 in order to have a full mapping of their service timeline. 
 
-From this volunteer pool, initial results suggest that approximately 50% of orientation attendees at any location disengage after orientation. Specifically, 55% of orientation attendees at Grays Ferry (71 attendees) have no record of service, while this number stands at 50.5% (46 attendees) at Grant Ave, and 46.8% (94 attendees) at PAC. If 50% of people attending orientations will not return, then they are blocking other, potentially more motivated new volunteers from beginning their service. The reasons for this attrition after orientation are not clear, but these numbers indicate that it is worth exploring avenues for optimizing the orientation system in a way that yields less attrition at this stage. One option would be to request more details from people when they sign up for orientation, with regard to their intentions and availabilities for volunteer service. This information could then be used to prioritize who gets to attend orientation at what time. 
+From this volunteer pool, initial results suggest that approximately 50% of orientation attendees at any location disengage after orientation. Specifically, 55% of orientation attendees at Grays Ferry (71 attendees) have no record of service, while this number stands at 50.5% (46 attendees) at Grant Ave, and 46.8% (94 attendees) at PAC. If half of people attending orientations will not return, then they are blocking other, potentially more motivated new volunteers from beginning their service. The reasons for this attrition after orientation are not clear, but these numbers indicate that it is worth exploring avenues for optimizing the orientation system in a way that yields less attrition at this stage. One option would be to request more details from people when they sign up for orientation, with regard to their intentions and availabilities for volunteer service. This information could then be used to prioritize who gets to attend orientation at what time. 
 
-Only a small percentage of orientation attendees had only 1 shift recorded (4.7% at Grays Ferry = 6 volunteers; 6.6% at Grant Ave = 6 volunteers; 7.5% at PAC = 15 volunteers). The majority of volunteers served 2 or more shifts, across all locations. 
-
+We also found that it is unlikely for a new volunteer to attend only one shift, and then disengage. Specifically, only a small percentage of orientation attendees had only 1 shift recorded (4.7% at Grays Ferry = 6 volunteers; 6.6% at Grant Ave = 6 volunteers; 7.5% at PAC = 15 volunteers). The majority of volunteers served 2 or more shifts, across all locations. This suggests that new volunteers have the motivation to serve at PAWS repeatedly, and the challenge may be how to best place and retain them for longer-term service.
+\newpage
 ![Number of volunteers by service level, per location](Engagement_by_ShiftCount.png)
 
-Interestingly, taken across all locations, the delay between orientation and shift 1 is not sufficient to estimate when volunteers become disengaged. In this dataset, we did not observe a significant relationship between the delay between orientation and volunteering and how long the volunteer continues to volunteer at PAWS. Furthermore, we found that whether a volunteer serves multiple times a week, once every 2 weeks, or more sporadically than every 2 weeks, this pattern is not an indicator for disengagement. 
+Interestingly, taken across all locations, the delay between orientation and shift 1 is not sufficient to estimate when volunteers become disengaged, even though the engagement analysis suggests that the longer this delay, the fewer shifts volunteers attend. In this dataset, we did not observe a significant relationship between the delay between orientation and volunteering and how long, in time, the volunteer continues to volunteer at PAWS. Furthermore, we found that whether a volunteer serves multiple times a week, once every 2 weeks, or more sporadically than every 2 weeks, this pattern is not an indicator for disengagement. It could be that the patterns of engagement frequency observed by staff, and in the data, can guide the options given to new volunteers when they first sign up (e.g. "Would you like to serve: a) weekly, b) monthly, c) every once in a while/events only").
 
-We also examined disengagement patterns between volunteers whose primary assignment is 'cat care', 'dog care', and 'dog walking'. The data suggest that dog walking volunteers (PAC or NE) are more likely to serve for a overall duration than cat care (all locations) and dog care (GF) volunteers. Furthermore, the risk of losing dog walking volunteers is highest within the first 60 days, while the risk of losing cat care and dog care volunteers is highest in the first 100 days of service.
+We also examined disengagement patterns between volunteers whose primary assignment is 'cat care', 'dog care', and 'dog walking'. The data suggest that dog walking volunteers (PAC or NE) are more likely to serve for an overall duration than cat care (all locations) and dog care (GF) volunteers. Furthermore, the risk of losing dog walking volunteers is highest within the first 60 days, while the risk of losing cat care and dog care volunteers is highest in the first 100 days of service.
 
 ![Probability that a volunteer remains ative after a given number of days, based on their assignment](EngagementProbs.png)
 
-\newpage
-# Conclusions and Recommendations
-
-We did not extensively examine all the patterns of volunteer disengagement and factors that led to a volunteer leaving. Overall, the largest drop-out appears to be that volunteers never show up after doing the orientation. If a volunteer does show up, then they tend to volunteer more than once. The Gray's Ferry location is having the hardest time retaining volunteers and their volunteers tend to volunteer less than other locations.
+This information could guide the timeline of retention efforts, so that retention efforts are highest in a volunteer's first 60-100 days of service.
 
 \newpage
 # Recommendations
@@ -110,12 +137,9 @@ R-Ladies has the opportunity to access demographic data based on zip codes, and 
 
 **4. Consider introducing an incentives program for dog walking volunteers to serve a minimum number of shifts as dog care volunteers at Grays Ferry**.
 
-** 5. Request more details from people when they sign up for orientation, with regard to their intentions and availabilities for volunteer service.** This information could then be used to prioritize who gets to attend orientation at what time. 
+**5. Request more details from people when they sign up for orientation, with regard to their intentions and availabilities for volunteer service.** This information could then be used to prioritize who gets to attend orientation at what time. For example, new volunteers could be asked whether they would like to, or be able to serve a) weekly, b) monthly, c) every once in a while/events only. 
+
+**6. Collect data on challenges faced by volunteers, and disengagement reasons.** It is likely that challenges faced by volunteers result, over time, to disengagement. Quantifying the impact of these challenges may be useful in prioritizing the challenges to address. Additionally, it may be worth reaching out to disengaged volunteers by email with very short, easy to answer questions regarding their reasons. 
 
 \newpage
-# About R-Ladies Philadelphia
-![](R-LadiesGlobal.png)
-R-Ladies Philadelphia is the Philadelphia chapter of R-Ladies, a worldwide organization to promote gender diversity in the community of statisticians, data miners, and programmers using the R programming language.
-
-# Contributors
 

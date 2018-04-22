@@ -41,15 +41,112 @@ df <- df[df$state == "DE" | df$state == "PA" | df$state == "NJ",]
 states <- map_data("state", region=c("pennsylvania", "new jersey", "delaware"))
 counties <- map_data("county", region=c("pennsylvania", "new jersey", "delaware"))
 df <- df[df$city_clean == "Philadelphia",]
-
+df.map <- df
 bc_bbox <- make_bbox(lat = latitude, lon = longitude, data = df.map)
 bc_bbox["left"] <- -75.4
 bc_bbox["bottom"] <- 39.91
 bc_bbox["right"] <- -74.8
 bc_bbox["top"] <- 40.1
-phila <- get_map(location = bc_bbox, source = "google", maptype = "roadmap")
-ggmap(phila) + 
-  geom_point(data = df, mapping = aes(x = longitude, y = latitude, color = shifts_attended))
+
+df <- data.frame(
+  x = c(-75.192633,-75.143366, -75.037081),
+  y = c(39.939109, 39.952296, 40.085266)
+  )
+
+phila <- get_googlemap(center=c(lon=-75.096617, lat=40.020814), zoom = 11,
+                       maptype = "roadmap", color="bw", markers = df)
+
+# split maps by location
+
+# PAC
+
+df <- df.map[df.map$primary_site == "PAWS Adoption Center - Old City" & 
+               as.character(df.map$shifts_attended) != "no shifts",]
+df <- df[!is.na(df$shifts_attended),]
+df <- plyr:::count(df, c("Zip","shifts_attended"))
+df <- merge(df, zipcode, by.x="Zip", by.y="zip")
+colnames(df) <- c("ZIP", "Number of Shifts Attended", "Number of Volunteers", "City", 
+                  "State", "Latitude", "Longitude")
+df$`Number of Volunteers` <- ifelse(df$`Number of Volunteers` ==1, "1", 
+                                    ifelse(df$`Number of Volunteers` <5, "2-4","5+"))
+
+map <- ggmap(phila) + 
+  geom_point(data = df, 
+             mapping = aes(x = Longitude, y = Latitude, 
+                           color = `Number of Shifts Attended`, 
+                           size = `Number of Volunteers`)) +
+  scale_color_manual(values=c("firebrick1", "gold1", "chartreuse3")) +
+  ggtitle("PAC Volunteer Engagement by ZIP code of volunteer") +
+  labs(x="",y="") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        legend.title=element_text(size=16), 
+        legend.text=element_text(size=14))
+
+png(filename="map_PAC.png", width=800, height=500)
+print(map)
+dev.off()
+
+# GF
+
+df <- df.map[df.map$primary_site == "Grays Ferry Clinic - GF" & 
+               as.character(df.map$shifts_attended) != "no shifts",]
+df <- df[!is.na(df$shifts_attended),]
+df <- plyr:::count(df, c("Zip","shifts_attended"))
+df <- merge(df, zipcode, by.x="Zip", by.y="zip")
+colnames(df) <- c("ZIP", "Number of Shifts Attended", "Number of Volunteers", "City", 
+                  "State", "Latitude", "Longitude")
+df$`Number of Volunteers` <- ifelse(df$`Number of Volunteers` ==1, "1", 
+                                    ifelse(df$`Number of Volunteers` <5, "2-4","5+"))
+
+map <- ggmap(phila) + 
+  geom_point(data = df, 
+             mapping = aes(x = Longitude, y = Latitude, 
+                           color = `Number of Shifts Attended`, 
+                           size = `Number of Volunteers`)) +
+  scale_color_manual(values=c("firebrick1", "gold1", "chartreuse3")) +
+  ggtitle("GF Volunteer Engagement by ZIP code of volunteer") +
+  labs(x="",y="") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        legend.title=element_text(size=16), 
+        legend.text=element_text(size=14))
+
+png(filename="map_GF.png", width=800, height=500)
+print(map)
+dev.off()
+
+# NE
+
+df <- df.map[df.map$primary_site == "PAWS Grant Ave. Adoption Center/Wellness Clinic" & 
+               as.character(df.map$shifts_attended) != "no shifts",]
+df <- df[!is.na(df$shifts_attended),]
+df <- plyr:::count(df, c("Zip","shifts_attended"))
+df <- merge(df, zipcode, by.x="Zip", by.y="zip")
+colnames(df) <- c("ZIP", "Number of Shifts Attended", "Number of Volunteers", "City", 
+                  "State", "Latitude", "Longitude")
+df$`Number of Volunteers` <- ifelse(df$`Number of Volunteers` ==1, "1", 
+                                    ifelse(df$`Number of Volunteers` <5, "2-4","5+"))
+
+map <- ggmap(phila) + 
+  geom_point(data = df, 
+             mapping = aes(x = Longitude, y = Latitude, 
+                           color = `Number of Shifts Attended`, 
+                           size = `Number of Volunteers`)) +
+  scale_color_manual(values=c("firebrick1", "gold1", "chartreuse3")) +
+  ggtitle("NE Volunteer Engagement by ZIP code of volunteer") +
+  labs(x="",y="") +
+  theme(plot.title = element_text(size = 20, face = "bold"),
+        legend.title=element_text(size=16), 
+        legend.text=element_text(size=14))
+
+png(filename="map_NE.png", width=800, height=500)
+print(map)
+dev.off()
+
+
+
+
+
+
 
 
 # from Kristen's code
