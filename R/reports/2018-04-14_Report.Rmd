@@ -19,7 +19,7 @@ PAWS locations often suffer from an insufficient number of volunteers available 
 1. There is an opportunity to speed up the timeline from initial interest to first shift, which would increase the number of shifts served per volunteer
 2. Volunteers at PAC and Grays Ferry appear to come from similar areas (zip codes), and could potentially be incentivized to split their time between these two locations, 
 3. Approximately 50% of orientation attendees at any location disengage after orientation and do not continue to serve even 1 shift
-4. The risk of losing dog walking volunteers is highest within the first 60 days, while the risk of losing cat care and dog care volunteers is highest in the first 100 days of service
+4. The risk of losing new volunteers is highest within roughly the first 100 days of service. Retention efforts could therefore target this time period specifically.
 
 Specific suggestions for actions based on these findings are provided at the conclusion of the report.
 
@@ -28,7 +28,7 @@ Specific suggestions for actions based on these findings are provided at the con
 ![](RLadiesPhilly.jpg)
 R-Ladies Philadelphia is the Philadelphia chapter of R-Ladies, a worldwide organization to promote gender diversity in the community of statisticians, data miners, and programmers using the R programming language. The following data scientists contributed to the analysis for this report:
 
-**Karla Fettich, PhD** is a psychologist and neuroscientist, and currently the Head of Algorithm Development at Orchestrall, Inc, where she develops algorithms to improve care in long-term care facilities. Karla served as the coordinator of the present R-Ladies / PAWS collaboration. 
+**Karla Fettich, PhD** is a psychologist and neuroscientist, and currently the Head of Algorithm Development at Orchestrall, Inc., where she develops algorithms to improve care in long-term care facilities. Karla is a PAWS dog care volunteer at Grays Ferry and served as the coordinator of the present R-Ladies / PAWS collaboration. 
 
 **Alice Walsh, PhD** is a computational biologist and currently the Head of Analytics Innovation in Bioinformatics at Bristol-Myers Squibb. 
 
@@ -43,7 +43,7 @@ Observations by volunteers and staff suggest that PAWS locations often suffer fr
 
 In order to better understand this problem, we analyzed the data to gain a better understanding of the following volunteer behavior patterns and the factors that may influence them: 1. Engagement (e.g. when do new volunteers sign up, how long before they actually attend their first shift), and 2. Disengagement (e.g. why do volunteers stop coming in for shifts).
 
-The data used for this round of analyses included 3 sets, obtained with PAWS permission: (1) the "master" dataset obtained from Volgistics, with names, addresses, and phone-numbers removed, and anoymized PAWS ID numbers, (2) the orientation signup sheet (from Google Docs), also de-identified, including orientation records between 1/1/2017 - 3/1/2018, (3) the "service" data obtained from Volgistics, de-identified. 
+The data used for this round of analyses included 3 sets, obtained with PAWS permission: (1) the "master" dataset obtained from Volgistics, with names, addresses, and phone-numbers removed, and anonymized PAWS ID numbers, (2) the orientation signup sheet (from Google Docs), also de-identified, including orientation records between 1/1/2017 - 3/1/2018, (3) the "service" data obtained from Volgistics, de-identified. 
 
 We purposefully did not include data from previous years in these analyses in order to keep the dataset small enough that we could focus on a deep understanding of the data, and to establish a basis to discuss more in-depth analyses.  
 
@@ -76,7 +76,7 @@ The third step in the process of becoming a new volunteer at PAWS is to sign in 
 
 The fourth step in the process of becoming a new volunteer at PAWS is to serve a first shift. The volunteer has full flexibility in choosing a day and shift for their first shift, as long as the chosen shift is aligned with their orientation, and is not already scheduled to capacity in Volgistics. 
 
-The data indicate that new volunteers who completed PAC orientation typically began their service 9 days later (dog) and 14 days later (cat). At Grays Ferry, volunteers from both basic and basic + WD orientations typlically started their service 17 days later, while at Grant Ave, volunteers began their service 21 days after orientation. 
+The data indicate that new volunteers who completed PAC orientation typically began their service 9 days later (dog) and 14 days later (cat). At Grays Ferry, volunteers from both basic and basic + WD orientations typically started their service 17 days later, while at Grant Ave, volunteers began their service 21 days after orientation. 
 
 ![Median number of days between orientation and the date of their first shift, by type of orientation](days_orientation_to_shift1.png)
 
@@ -118,9 +118,9 @@ Interestingly, taken across all locations, the delay between orientation and shi
 
 We also examined disengagement patterns between volunteers whose primary assignment is 'cat care', 'dog care', and 'dog walking'. The data suggest that dog walking volunteers (PAC or NE) are more likely to serve for an overall duration than cat care (all locations) and dog care (GF) volunteers. Furthermore, the risk of losing dog walking volunteers is highest within the first 60 days, while the risk of losing cat care and dog care volunteers is highest in the first 100 days of service.
 
-![Probability that a volunteer remains ative after a given number of days, based on their assignment](EngagementProbs.png)
+![Probability that a volunteer remains active after a given number of days, based on their assignment](EngagementProbs.png)
 
-This information could guide the timeline of retention efforts, so that retention efforts are highest in a volunteer's first 60-100 days of service.
+The data suggest that PAWS is most likely to lose new volunteers in their first 60 days of service (dog walking) or 100 days (cat care, dog care). This information could guide the timeline of retention efforts, so that retention efforts are highest in a volunteer's first 60-100 days of service.
 
 \newpage
 # Recommendations
