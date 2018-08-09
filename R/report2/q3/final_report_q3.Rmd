@@ -1,0 +1,355 @@
+---
+title: "PAWS - Volunteer disengagement"
+author: "R-Ladies Philadelphia, Alice Walsh"
+date: "3/16/2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r, echo=FALSE, include=FALSE}
+rm(list = ls()) # can modify this if we are passing parameters into rmarkdown, etc.
+set.seed(1234)
+options(stringsAsFactors = FALSE)
+```
+
+```{r setup, include=FALSE}
+# Here I set for graphs to save to pdf so others can use
+knitr::opts_chunk$set(echo = FALSE,
+                      dev = 'pdf',
+                      fig.path = 'final_plots/')
+```
+
+```{r load_libs, warning=FALSE, message=FALSE, include = FALSE}
+library(survival)
+library(survminer)
+library(RColorBrewer)
+suppressPackageStartupMessages(library(tidyverse))
+library(ggalluvial)
+```
+
+```{r additional_setup, include=FALSE}
+# I like to change the default color palette - doesn't apply to ggsurvplot for some reason?
+scale_color_discrete <- function(...) {scale_color_manual(..., values = brewer.pal(n=9, name = "Set1"))}
+scale_fill_discrete <- function(...) {scale_fill_manual(..., values = brewer.pal(n=9, name = "Set1"))}
+
+```
+
+# Question
+What is the typical pattern for volunteer disengagement?
+
+First, I summarised the number of volunteers with various characteristics:  
+
+* did orientation, but no shifts
+* did orientation, had only 1 shift
+* did orientation, had 2+ shifts
+
+How do we define a "disengaged" volunteer?  
+
+* For the purpose of this analysis, we considered a volunteer was disengaged (i.e., stopped volunteering) if the length of time after their last shift was > 90 days ago.
+
+# Procedure  
+
+1. Load in the data that was pre-cleaned and merged
+1. Analyze and create plots
+
+All analysis was performed for volunteers that did orientation between Jan 01 2017 and Sept 01 2017.
+
+
+```{r load_data}
+final_data <- readRDS("C:/Users/karla/Dropbox/PAWS/Data/merged.Rds")
+```
+
+# Analysis
+
+## Summary of volunteers
+
+* How many did orientation, but no shifts?
+* How many did orientation, had only 1 shift?
+* How many did orientation, had 2+ shifts?
+
+```{r summarise}
+final_data_filt <- final_data %>%
+  filter(Orientation.Date.Primary >= "2018-01-01", Orientation.Date.Primary < "2018-05-01")
+
+end_summary <- final_data_filt  %>%
+  summarise(total_volunteers = n(),
+            volunteered_ever = paste( round(100* sum(total_shifts>0)/n(),1) ,"%"),
+            volunteered_onlyonce = paste( round(100* sum(total_shifts==1)/n(),1),"%"),
+            twoplus = paste( round(100* sum(twoplus_shifts==TRUE)/n(), 1), "%"),
+            tenplus = paste( round(100* sum(tenplus_shifts==TRUE)/n(), 1), "%"),
+            ave_shifts = round( mean(total_shifts), 2),
+            ave_missed_shifts = round( mean(missed_shifts), 2))
+
+knitr::kable(t(end_summary), caption="Overall Summary")
+
+```
+
+## Summary of volunteers by site where they did orientation
+```{r summarise_loc}
+
+loc_summary <- final_data_filt  %>%
+  group_by(orient_loc.Primary) %>%
+  summarise(total_volunteers = n(),
+            volunteered_ever = paste( round(100* sum(total_shifts>0)/n(),1) ,"%"),
+            volunteered_onlyonce = paste( round(100* sum(total_shifts==1)/n(),1),"%"),
+            twoplus = paste( round(100* sum(twoplus_shifts==TRUE)/n(), 1), "%"),
+            tenplus = paste( round(100* sum(tenplus_shifts==TRUE)/n(), 1), "%"),
+            ave_shifts = round( mean(total_shifts), 2),
+            ave_missed_shifts = round( mean(missed_shifts), 2))
+loc_summary <- t(loc_summary)
+colnames(loc_summary) <- loc_summary[1,]
+loc_summary <- loc_summary[-1,]
+knitr::kable(loc_summary, caption="Summary stratified by location")
+
+value <- c(71*0.225, 71*0.141, 71*0.634, 71* 0.127)
+label <- c("no service", "1 shift", "2-9 shifts", "10+ shifts")
+site <- c("GF")
+pct <- c("22.5%", "14.1%", "53.4%","12.7%")
+gf <- data.frame(value, label, site, pct)
+
+value <- c(46*0.217, 46*0.174, 46*0.609, 46*0.174 )
+label <- c("no service", "1 shift", "2-9 shifts", "10+ shifts")
+site <- c("NE")
+pct <- c("21.7%", "17.4%", "60.9%","17.4%")
+ne <- data.frame(value, label, site, pct)
+
+value <- c(87*0.241, 87*0.138, 87*0.621, 87*0.149 )
+label <- c("no service", "1 shift", "2-9 shifts", "10+ shifts")
+site <- c("PAC")
+pct <- c("24.1%", "13.8%", "62.1%","14.9%")
+pac <- data.frame(value, label, site, pct)
+
+d <- rbind(gf, ne, pac)
+d$label <- factor(d$label, levels = c("no service", "1 shift", "2-9 shifts", "10+ shifts"))
+
+
+g <- ggplot(d, aes(x = site, y= value, fill=label, label=pct)) + 
+  geom_bar(stat = "identity") +
+  scale_fill_brewer(palette = 12) +
+  geom_text(size = 3, position = position_stack(vjust = 0.5)) + 
+  ylab("Number of volunteers") + 
+  ggtitle("Number of volunteers by service level, per location")
+
+png("Engagement_by_ShiftCount.png", width=800, height=600)
+g
+dev.off()
+
+```
+
+## Summary of volunteer disengagement
+```{r}
+med_days <- median(filter(final_data_filt, total_shifts > 0)$days_since_last)
+med_days_between <- median(filter(final_data_filt, total_shifts > 0)$time_bw_shifts, na.rm = T)
+
+```
+
+For a volunteer that did at least one shift:
+
+
+The median days since last shift is `r med_days` days.
+
+The median time between shifts is `r med_days_between` days.
+
+
+```{r calc_disengage}
+final_data_filt$event <- 0
+final_data_filt$event[final_data_filt$days_since_last > 90] <- 1 
+
+# create factor for whether they reported for shift within 14 days
+final_data_filt$first_shift_group <- case_when(
+  as.numeric(final_data_filt$time_to_first) <= 14 ~ "<= 14 days",
+  as.numeric(final_data_filt$time_to_first) <= 60 ~ "14 to 60 days",
+  as.numeric(final_data_filt$time_to_first) > 60 ~ "> 60 days"
+)
+final_data_filt$first_shift_group <- factor(final_data_filt$first_shift_group,
+                                       levels = c("<= 14 days",
+                                                  "14 to 60 days", 
+                                                  "> 60 days"))
+
+final_data_filt$timebw_shift_group <- case_when(
+  as.numeric(final_data_filt$time_bw_median) <= 7 ~ "<= 7 days",
+  as.numeric(final_data_filt$time_bw_median) <= 14 ~ "7 to 14 days",
+  as.numeric(final_data_filt$time_bw_median) > 14 ~ "> 14 days"
+)
+final_data_filt$timebw_shift_group <- factor(final_data_filt$timebw_shift_group, 
+                                        levels = c("<= 7 days", "7 to 14 days", "> 14 days"))
+
+final_data_filt %>%
+  filter(total_shifts > 0) %>%
+  group_by(first_shift_group) %>%
+  summarise(mean_shifts = mean(total_shifts),
+            mean_missed_shifts = mean(missed_shifts),
+            freq = n()) %>%
+  knitr::kable(caption = "Summary of time between orientation to the first shift")
+
+final_data_filt %>%
+  filter(total_shifts > 0 ) %>%
+  group_by(timebw_shift_group) %>%
+  summarise(mean_shifts = mean(total_shifts),
+            mean_missed_shifts = mean(missed_shifts),
+            freq = n()) %>%
+  knitr::kable(caption = "Summary of time between shifts")
+```
+
+## Visualizations
+In the below histogram, we see that most the engaged volunteers have volunteered in the last 90 days (vertical black line), while the disengaged volunteers have not volunteered in 100 or more days.
+
+
+```{r days_since_last}
+ggplot(filter(final_data_filt, total_shifts > 0), aes(x= days_since_last)) + 
+  geom_histogram(binwidth = 7) + 
+  geom_vline(xintercept = 90) + 
+  ylab("Number of Volunteers") + 
+  xlab("Days since last shift") + 
+  theme_bw()
+
+```
+
+
+```{r alluvial_plot, include=FALSE, eval = FALSE}
+signup_service_plot <- final_data_filt %>%
+  filter(total_shifts > 0 ) %>%
+  mutate(event = factor(event)) %>%
+  group_by(event, orient_loc.Primary, primary_type) %>%
+  summarise(Freq = n()) %>%
+  ungroup()
+
+
+ggplot(data = signup_service_plot,
+       aes(axis1 = orient_loc.Primary, axis2 = primary_type,
+           weight = Freq)) +
+  scale_x_discrete(limits = c("Primary Orientation Location", "Type"), expand = c(.1, .05)) +
+  geom_alluvium(aes(fill = event)) +
+  geom_stratum() + geom_text(stat = "stratum", label.strata = TRUE) +
+  theme_minimal() +
+  ggtitle("PAWS Volunteer patterns",
+          "stratified by whether they became disengaged")
+```
+
+
+## Plot volunteers time between first shift and disengagement
+
+```{r kaplan-meier_timetofirst, fig.width=8, fig.height=6}
+model_data <- filter(final_data_filt, total_shifts > 1)
+surv.model <- Surv(model_data$time_last_to_first, model_data$event)
+
+surv.fit <- survfit(surv.model ~ first_shift_group, data = model_data)
+
+ggsurvplot(surv.fit, data = model_data,
+           surv.median.line = "hv", 
+           pval = TRUE, conf.int = TRUE, cumevents = TRUE,
+           ylab = "Volunteer Engagement Prob",
+           palette = brewer.pal(n=9, "Set1"),
+           xlab = "Time From First to Last Shift (days)",
+           title = "Compare how soon after orientation volunteered",
+           legend.title = "", legend.labs = levels(factor(model_data$first_shift_group)))  
+
+
+```
+
+
+We do not observe a significant relationship between the delay between orientation and volunteering and how long the volunteer continues to volunteer. 
+
+The median volunteer engangement time was `r surv_median(surv.fit)$median[1]` days for volunteers that did their first shift <= 14 days after orientation.
+
+```{r kaplan-meier_timebetween, fig.width=8, fig.height=6}
+surv.fit <- survfit(surv.model ~ timebw_shift_group, data = model_data)
+
+ggsurvplot(surv.fit, data = model_data,
+           surv.median.line = "hv", 
+           pval = TRUE, conf.int = TRUE, cumevents = TRUE,
+           ylab = "Volunteer Engagement Prob",
+           palette = brewer.pal(n=9, "Set1"),
+           xlab = "Time From First to Last Shift (days)",
+           title = "Compare median time between shifts",
+           legend.title = "", legend.labs = levels(factor(model_data$timebw_shift_group)))  
+
+```
+
+We don't see a strong trend that volunteers leave sooner if they tend to volunteer more or less frequently.
+
+The median volunteer engangement time was `r surv_median(surv.fit)$median[1]` days, `r surv_median(surv.fit)$median[2]` days, `r surv_median(surv.fit)$median[3]` days for volunteers with median days between shifts of <= 7 days, 7 to 14 days, and > 14 days, respectively.
+
+
+```{r kaplan-meier-only-one, fig.width=8, fig.height=6}
+# Could plot either total_time - time from orientation to last shift
+# or time_last_to_first - time from first shift to last shift
+
+model_data <- filter(final_data_filt, total_shifts > 0)
+surv.model <- Surv(model_data$total_time, model_data$event)
+surv.fit <- survfit(surv.model ~ only_one_shift, data = model_data)
+# surv.fit
+# ggsurvplot(surv.fit, data = model_data,
+#            surv.median.line = "hv", 
+#            pval = TRUE, conf.int = TRUE, cumevents = TRUE,
+#            ylab = "Volunteer Engagement Prob",
+#            palette = brewer.pal(n=9, "Set1"),
+#            xlab = "Time From Orientation to Last Shift (days)",
+#            title = "Compare whether only did one shift",
+#            legend.title = "", legend.labs = levels(factor(model_data$only_one_shift)))  
+
+```
+
+```{r km_top_assignments, fig.width= 8, fig.height = 6}
+# top assignments:
+top_assign <- names(sort(table(final_data_filt$primary_type),decreasing = T))[1:3]
+model_data <- filter(final_data_filt, total_shifts > 1,
+                     primary_type %in% top_assign)
+
+surv.model <- Surv(model_data$time_last_to_first, model_data$event)
+surv.fit <- survfit(surv.model ~ primary_type, data = model_data)
+
+g <- ggsurvplot(surv.fit, data = model_data,
+           surv.median.line = "hv", 
+           pval = TRUE, conf.int = FALSE, cumevents = TRUE,
+           palette = brewer.pal(n=9, "Set1"),
+           ylab = "Probability that a volunteer remains active after x days", xlab = "Time From First to Last Shift (days)",
+           title = "Compare primary assignments",
+           legend.title = "", legend.labs = levels(factor(model_data$primary_type)))  
+
+png("EngagementProbs.png", width=800, height=600)
+g
+dev.off()
+
+```
+
+There is a trend that dog walking volunteers keep volunteering longer than cat care or dog care volunteers. Cat care is at all three sites, dog care only at Grays Ferry, and dog walking is either PAC or NE.
+
+The median volunteer engangement time was `r surv_median(surv.fit)$median[1]` days and `r surv_median(surv.fit)$median[2]` days for cat care volunteers and dog care volunteers, respectively. The median engagement time for dog walking volunteers was not reached.
+
+```{r kaplan-meier-location, fig.width=8, fig.height=6}
+model_data <- filter(final_data_filt, total_shifts > 1)
+surv.model <- Surv(model_data$time_last_to_first, model_data$event)
+surv.fit <- survfit(surv.model ~ orient_loc.Primary, data = model_data)
+
+ggsurvplot(surv.fit, data = model_data,
+           surv.median.line = "hv", 
+           pval = TRUE, conf.int = FALSE, cumevents = TRUE,
+           palette = brewer.pal(n=9, "Set1"),
+           ylab = "Volunteer Engagement Prob", xlab = "Time From First to Last Shift (days)",
+           title = "Compare primary orientation location",
+           legend.title = "", legend.labs = levels(factor(model_data$orient_loc.Primary))) 
+```
+
+
+
+```{r kaplan-meier-orient-location, fig.width=8, fig.height=6}
+model_data <- filter(final_data_filt, total_shifts > 1)
+surv.model <- Surv(model_data$time_last_to_first, model_data$event)
+surv.fit <- survfit(surv.model ~ city_clean, data = model_data)
+
+ggsurvplot(surv.fit, data = model_data,
+           surv.median.line = "hv", 
+           pval = TRUE, conf.int = FALSE, cumevents = TRUE,
+           palette = brewer.pal(n=9, "Set1"),
+           ylab = "Volunteer Engagement Prob", xlab = "Time From First to Last Shift (days)",
+           title = "Compare volunteer residence city",
+           legend.title = "", legend.labs = levels(factor(model_data$city_clean))) 
+```
+
+There is not a clear trend for orientation location or whether someone lives in philadelphia or outside philadelphia.
+
+# Conclusions from this part
+
+We did not extensively examine all the patterns of volunteer disengagement and factors that led to a volunteer leaving. Overall, the largest drop-out appears to be that volunteers never show up after doing the orientation. If a volunteer does show up, then they tend to volunteer more than once. The Gray's Ferry location is having the hardest time retaining volunteers and their volunteers tend to volunteer less than other locations.

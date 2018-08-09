@@ -1,0 +1,429 @@
+---
+title: "PAWS Analysis with R-Ladies - Exploring and Manipulating the Data"
+author: "Alice Walsh"
+date: "3/16/2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_libs, warning=FALSE}
+# This code works when you are using RStudio project. Paths are relative and stuff
+suppressPackageStartupMessages(library(tidyverse))
+library(ggalluvial)
+
+```
+
+# Question
+What is the typical pattern for volunteer disengagement?
+
+I need to summarise the number of volunteers with various characteristics:  
+
+* did orientation, but no shifts
+* did orientation, had only 1 shift
+* did orientation, had 2+ shifts
+
+What factors are associated with these three groups? location, orientation type, zip code, days to first shift?
+
+For volunteers that do show up, what happens? Lets plot frequencies over the following factors:  
+
+* orientation type
+* orientation location
+* did a shift
+* did a second shift
+* shift types
+
+How do we define a "disengaged" volunteer?  
+
+* My idea: Length of time after last shift is > x months (test different x)
+
+# Procedure  
+* We have data from orientation sign up - orientation dates
+* We have data from PAWS master volunteer database - date for when they were entered and then started
+* We have data from volunteer shifts when people logged in and logged out
+
+1. Load in the data
+1. Process data to make it analysis-ready
+1. Do some data exploration
+1. Make a plot to show volunteer patterns
+1. Idea: use ggplot2 extension ggalluvial
+
+## Load Data
+```{r data_load}
+master_file <- '../../Data/master.csv'
+service_file <- '../../Data/service.csv'
+signup_file <- '../../Data/signupsheet.csv'
+
+master <- read.csv('C:/Users/karla/Dropbox/PAWS/Data/master.csv', quote="", stringsAsFactors = F)
+service <- read.csv('C:/Users/karla/Dropbox/PAWS/Data/service.csv', stringsAsFactors = F)
+signup <- read.csv('C:/Users/karla/Dropbox/PAWS/Data/signupsheet.csv', stringsAsFactors = F)
+```
+
+The `r master_file` has `r nrow(master)` rows.
+
+The `r service_file` has `r nrow(service)` rows.
+
+The `r signup_file` has `r nrow(signup)` rows.
+
+### Basic info on signup table
+Signup table has information of the types of orientations.
+```{r basic_signup}
+knitr::kable(table(signup$Type), caption = "Type")
+knitr::kable(table(signup$NOT.Attending), caption = "Not Attending")
+knitr::kable(table(signup$Present), caption = "Present")
+knitr::kable(table(signup$orientation), caption = "Primary or Secondary Orientation")
+```
+
+OK, so I learned that we need to clean up with "Type" fields and remove one row for cancelling on the orientation.
+
+I also created a orientation location that was separate from orientation type.
+
+```{r}
+signup_clean <- signup %>%
+  filter(NOT.Attending != "CANCELLED") %>%
+  mutate(Type = case_when(
+    Type == "NE" | Type == "NE + NE" ~ "NE Basic",
+    Type == "GF Basic " ~ "GF Basic",
+    Type == "GF Basic  + GF WD" ~ "GF Basic + WD",
+    Type == "GF Basic + GF WD" ~ "GF Basic + WD",
+    TRUE ~ as.character(Type)
+  )) %>%
+  separate(Type, into = c("orient_loc", "orient_type"), sep = " ", extra = "merge", remove = FALSE) %>%
+  select(-NOT.Attending, -Present) %>% # dont need these
+  mutate(Orientation.Date = as.Date(Orientation.Date, format = "%m/%d/%y")) %>%
+  arrange(Orientation.Date)
+
+
+with(signup_clean, table(orient_type, orientation, exclude = NULL) )
+
+with(signup_clean, table(orient_loc, orientation, exclude = NULL) )
+```
+
+The earliest orientation date was `r min(signup_clean$Orientation.Date)`
+
+
+Decided to make separate variables for Primary and Secondary orientation (convert to wide).  There were some cases where there were duplicate Secondary orientations for a single ID. Kept the earliest.
+
+```{r}
+signup_clean <- reshape(signup_clean,timevar="orientation",idvar="ID",direction="wide")
+
+```
+
+It is known that there are a handful of cases where Primary occured after Secondary orientation - swap those.
+
+```{r}
+signup_clean <- signup_clean %>%
+  mutate(sec_prim = Orientation.Date.Secondary - Orientation.Date.Primary) %>%
+  mutate(new.Date.Primary = case_when(
+    sec_prim < 0 ~ Orientation.Date.Secondary,
+    TRUE ~ Orientation.Date.Primary
+  ),
+  new.Date.Secondary = case_when(
+    sec_prim < 0 ~Orientation.Date.Primary,
+    TRUE ~ Orientation.Date.Secondary
+  )) %>%
+  mutate(sec_prim_new = new.Date.Secondary - new.Date.Primary) %>%
+  select( -Orientation.Date.Primary, -Orientation.Date.Secondary, -sec_prim ) %>%
+  rename(Orientation.Date.Primary= new.Date.Primary, Orientation.Date.Secondary= new.Date.Secondary)
+
+```
+
+
+### Basic info on master table
+
+
+Can see that again the text fields like city are not clean.  
+
+I cleaned the City variable and converted all zip code to 5 digit level. The zip codes are still messed up as some are not valid 5-digit codes. They might be missing a leading zero.
+
+```{r clean_city}
+master_clean <- master %>%
+  mutate(city_clean = case_when(
+    grepl("Phil|phil", City) ~ "Philadelphia",
+    TRUE ~ "other"
+  ),
+  Zip = case_when(
+    grepl("PA|NJ", Zip) ~ "",
+    TRUE ~ as.character(Zip)
+  )) %>%
+  separate(Zip, into="Zip", sep="-", extra = "drop")
+
+```
+
+```{r basic_master}
+knitr::kable(table(master_clean$Status, exclude=NULL), caption = "Status")
+knitr::kable(table(master_clean$city_clean, exclude=NULL), caption = "City after cleaning")
+knitr::kable(table(master_clean$Zip, exclude=NULL), caption = "Zip Codes after cleaning")
+```
+
+
+Look at the date ranges for the dates
+```{r master_dates}
+master_clean <- master_clean %>%
+  mutate(Date.entered = as.Date(Date.entered, format = "%m-%d-%Y"),
+         Start.date = as.Date(Start.date, format = "%m-%d-%Y"),
+         Stop.date = as.Date(Stop.date, format = "%m-%d-%Y"),
+         Orientation.Date.master = as.Date(Orientation.Date, format = "%m-%d-%Y"))
+
+print("Date.entered")
+summary(master_clean$Date.entered)
+print("Start.date")
+summary(master_clean$Start.date)
+print("Orientation.date")
+summary(master_clean$Orientation.Date.master)
+
+```
+
+
+### Basic info on service table
+Look at min/max dates
+```{r basic_service}
+service <- service %>%
+  mutate(From.date = as.Date(From.date, format = "%m-%d-%Y"),
+         To.date = as.Date(To.date, format = "%m-%d-%Y"))
+
+print("From.date")
+summary(service$From.date)
+print("To.date")
+summary(service$To.date)
+```
+
+Look at values for factors:
+We need to harmonize the site annotation from this table with that in the orientation table.
+There are also a ton of assignments that are special events. Let's create one new category for those and lump them all together. 
+```{r}
+knitr::kable(table(service$Site, exclude=NULL), caption = "Site")
+knitr::kable(table(service$Assignment, exclude=NULL), caption = "Assignment")
+knitr::kable(table(service$No.Call.No.Show, exclude=NULL), caption = "No.Call.No.Show")
+knitr::kable(table(service$Call.Email.to.miss.shift, exclude=NULL), caption = "Call.Email.to.miss.shift")
+knitr::kable(table(service$Absence, exclude=NULL), caption = "Absence")
+
+```
+
+```{r cleanup_assignments}
+service_clean <- service %>%
+  mutate(assignment_group = case_when(
+    Assignment == "Cat Care Volunteer - PAC" ~ "Cat Care Volunteer - PAC",
+    Assignment == "Cat Care Volunteer - Grant Ave." ~ "Cat Care Volunteer - Grant Ave.",
+    Assignment == "Administrative tasks" ~ "Administrative tasks - ",
+    Assignment == "Foster Care Administrative Assistant" ~ "Foster Care Administrative Assistant - ",
+    Assignment == "Dog Care Volunteer - GF" ~ "Dog Care Volunteer - GF",
+    Assignment == "Dog Walking Volunteer - Grant Ave." ~ "Dog Walking Volunteer - Grant Ave.",
+    Assignment == "Dog Walking Volunteer - PAC" ~ "Dog Walking Volunteer - PAC",
+    Assignment == "Cat Care Volunteer - GF" ~ "Cat Care Volunteer - GF",
+    Assignment == "Cat Socialization Team" ~ "Cat Socialization Team - ",
+    Assignment == "PAWS South Philly PetSmart" ~ " - PAWS South Philly PetSmart",
+    Assignment == "PAC Adoptions Assistant" ~ "Adoptions Assistant - PAC",
+    Assignment == "Cat Pawsitive Program Volunteer - Grant Ave. Location" ~ "Cat Pawsitive Program Volunteer - Grant Ave.",
+    Assignment == "PAC Dog Mentee Shift (for shadowing only)" ~ "Dog Mentee Shift - PAC",
+    Assignment == "PAC Cat Mentee Shift (for shadowing only)" ~ "Cat Mentee Shift - PAC",
+    Assignment == "Dog Rescue Volunteer - GF" ~ "Dog Rescue Volunteer - GF",
+    Assignment == "Veterinary Tech Volunteer shift - Grant Ave" ~ "Veterinary Tech Volunteer - Grant Ave.",
+    Assignment == "PAC Veterinary Tech Volunteer" ~ "Veterinary Tech Volunteer - PAC",
+    Assignment == "PAC Orientations" ~ "Orientations - PAC",
+    Assignment == "PAC Transport Volunteer" ~ "Transport Volunteer - PAC",
+    Assignment == "Grant Mentee Shift (for shadowing only)" ~ "Mentee Shift - Grant Ave.",
+    Assignment == "Cat Pawsitive Program Volunteers - OLD CITY" ~ "Cat Pawsitive Program Volunteer - PAC",
+    Assignment == "Voicemail Volunteers" ~ "Voicemail Volunteers - ",
+    Assignment == "Gray's Ferry Mentee Shift for dog care (for shadowing only)" ~ "Dog Mentee Shift - GF",
+    grepl("Mutt Strut", Assignment) ~ "Mutt Strut",
+    TRUE ~ "other_event"
+  ))
+
+
+# Should also sep location and task here
+service_clean <- service_clean %>%
+  separate(assignment_group, into = c("assignment_type", "location"), sep = " - ")
+
+```
+
+```{r}
+service_clean %>%
+  group_by(assignment_type) %>%
+  summarise(Freq = n()) %>%
+  arrange(desc(Freq)) %>%
+  knitr::kable( caption = "New Assignment Variable")
+# knitr::kable(table(service_clean$assignment_type, exclude=NULL), caption = "New Assignment Variable")
+```
+
+## Data manipulation
+
+
+
+### Filter to after January 1, 2018
+How many unique volunteer IDs does this leave in each table?
+```{r filter_dates}
+service_clean <- service_clean %>%
+  filter(From.date >= "2018-01-01")
+
+master_clean <- master_clean %>%
+  filter(Date.entered >= "2018-01-01")
+
+length(unique(service_clean$ID))
+length(unique(master_clean$ID))
+length(unique(signup_clean$ID))
+# In all three
+length(intersect(signup_clean$ID, intersect(service_clean$ID, master_clean$ID)))
+```
+
+98% of volunteers in the signup data are also in the master data. However, only ~55% are in the service data.
+Is this because of the way the service data was downloaded?
+
+### Derive service flags
+From the service table, derive variables for   
+
+* did 1+ shift?
+* did only 1 shift?
+* did 2+ shifts?
+* did 10+ shifts?
+
+Should we filter out special events?
+
+```{r service_flags, warning=FALSE}
+service_clean <- service_clean %>%
+  mutate(no_show = Absence > 0 ) %>%
+  arrange(ID, From.date) %>%
+  group_by(ID, no_show) %>%
+  mutate(diff_shift = as.numeric(From.date - lag(From.date))) %>%
+  ungroup()
+
+service_summary <- service_clean %>%
+  group_by(ID) %>%
+  summarise(total_shifts = sum(no_show==FALSE),
+            missed_shifts = sum(no_show==TRUE),
+            first_shift_date =  min(From.date[no_show==FALSE], na.rm=T),
+            last_recorded_date = max(From.date[no_show==FALSE], na.rm=T),
+            time_bw_shifts = as.numeric(mean(diff_shift, na.rm = T)),
+            time_bw_median = as.numeric(median(diff_shift, na.rm = T)),
+            primary_type = names(sort(table(assignment_type), decreasing = T)[1]),
+            primary_type_shifts = sort(table(assignment_type), decreasing = T)[1],
+            primary_site = names(sort(table(Site), decreasing = T)[1])) 
+service_summary$time_bw_shifts[service_summary$total_shifts<=1] <- NA
+# Note that this throws a ton of warnings
+
+# Merge with Signup
+signup_service <- merge(signup_clean, service_summary, by = "ID", all.x = TRUE) %>%
+  mutate(total_shifts = case_when(
+    is.na(total_shifts) ~ 0,
+    TRUE ~ as.numeric(total_shifts)),
+    missed_shifts = case_when(
+    is.na(missed_shifts) ~ 0,
+    TRUE ~ as.numeric(missed_shifts))) %>%
+  mutate(any_shifts = total_shifts != 0,
+         only_one_shift = total_shifts == 1,
+         twoplus_shifts = total_shifts > 1, 
+         tenplus_shifts = total_shifts >= 10)
+  
+# Add in demographics from master
+final_data <- merge(signup_service, select(master_clean, ID, Status, Date.entered, Start.date, city_clean, Zip), by = "ID")
+# have some IDs not in master_clean that are in signup_service - these have early date entered
+
+```
+
+## Visualizations
+```{r plot}
+signup_service_plot <- final_data %>%
+  filter(Orientation.Date.Primary <= "2017-08-01") %>%
+  group_by(orient_loc.Primary, orient_type.Primary, primary_type, any_shifts) %>%
+  summarise(Freq = n()) %>%
+  ungroup()
+
+
+ggplot(data = signup_service_plot,
+       aes(axis1 = orient_loc.Primary, axis2 = orient_type.Primary, axis3 = primary_type,
+           weight = Freq)) +
+  scale_x_discrete(limits = c("Primary Orientation Location", "Type", "primary_type"), expand = c(.1, .05)) +
+  geom_alluvium(aes(fill = any_shifts)) +
+  geom_stratum() + geom_text(stat = "stratum", label.strata = TRUE) +
+  theme_minimal() +
+  ggtitle("PAWS Volunteer patterns",
+          "stratified by whether they did any shifts")
+```
+
+OK - This is a start. It needs to be clarified a little.
+
+How long since the last shift? This can help us decide a volunteer disengaged cutoff
+```{r calc_diffs}
+final_data$total_time <- as.numeric(final_data$last_recorded_date - final_data$Orientation.Date.Primary)
+final_data$time_to_first <- as.numeric(final_data$first_shift_date - final_data$Orientation.Date.Primary)
+final_data$time_last_to_first <- as.numeric(final_data$last_recorded_date - final_data$first_shift_date)
+final_data$days_since_last <- as.numeric(as.Date("2018-03-02") - final_data$last_recorded_date)
+
+```
+
+```{r hist_last}
+
+model_data <- filter(final_data, total_shifts > 0)
+hist(as.numeric(model_data$days_since_last), 100,
+     main = "Days since last shift for those who did any shifts",
+     xlab = "Days")
+
+
+```
+
+```{r}
+median(filter(final_data, total_shifts > 0)$days_since_last)
+
+median(filter(final_data, total_shifts > 0)$time_bw_shifts, na.rm = T)
+
+```
+
+So looking at all the data including recent orientations (where data is censored), the median days since last shift is around a month, and the median time between shifts is about a week.
+
+```{r}
+ggplot(filter(final_data, total_shifts > 0), aes(x = Orientation.Date.Primary, y = days_since_last)) +
+  geom_point() +
+  geom_hline(yintercept = 90, color = "red") + 
+  theme_bw()
+
+ggplot(filter(final_data, total_shifts > 0), aes(x = as.Date("2018-03-02") -Orientation.Date.Primary, y = days_since_last)) +
+  geom_point() +
+  geom_hline(yintercept = 90, color = "red") + 
+  geom_abline(slope = 1, intercept = -90, color = "blue") + 
+  theme_bw()
+```
+
+OK. Based on this plot, I propose to use >90 days (red line) as a cutoff for when a volunteer is disengaged. 
+I will restrict to looking at data before a certain date (maybe May 01 2018) because we don't know if these volunteers will become disengaged.
+
+## Summary stats
+For volunteers that did orientation between Jan 01 2018 and May 01 2018:
+
+* How many did orientation, but no shifts?
+* How many did orientation, had only 1 shift?
+* How many did orientation, had 2+ shifts?
+
+```{r summarise}
+end_summary <- final_data  %>%
+  filter(Orientation.Date.Primary >= "2018-01-01", Orientation.Date.Primary < "2018-05-01") %>%
+  summarise(total_volunteers = n(),
+            volunteered_ever = paste( round(100* sum(total_shifts>0)/n(),1) ,"%"),
+            volunteered_onlyonce = paste( round(100* sum(total_shifts==1)/n(),1),"%"),
+            twoplus = paste( round(100* sum(twoplus_shifts==TRUE)/n(), 1), "%"),
+            tenplus = paste( round(100* sum(tenplus_shifts==TRUE)/n(), 1), "%"),
+            ave_shifts = round( mean(total_shifts), 2),
+            ave_missed_shifts = round( mean(missed_shifts), 2))
+
+knitr::kable(t(end_summary), caption="Overall Summary")
+
+```
+
+
+# Output
+
+I wrote files for downstream use.
+
+* a Rds with merged data to Data/merged.Rds
+* a Rds with cleaned service data to Data/service_clean.Rds
+
+```{r save}
+saveRDS(final_data, "C:/Users/karla/Dropbox/PAWS/Data/merged.Rds")
+saveRDS(service_clean, "C:/Users/karla/Dropbox/PAWS/Data/service_clean.Rds")
+```
+
+
+# Session Information
