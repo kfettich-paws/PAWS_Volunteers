@@ -3,8 +3,8 @@ title: "PAWS - Volunteer disengagement"
 author: "R-Ladies Philadelphia, Alice Walsh (re-run & modified by KF)"
 date: "8/20/2018"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r, echo=FALSE, include=FALSE}
@@ -53,11 +53,11 @@ How do we define a "disengaged" volunteer?
 1. Load in the data that was pre-cleaned and merged
 1. Analyze and create plots
 
-All analysis was performed for volunteers that did orientation between Jan 01 2017 and Sept 01 2017.
+All analysis was performed for volunteers that did orientation between Jan 01 2018 and May 01 2018.
 
 
 ```{r load_data}
-final_data <- readRDS("C:/Users/karla/Dropbox/PAWS/Data/merged.Rds")
+final_data <- readRDS("../../../Data/merged.Rds")
 ```
 
 # Analysis
@@ -70,14 +70,14 @@ final_data <- readRDS("C:/Users/karla/Dropbox/PAWS/Data/merged.Rds")
 
 ```{r summarise}
 final_data_filt <- final_data %>%
-  filter(Orientation.Date.Primary >= "2018-01-01", Orientation.Date.Primary < "2018-04-26")
+  filter(Orientation.Date.Primary >= "2018-01-01", Orientation.Date.Primary < "2018-05-01")
 
 end_summary <- final_data_filt  %>%
   summarise(total_volunteers = n(),
-            volunteered_ever = paste( round(100* sum(total_shifts>0)/n(),1) ,"%"),
-            volunteered_onlyonce = paste( round(100* sum(total_shifts==1)/n(),1),"%"),
-            twoplus = paste( round(100* sum(twoplus_shifts==TRUE)/n(), 1), "%"),
-            tenplus = paste( round(100* sum(tenplus_shifts==TRUE)/n(), 1), "%"),
+            `no service` = paste( round(100* sum(total_shifts==0)/n(),1) ,"%"),
+            `only 1 shift` = paste( round(100* sum(total_shifts==1)/n(),1),"%"),
+            `2-9 shifts` = paste( round(100* sum(twoplus_shifts==TRUE)/n(), 1), "%"),
+            `10+ shifts` = paste( round(100* sum(tenplus_shifts==TRUE)/n(), 1), "%"),
             ave_shifts = round( mean(total_shifts), 2),
             ave_missed_shifts = round( mean(missed_shifts), 2))
 
@@ -91,40 +91,25 @@ knitr::kable(t(end_summary), caption="Overall Summary")
 loc_summary <- final_data_filt  %>%
   group_by(orient_loc.Primary) %>%
   summarise(total_volunteers = n(),
-            volunteered_ever = paste( round(100* sum(total_shifts>0)/n(),1) ,"%"),
-            volunteered_onlyonce = paste( round(100* sum(total_shifts==1)/n(),1),"%"),
-            twoplus = paste( round(100* sum(twoplus_shifts==TRUE)/n(), 1), "%"),
-            tenplus = paste( round(100* sum(tenplus_shifts==TRUE)/n(), 1), "%"),
-            ave_shifts = round( mean(total_shifts), 2),
-            ave_missed_shifts = round( mean(missed_shifts), 2))
+           `no service` = sum(total_shifts==0) ,
+            `1 shift` = sum(total_shifts==1),
+            `2-9 shifts` = sum(twoplus_shifts==TRUE),
+            `10+ shifts` = sum(tenplus_shifts==TRUE))
 loc_summary <- t(loc_summary)
 colnames(loc_summary) <- loc_summary[1,]
 loc_summary <- loc_summary[-1,]
 knitr::kable(loc_summary, caption="Summary stratified by location")
 
-value <- c(71*0.225, 71*0.141, 71*0.634, 71* 0.127)
-label <- c("no service", "1 shift", "2-9 shifts", "10+ shifts")
-site <- c("GF")
-pct <- c("22.5%", "14.1%", "53.4%","12.7%")
-gf <- data.frame(value, label, site, pct)
+# reshape data for plot
+d <- as.data.frame(loc_summary) %>% 
+  rownames_to_column("label") %>% 
+  filter(label != "total_volunteers") %>% 
+  gather(key = "site", value = "value", GF:PAC)
 
-value <- c(46*0.217, 46*0.174, 46*0.609, 46*0.174 )
-label <- c("no service", "1 shift", "2-9 shifts", "10+ shifts")
-site <- c("NE")
-pct <- c("21.7%", "17.4%", "60.9%","17.4%")
-ne <- data.frame(value, label, site, pct)
-
-value <- c(87*0.241, 87*0.138, 87*0.621, 87*0.149 )
-label <- c("no service", "1 shift", "2-9 shifts", "10+ shifts")
-site <- c("PAC")
-pct <- c("24.1%", "13.8%", "62.1%","14.9%")
-pac <- data.frame(value, label, site, pct)
-
-d <- rbind(gf, ne, pac)
 d$label <- factor(d$label, levels = c("no service", "1 shift", "2-9 shifts", "10+ shifts"))
 
 
-g <- ggplot(d, aes(x = site, y= value, fill=label, label=pct)) + 
+g <- ggplot(d, aes(x = site, y= value, fill=label, label=value)) + 
   geom_bar(stat = "identity") +
   scale_fill_brewer(palette = 12) +
   geom_text(size = 3, position = position_stack(vjust = 0.5)) + 
@@ -251,7 +236,7 @@ ggsurvplot(surv.fit, data = model_data,
 
 We do not observe a significant relationship between the delay between orientation and volunteering and how long the volunteer continues to volunteer. 
 
-The median volunteer engangement time was `r surv_median(surv.fit)$median[1]` days for volunteers that did their first shift <= 14 days after orientation.
+The median volunteer engangement time was not yet reached.
 
 ```{r kaplan-meier_timebetween, fig.width=8, fig.height=6}
 surv.fit <- survfit(surv.model ~ timebw_shift_group, data = model_data)
@@ -269,7 +254,7 @@ ggsurvplot(surv.fit, data = model_data,
 
 We don't see a strong trend that volunteers leave sooner if they tend to volunteer more or less frequently.
 
-The median volunteer engangement time was `r surv_median(surv.fit)$median[1]` days, `r surv_median(surv.fit)$median[2]` days, `r surv_median(surv.fit)$median[3]` days for volunteers with median days between shifts of <= 7 days, 7 to 14 days, and > 14 days, respectively.
+The median volunteer engangement time was not yet reached.
 
 
 ```{r kaplan-meier-only-one, fig.width=8, fig.height=6}
@@ -316,7 +301,7 @@ dev.off()
 
 There is a trend that dog walking volunteers keep volunteering longer than cat care or dog care volunteers. Cat care is at all three sites, dog care only at Grays Ferry, and dog walking is either PAC or NE.
 
-The median volunteer engangement time was `r surv_median(surv.fit)$median[1]` days and `r surv_median(surv.fit)$median[2]` days for cat care volunteers and dog care volunteers, respectively. The median engagement time for dog walking volunteers was not reached.
+The median volunteer engangement time was not reached.
 
 ```{r kaplan-meier-location, fig.width=8, fig.height=6}
 model_data <- filter(final_data_filt, total_shifts > 1)

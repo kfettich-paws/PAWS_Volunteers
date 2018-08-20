@@ -63,7 +63,7 @@ How do we define a "disengaged" volunteer?
 
 ## Load Data
 ```{r}
-final_data <- readRDS("C:/Users/karla/Dropbox/PAWS/Data/merged.Rds")
+final_data <- readRDS("../../../Data/merged.Rds")
 ```
 
 # Analysis
