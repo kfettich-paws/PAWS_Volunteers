@@ -104,12 +104,15 @@ knitr::kable(loc_summary, caption="Summary stratified by location")
 d <- as.data.frame(loc_summary) %>% 
   rownames_to_column("label") %>% 
   filter(label != "total_volunteers") %>% 
-  gather(key = "site", value = "value", GF:PAC)
+  gather(key = "site", value = "value", GF:PAC) %>% 
+  mutate(value = as.numeric(value)) %>% 
+  group_by(site) %>% 
+  mutate(percent =paste(round(100* value / sum(value), 2), "%"))
 
 d$label <- factor(d$label, levels = c("no service", "1 shift", "2-9 shifts", "10+ shifts"))
 
 
-g <- ggplot(d, aes(x = site, y= value, fill=label, label=value)) + 
+g <- ggplot(d, aes(x = site, y= value, fill=label, label=percent)) + 
   geom_bar(stat = "identity") +
   scale_fill_brewer(palette = 12) +
   geom_text(size = 3, position = position_stack(vjust = 0.5)) + 
