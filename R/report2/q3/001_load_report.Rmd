@@ -1,7 +1,7 @@
 ---
 title: "PAWS Analysis with R-Ladies - Exploring and Manipulating the Data"
-author: "Alice Walsh"
-date: "3/16/2018"
+author: "Alice Walsh (updated by KF)"
+date: "8/20/2018"
 output:
   pdf_document: default
   html_document: default
@@ -327,7 +327,7 @@ final_data <- merge(signup_service, select(master_clean, ID, Status, Date.entere
 ## Visualizations
 ```{r plot}
 signup_service_plot <- final_data %>%
-  filter(Orientation.Date.Primary <= "2017-08-01") %>%
+  filter(Orientation.Date.Primary <= "2018-04-26") %>%
   group_by(orient_loc.Primary, orient_type.Primary, primary_type, any_shifts) %>%
   summarise(Freq = n()) %>%
   ungroup()
@@ -351,7 +351,7 @@ How long since the last shift? This can help us decide a volunteer disengaged cu
 final_data$total_time <- as.numeric(final_data$last_recorded_date - final_data$Orientation.Date.Primary)
 final_data$time_to_first <- as.numeric(final_data$first_shift_date - final_data$Orientation.Date.Primary)
 final_data$time_last_to_first <- as.numeric(final_data$last_recorded_date - final_data$first_shift_date)
-final_data$days_since_last <- as.numeric(as.Date("2018-03-02") - final_data$last_recorded_date)
+final_data$days_since_last <- as.numeric(as.Date("2018-07-02") - final_data$last_recorded_date)
 
 ```
 
@@ -399,7 +399,7 @@ For volunteers that did orientation between Jan 01 2018 and May 01 2018:
 
 ```{r summarise}
 end_summary <- final_data  %>%
-  filter(Orientation.Date.Primary >= "2018-01-01", Orientation.Date.Primary < "2018-05-01") %>%
+  filter(Orientation.Date.Primary >= "2018-01-01", Orientation.Date.Primary < "2018-04-26") %>%
   summarise(total_volunteers = n(),
             volunteered_ever = paste( round(100* sum(total_shifts>0)/n(),1) ,"%"),
             volunteered_onlyonce = paste( round(100* sum(total_shifts==1)/n(),1),"%"),

@@ -1,10 +1,10 @@
 ---
 title: "PAWS - Volunteer disengagement"
-author: "R-Ladies Philadelphia, Alice Walsh"
-date: "3/16/2018"
+author: "R-Ladies Philadelphia, Alice Walsh (re-run & modified by KF)"
+date: "8/20/2018"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r, echo=FALSE, include=FALSE}
@@ -70,7 +70,7 @@ final_data <- readRDS("C:/Users/karla/Dropbox/PAWS/Data/merged.Rds")
 
 ```{r summarise}
 final_data_filt <- final_data %>%
-  filter(Orientation.Date.Primary >= "2018-01-01", Orientation.Date.Primary < "2018-05-01")
+  filter(Orientation.Date.Primary >= "2018-01-01", Orientation.Date.Primary < "2018-04-26")
 
 end_summary <- final_data_filt  %>%
   summarise(total_volunteers = n(),

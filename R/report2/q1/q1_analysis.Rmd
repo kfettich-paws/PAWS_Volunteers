@@ -1,7 +1,7 @@
 ---
 title: "PAWS Analysis with R-Ladies - Volunteer engagement timeline"
-author: "Karla Fettich, Alice Walsh"
-date: "March 25, 2018"
+author: "Karla Fettic"
+date: "August 20, 2018"
 output:
   html_document: default
   pdf_document: default

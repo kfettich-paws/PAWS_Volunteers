@@ -1,7 +1,7 @@
 ---
 title: "PAWS Analysis with R-Ladies - Question 3 additional analysis"
-author: "Alice Walsh"
-date: "3/23/2018"
+author: "Alice Walsh (updated by KF)"
+date: "8/20/2018"
 output:
   pdf_document: default
   html_document: default
@@ -63,11 +63,11 @@ How do we define a "disengaged" volunteer?
 
 ## Load Data
 ```{r}
-final_data <- readRDS("../../Data/merged.Rds")
+final_data <- readRDS("C:/Users/karla/Dropbox/PAWS/Data/merged.Rds")
 ```
 
 # Analysis
-Let's try time-to-event analysis. Here we will look at data for volunteers who did orientation between Jan 1, 2017 and August 1, 2017. For this analysis, only volunteers that did at least one shift are considered and a volunteer is defined as "disengaged" if greater than 90 days passes without volunteering.
+Let's try time-to-event analysis. Here we will look at data for volunteers who did orientation between Jan 1, 2018 and May 1, 2018. For this analysis, only volunteers that did at least one shift are considered and a volunteer is defined as "disengaged" if greater than 90 days passes without volunteering.
 
 ```{r calc_disengage}
 final_data$event <- 0
@@ -91,7 +91,7 @@ final_data$timebw_shift_group <- factor(final_data$timebw_shift_group,
                                         levels = c("<= 7 days", "7 to 14 days", "> 14 days"))
 
 final_data %>%
-  filter(Orientation.Date.Primary <= "2017-09-01", total_shifts > 0) %>%
+  filter(Orientation.Date.Primary <= "2018-05-01", total_shifts > 0) %>%
   group_by(first_shift_group) %>%
   summarise(mean_shifts = mean(total_shifts),
             mean_missed_shifts = mean(missed_shifts),
@@ -99,7 +99,7 @@ final_data %>%
   knitr::kable(caption = "Summary of time orientation to first shift")
 
 final_data %>%
-  filter(Orientation.Date.Primary <= "2017-09-01", total_shifts > 0 ) %>%
+  filter(Orientation.Date.Primary <= "2018-05-01", total_shifts > 0 ) %>%
   group_by(timebw_shift_group) %>%
   summarise(mean_shifts = mean(total_shifts),
             mean_missed_shifts = mean(missed_shifts),
@@ -111,7 +111,7 @@ final_data %>%
 ## Plot volunteers time between first shift and disengagement (time_last_to_first)
 
 ```{r kaplan-meier1}
-model_data <- filter(final_data, total_shifts > 1, Orientation.Date.Primary <= "2017-09-01")
+model_data <- filter(final_data, total_shifts > 1, Orientation.Date.Primary <= "2018-05-01")
 surv.model <- Surv(model_data$time_last_to_first, model_data$event)
 
 surv.fit <- survfit(surv.model ~ first_shift_group, data = model_data)
@@ -144,7 +144,7 @@ We don't see a strong trend that volunteers leave sooner if they tend to volunte
 # Could plot either total_time - time from orientation to last shift
 # or time_last_to_first - time from first shift to last shift
 
-model_data <- filter(final_data, total_shifts > 0, Orientation.Date.Primary <= "2017-09-01")
+model_data <- filter(final_data, total_shifts > 0, Orientation.Date.Primary <= "2018-05-01")
 surv.model <- Surv(model_data$total_time, model_data$event)
 surv.fit <- survfit(surv.model ~ only_one_shift, data = model_data)
 surv.fit
@@ -160,7 +160,7 @@ ggsurvplot(surv.fit, data = model_data,
 # top assignments:
 top_assign <- names(sort(table(final_data$primary_type),decreasing = T))[1:3]
 model_data <- filter(final_data, total_shifts > 1,
-                     Orientation.Date.Primary <= "2017-09-01",
+                     Orientation.Date.Primary <= "2018-05-01",
                      primary_type %in% top_assign)
 
 surv.model <- Surv(model_data$time_last_to_first, model_data$event)
@@ -175,7 +175,7 @@ ggsurvplot(surv.fit, data = model_data,
            legend.title = "", legend.labs = levels(factor(model_data$primary_type)))  
   
 
-model_data <- filter(final_data, total_shifts > 1, Orientation.Date.Primary <= "2017-09-01")
+model_data <- filter(final_data, total_shifts > 1, Orientation.Date.Primary <= "2018-05-01")
 surv.model <- Surv(model_data$time_last_to_first, model_data$event)
 surv.fit <- survfit(surv.model ~ orient_loc.Primary, data = model_data)
 surv.fit
@@ -188,7 +188,7 @@ ggsurvplot(surv.fit, data = model_data,
            legend.title = "", legend.labs = levels(factor(model_data$orient_loc.Primary))) 
 
 
-model_data <- filter(final_data, total_shifts > 1, Orientation.Date.Primary <= "2017-09-01")
+model_data <- filter(final_data, total_shifts > 1, Orientation.Date.Primary <= "2018-05-01")
 surv.model <- Surv(model_data$time_last_to_first, model_data$event)
 surv.fit <- survfit(surv.model ~ city_clean, data = model_data)
 surv.fit
