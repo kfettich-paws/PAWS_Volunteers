@@ -216,7 +216,7 @@ service_clean <- service %>%
     Assignment == "Dog Walking Volunteer - PAC" ~ "Dog Walking Volunteer - PAC",
     Assignment == "Cat Care Volunteer - GF" ~ "Cat Care Volunteer - GF",
     Assignment == "Cat Socialization Team" ~ "Cat Socialization Team - ",
-    Assignment == "PAWS South Philly PetSmart" ~ " - PAWS South Philly PetSmart",
+    Assignment == "PAWS South Philly PetSmart" ~ "PetSmart - PAWS South Philly PetSmart",
     Assignment == "PAC Adoptions Assistant" ~ "Adoptions Assistant - PAC",
     Assignment == "Cat Pawsitive Program Volunteer - Grant Ave. Location" ~ "Cat Pawsitive Program Volunteer - Grant Ave.",
     Assignment == "PAC Dog Mentee Shift (for shadowing only)" ~ "Dog Mentee Shift - PAC",
@@ -230,8 +230,8 @@ service_clean <- service %>%
     Assignment == "Cat Pawsitive Program Volunteers - OLD CITY" ~ "Cat Pawsitive Program Volunteer - PAC",
     Assignment == "Voicemail Volunteers" ~ "Voicemail Volunteers - ",
     Assignment == "Gray's Ferry Mentee Shift for dog care (for shadowing only)" ~ "Dog Mentee Shift - GF",
-    grepl("Mutt Strut", Assignment) ~ "Mutt Strut",
-    TRUE ~ "other_event"
+    grepl("Mutt Strut", Assignment) ~ "Mutt Strut - ",
+    TRUE ~ "other_event - "
   ))
 
 
