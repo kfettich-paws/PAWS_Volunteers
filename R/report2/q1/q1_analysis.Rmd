@@ -304,7 +304,7 @@ v$row <- 1:7
 v$Median <- as.numeric(as.character(v$Median))
 
 p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
-  ggtitle("Days between orientation and date entered into Volgistics") + 
+  ggtitle("Days between orientation and date entered into Volgistics 2018") + 
   geom_bar(stat="identity", fill="steelblue") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
   scale_x_discrete(name = "Orientation Location and Type", breaks = v$row, labels = as.character(v$orient_type.Primary)) + 
@@ -400,7 +400,7 @@ v$row <- 1:7
 v$Median <- as.numeric(as.character(v$Median))
 
 p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
-  ggtitle("Days between orientation and date of first shift") + 
+  ggtitle("Days between orientation and date of first shift 2018") + 
   geom_bar(stat="identity", fill="steelblue") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
   scale_x_discrete(name = "Orientation Location and Type", breaks = v$row, labels = as.character(v$orient_type.Primary)) + 
@@ -438,7 +438,7 @@ v$row <- 1:16
 v$Median <- as.numeric(as.character(v$Median))
 
 p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
-  ggtitle("Days between first sign-in to Volgistics and date of first shift") + 
+  ggtitle("Days between first sign-in to Volgistics and date of first shift 2018") + 
   geom_bar(stat="identity", fill="steelblue") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
   scale_x_discrete(name = "First Shift Location and Type", breaks = v$row, labels = as.character(v$assignment_type.1)) + 
@@ -510,6 +510,24 @@ new.vols.by.month$Freq[which(new.vols.by.month$orient_loc.Primary=="PAC")] / sum
 
 new.vols.by.month$Freq[which(new.vols.by.month$orient_loc.Primary=="NE")] <- 
 new.vols.by.month$Freq[which(new.vols.by.month$orient_loc.Primary=="NE")] / sum(new.vols.by.month$Freq[which(new.vols.by.month$orient_loc.Primary=="NE")])
+
+# add months 7-12 wuth NA
+
+new.vols.by.month$Freq[new.vols.by.month$orientation.month==7] <- NA
+new.vols.by.month$orientation.month <- as.numeric(as.character(new.vols.by.month$orientation.month))
+
+empty.rows.GF <- data.frame(orient_loc.Primary = c("GF"),
+                         orientation.month = c(7,8,9,10,11,12),
+                         Freq = NA)
+empty.rows.NE <- data.frame(orient_loc.Primary = c("NE"),
+                         orientation.month = c(7,8,9,10,11,12),
+                         Freq = NA)
+empty.rows.PAC <- data.frame(orient_loc.Primary = c("PAC"),
+                         orientation.month = c(7,8,9,10,11,12),
+                         Freq = NA)
+new.vols.by.month <- rbind(new.vols.by.month,empty.rows.GF,empty.rows.NE,empty.rows.PAC)
+new.vols.by.month <- new.vols.by.month[!is.na(new.vols.by.month$orient_loc.Primary) & 
+                                         !is.na(new.vols.by.month$orientation.month),]
 
 p <- ggplot(data=new.vols.by.month[new.vols.by.month$orient_loc.Primary=="GF",],
        aes(x=factor(orientation.month), 

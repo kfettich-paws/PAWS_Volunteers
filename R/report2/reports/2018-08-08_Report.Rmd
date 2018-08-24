@@ -1,7 +1,7 @@
 ---
-title: "PAWS Volunteer Engagement Patterns"
+title: "PAWS Volunteer Engagement Patterns (2018 Mid-Year Update)"
 author: "R-Ladies Philadelphia"
-date: "August 8, 2018"
+date: "August 21, 2018"
 geometry: margin=2cm
 output: 
   pdf_document: default
@@ -39,29 +39,32 @@ R-Ladies Philadelphia is the Philadelphia chapter of R-Ladies, a worldwide organ
 \newpage
 # Problem definition and dataset
 
-This report is a follow-up analysis to the report from Q1 2017, with a focus on the first half of 2018 (Jan 1 2018 - July 1 2018), addressing the question from the previous report - **What can PAWS do to increase volunteer engagement and retention?** 
+This report is a follow-up analysis to the report from Q1 2018, with a focus on the first half of 2018 (Jan 1, 2018 - July 25, 2018), addressing the question from the previous report - **What can PAWS do to increase volunteer engagement and retention?** 
 
-The data used for this round of analyses included 3 sets, obtained with PAWS permission: (1) the "master" dataset obtained from Volgistics, with names, addresses, and phone-numbers removed, and anonymized PAWS ID numbers, (2) the orientation signup sheet (from Google Docs), also de-identified, including orientation records between 1/1/2018 - 7/1/2018, (3) the "service" data obtained from Volgistics, de-identified. 
+The data used for this round of analyses included 3 sets, obtained with PAWS permission: (1) the "master" dataset obtained from Volgistics, with names, addresses, and phone-numbers removed, and anonymized PAWS ID numbers, (2) the orientation signup sheet (from Google Docs), also de-identified, including orientation records between 1/1/2018 - 7/25/2018, (3) the "service" data obtained from Volgistics, de-identified. 
+
+**New volunteers**: volunteers who recorded at least 1 shift of service
+
 
 # Results: Engagement
 ## Attending Orientation
 
-Currently, the first step of becoming a PAWS volunteer is to attend orientation. It is therefore assumed that attending orientation is the first indication that a potential volunteer is motivated to donate their time to PAWS and has availability to do so. The new volunteer orientation attendance data from 2018 lends further support to the finding that new volunteer participation in orientation has seasonal patterns.  
-
-New volunteers (volunteers who recorded at least 1 shift of service) who attended their first orientation at Grays Ferry tended to do so mostly in January/February and June (which is a different pattern from the March/April peaks in 2017). Similar to 2017, PAC maintained a relatively stable new volunteer orientation attendance throughout the first half of 2018, with a peak attendance in May. In contrast, Grant Ave experienced a dip in new volunteers attending orientation in May (while May was a peak month in 2017). 
+New volunteers who attended their first orientation at Grays Ferry tended to do so mostly in January/February and June (which is a different pattern from the March/April peaks in 2017). Similar to 2017, PAC maintained a relatively stable new volunteer orientation attendance throughout the first half of 2018, with a peak attendance in May. In contrast, Grant Ave experienced a dip in new volunteers attending orientation in May (while May was a peak month in 2017). 
 
 A more in-depth analysis of what drives these patterns can be done - however, the scope of this analysis will need to be defined by PAWS. E.g., the impact of macro-level events can be assessed, e.g. specific changes in operations like the introduction of tablet sign-ins, orientation with mentorship, etc.; events like volunteer recruitment campaigns or other PAWS events; weather; etc. Additionally, more micro-level factors can also be explored, such as time of day/week of first shift, other volunteers present during first shift, etc. 
 
-
 ![](GF_orientationByMonth.png)
+![](GF_orientationByMonth_updated.png)
 ![](PAC_orientationByMonth.png)
+![](PAC_orientationByMonth_updated.png)
+
 ![](NE_orientationByMonth.png)
+![](NE_orientationByMonth_updated.png)
 
-
-## Being entered into Volgistics
+## Volgistics Sign-In Link
 The next step of becoming a PAWS volunteer is to be sent a link from a PAWS staff member, with login information for Volgistics. 
 
-![Median number of days between when a volunteer attends orientation and when a volunteer is entered into Volgistics](days_orientation_to_system.png) 
+![Median number of days between when a volunteer attended orientation and when the Volgistics link was sent out, 2017](days_orientation_to_system.png) ![Median number of days between when a volunteer attended orientation and when the Volgistics link was sent out, 2018](days_orientation_to_system_update.png)
 
 The data indicate that once they attended orientation, new volunteers were typically emailed the Volgistics sign-up link 1-2 days later at PAC, 4-5 days later at Grays Ferry (increased from 3 in 2017), and 8 days later at Grant Ave (decreased from 10 in 2017).   
 
@@ -73,9 +76,9 @@ Similarly to 2017, new volunteers signed into Volgistics within a day of receivi
 
 The data indicate that new volunteers who completed PAC orientation typically began their service 16 days later (dog; increase from 9 in 2017) and 12 days later (cat; decrease from 14 in 2017). At Grays Ferry, volunteers from basic orientation started service 14 days later (decrease from 17 in 2017) and volunteers from basic + WD orientations typically started their service 19 days later (increase from 17); at Grant Ave, volunteers began their service 20 days after orientation (decrease from 21 in 2017). 
 
-![Median number of days between orientation and the date of their first shift, by type of orientation](days_orientation_to_shift1.png)
+![Median number of days between orientation and the date of their first shift, by type of orientation](days_orientation_to_shift1.png) ![Median number of days between orientation and the date of their first shift, by type of orientation](days_orientation_to_shift1_update.png) 
 
-![Median number of days between orientation and the date of their first shift, by shift and location](days_orientation_to_shift1_byShiftLoc.png)
+![Median number of days between orientation and the date of their first shift, by shift and location](days_orientation_to_shift1_byShiftLoc.png) ![Median number of days between orientation and the date of their first shift, by shift and location](days_orientation_to_shift1_byShiftLoc_update.png)
 
 The **Cat Pawsitive Program** saw volunteers starting their first shift approx. 27 days from orientation, a dramatic decrease from 2017 (49 days from orientation).
 
@@ -96,8 +99,11 @@ It is interesting to note that dog care volunteer shifts (which only exist at Gr
 We explored where volunteers at each location come from. For the purpose of this analysis, we used zip codes to inform where volunteers live, and we limited the dataset to volunteers who completed orientations between January 1st, 2017 and September 1st, 2017, and who recorded at least 1 shift in Volgistics.
 
 ![ZIP codes of volunteers at PAC](map_PAC.png)
+![ZIP codes of volunteers at PAC](map_PAC_update.png)
 ![ZIP codes of volunteers at GF](map_GF.png)
+![ZIP codes of volunteers at GF](map_GF_update.png)
 ![ZIP codes of volunteers at NE](map_NE.png)
+![ZIP codes of volunteers at NE](map_NE_update.png)
 
 It appears to be the case that the Grant Ave location attracts volunteers from North Philadelphia and Northeast Philadelphia, while PAC and GF share a more localized pool of volunteers from the Center City, South Philadelphia and West Philadelphia area. Given this, one possibility to attract more volunteers to the Grays Ferry location may be to encourage PAC volunteers to also serve at Grays Ferry. 
 
@@ -110,12 +116,14 @@ From this volunteer pool, initial results suggest that approximately 50% of orie
 We also found that it is unlikely for a new volunteer to attend only one shift, and then disengage. Specifically, only a small percentage of orientation attendees had only 1 shift recorded (4.7% at Grays Ferry = 6 volunteers; 6.6% at Grant Ave = 6 volunteers; 7.5% at PAC = 15 volunteers). The majority of volunteers served 2 or more shifts, across all locations. This suggests that new volunteers have the motivation to serve at PAWS repeatedly, and the challenge may be how to best place and retain them for longer-term service.
 \newpage
 ![Number of volunteers by service level, per location](Engagement_by_ShiftCount.png)
+![Number of volunteers by service level, per location](Engagement_by_ShiftCount_update.png)
 
 Interestingly, taken across all locations, the delay between orientation and shift 1 is not sufficient to estimate when volunteers become disengaged, even though the engagement analysis suggests that the longer this delay, the fewer shifts volunteers attend. In this dataset, we did not observe a significant relationship between the delay between orientation and volunteering and how long, in time, the volunteer continues to volunteer at PAWS. Furthermore, we found that whether a volunteer serves multiple times a week, once every 2 weeks, or more sporadically than every 2 weeks, this pattern is not an indicator for disengagement. It could be that the patterns of engagement frequency observed by staff, and in the data, can guide the options given to new volunteers when they first sign up (e.g. "Would you like to serve: a) weekly, b) monthly, c) every once in a while/events only").
 
 We also examined disengagement patterns between volunteers whose primary assignment is 'cat care', 'dog care', and 'dog walking'. The data suggest that dog walking volunteers (PAC or NE) are more likely to serve for an overall duration than cat care (all locations) and dog care (GF) volunteers. Furthermore, the risk of losing dog walking volunteers is highest within the first 60 days, while the risk of losing cat care and dog care volunteers is highest in the first 100 days of service.
 
-![Probability that a volunteer remains active after a given number of days, based on their assignment](EngagementProbs.png)
+![Probability that a volunteer remains active after a given number of days, based on their assignment](EngagementProbs.png) ![Probability that a volunteer remains active after a given number of days, based on their assignment](EngagementProbs_update.png)
+
 
 The data suggest that PAWS is most likely to lose new volunteers in their first 60 days of service (dog walking) or 100 days (cat care, dog care). This information could guide the timeline of retention efforts, so that retention efforts are highest in a volunteer's first 60-100 days of service.
 

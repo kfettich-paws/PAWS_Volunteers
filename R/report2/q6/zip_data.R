@@ -19,7 +19,7 @@ require(ggmap)
 
 df <- readRDS(paste0(getwd(),"/Data/merged.Rds"))
 df <- df %>%
-  filter(Orientation.Date.Primary >= "2017-01-01", Orientation.Date.Primary < "2017-09-01")
+  filter(Orientation.Date.Primary >= "2018-01-01", Orientation.Date.Primary < "2018-05-01")
 
 # create factor for how many shifts attended
 df$shifts_attended <- case_when(
@@ -76,7 +76,7 @@ map <- ggmap(phila) +
                            color = `Number of Shifts Attended`, 
                            size = `Number of Volunteers`)) +
   scale_color_manual(values=c("firebrick1", "gold1", "chartreuse3")) +
-  ggtitle("PAC Volunteer Engagement by ZIP code of volunteer") +
+  ggtitle("PAC Volunteer Engagement by ZIP code of volunteer 2018") +
   labs(x="",y="") +
   theme(plot.title = element_text(size = 20, face = "bold"),
         legend.title=element_text(size=16), 
@@ -104,7 +104,7 @@ map <- ggmap(phila) +
                            color = `Number of Shifts Attended`, 
                            size = `Number of Volunteers`)) +
   scale_color_manual(values=c("firebrick1", "gold1", "chartreuse3")) +
-  ggtitle("GF Volunteer Engagement by ZIP code of volunteer") +
+  ggtitle("GF Volunteer Engagement by ZIP code of volunteer 2018") +
   labs(x="",y="") +
   theme(plot.title = element_text(size = 20, face = "bold"),
         legend.title=element_text(size=16), 
@@ -132,7 +132,7 @@ map <- ggmap(phila) +
                            color = `Number of Shifts Attended`, 
                            size = `Number of Volunteers`)) +
   scale_color_manual(values=c("firebrick1", "gold1", "chartreuse3")) +
-  ggtitle("NE Volunteer Engagement by ZIP code of volunteer") +
+  ggtitle("NE Volunteer Engagement by ZIP code of volunteer 2018") +
   labs(x="",y="") +
   theme(plot.title = element_text(size = 20, face = "bold"),
         legend.title=element_text(size=16), 
