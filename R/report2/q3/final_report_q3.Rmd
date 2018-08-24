@@ -117,7 +117,7 @@ g <- ggplot(d, aes(x = site, y= value, fill=label, label=percent)) +
   scale_fill_brewer(palette = 12) +
   geom_text(size = 3, position = position_stack(vjust = 0.5)) + 
   ylab("Number of volunteers") + 
-  ggtitle("Number of volunteers by service level, per location")
+  ggtitle("Number of volunteers by service level, per location\n2018")
 
 png("Engagement_by_ShiftCount.png", width=800, height=600)
 g
@@ -190,6 +190,7 @@ ggplot(filter(final_data_filt, total_shifts > 0), aes(x= days_since_last)) +
   geom_vline(xintercept = 90) + 
   ylab("Number of Volunteers") + 
   xlab("Days since last shift") + 
+  ggtitle("Days since last shift in 2018") + 
   theme_bw()
 
 ```
@@ -230,7 +231,7 @@ ggsurvplot(surv.fit, data = model_data,
            ylab = "Volunteer Engagement Prob",
            palette = brewer.pal(n=9, "Set1"),
            xlab = "Time From First to Last Shift (days)",
-           title = "Compare how soon after orientation volunteered",
+           title = "Compare time between orientation and first shift, data in 2018",
            legend.title = "", legend.labs = levels(factor(model_data$first_shift_group)))  
 
 
@@ -250,7 +251,7 @@ ggsurvplot(surv.fit, data = model_data,
            ylab = "Volunteer Engagement Prob",
            palette = brewer.pal(n=9, "Set1"),
            xlab = "Time From First to Last Shift (days)",
-           title = "Compare median time between shifts",
+           title = "Compare median time between shifts, data in 2018",
            legend.title = "", legend.labs = levels(factor(model_data$timebw_shift_group)))  
 
 ```
@@ -293,7 +294,7 @@ g <- ggsurvplot(surv.fit, data = model_data,
            pval = TRUE, conf.int = FALSE, cumevents = TRUE,
            palette = brewer.pal(n=9, "Set1"),
            ylab = "Probability that a volunteer remains active after x days", xlab = "Time From First to Last Shift (days)",
-           title = "Compare primary assignments",
+           title = "Compare primary assignments, data in 2018",
            legend.title = "", legend.labs = levels(factor(model_data$primary_type)))  
 
 png("EngagementProbs.png", width=800, height=600)
@@ -316,7 +317,7 @@ ggsurvplot(surv.fit, data = model_data,
            pval = TRUE, conf.int = FALSE, cumevents = TRUE,
            palette = brewer.pal(n=9, "Set1"),
            ylab = "Volunteer Engagement Prob", xlab = "Time From First to Last Shift (days)",
-           title = "Compare primary orientation location",
+           title = "Compare primary orientation location, data in 2018",
            legend.title = "", legend.labs = levels(factor(model_data$orient_loc.Primary))) 
 ```
 
@@ -332,12 +333,12 @@ ggsurvplot(surv.fit, data = model_data,
            pval = TRUE, conf.int = FALSE, cumevents = TRUE,
            palette = brewer.pal(n=9, "Set1"),
            ylab = "Volunteer Engagement Prob", xlab = "Time From First to Last Shift (days)",
-           title = "Compare volunteer residence city",
+           title = "Compare volunteer residence city, data in 2018",
            legend.title = "", legend.labs = levels(factor(model_data$city_clean))) 
 ```
 
-There is not a clear trend for orientation location or whether someone lives in philadelphia or outside philadelphia.
+
 
 # Conclusions from this part
 
-We did not extensively examine all the patterns of volunteer disengagement and factors that led to a volunteer leaving. Overall, the largest drop-out appears to be that volunteers never show up after doing the orientation. If a volunteer does show up, then they tend to volunteer more than once. The Gray's Ferry location is having the hardest time retaining volunteers and their volunteers tend to volunteer less than other locations.
+**Need to update for 2018 data**
