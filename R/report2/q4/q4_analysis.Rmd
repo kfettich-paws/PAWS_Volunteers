@@ -26,6 +26,7 @@ suppressPackageStartupMessages(library(glmnet))
 ```{r load_data, include=FALSE}
 load(file = "../../PAWS_cleaned.rda")
 load(file = "../../service_clean_wide.rda")
+
 ```
 
 ```{r names, include=FALSE}

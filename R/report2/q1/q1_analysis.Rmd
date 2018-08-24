@@ -1,7 +1,7 @@
 ---
 title: "PAWS Analysis with R-Ladies - Volunteer engagement timeline"
-author: "Karla Fettic"
-date: "August 20, 2018"
+author: "Karla Fettich"
+date: "August 23, 2018"
 output:
   html_document: default
   pdf_document: default
@@ -263,28 +263,44 @@ quantile(v.activity$t.orientation.to.shift1, na.rm = TRUE)
 
 # Analysis
 
+# going to split groups into 2, v17 = volunteers who did orientation in 2017, and v18 = volunteers who did orientation in 2018.
+
+```{r}
+v17 <- v.activity[v.activity$Orientation.Date.Primary >= "2017-01-01" & 
+                    v.activity$Orientation.Date.Primary < "2018-01-01",]
+v18 <- v.activity[v.activity$Orientation.Date.Primary >= "2018-01-01",]
+```
+
 1. What is the typical wait time from attending their first orientation, to being entered into the system (to be able to sign up for shifs)? For this question, I will create groups based only on location of orientation, because this wait time depends on PAWS staff at each location.
 
 ```{r}
-quantile(as.numeric(v.activity$t.orientation.to.entered), na.rm = TRUE, c(seq(0,1,0.1)))
+quantile(as.numeric(v17$t.orientation.to.entered), na.rm = TRUE, c(seq(0,1,0.1)))
+quantile(as.numeric(v18$t.orientation.to.entered), na.rm = TRUE, c(seq(0,1,0.1)))
 ```
 
-It looks like the top 10% of values are unusually high. This will skew the mean, so a more accurate representation of the typical wait time is the median, at `r median(as.numeric(v.activity$t.orientation.to.entered), na.rm = TRUE)` days. 
+It looks like the top 10% of values are unusually high. This will skew the mean, so a more accurate representation of the typical wait time is the median, at `r median(as.numeric(v17$t.orientation.to.entered), na.rm = TRUE)` days in 2017, and `r median(as.numeric(v18$t.orientation.to.entered), na.rm = TRUE)` in 2018. 
 
 * What is this wait time for orientations that took place at the different locations (PAC, NE and GF)? 
 
 ```{r}
-v.activity[,c("orient_loc.Primary","t.orientation.to.entered")] %>% 
+v17[,c("orient_loc.Primary","t.orientation.to.entered")] %>% 
   group_by(orient_loc.Primary) %>% 
   summarise(Min=min(t.orientation.to.entered, na.rm=TRUE),
             Max=max(t.orientation.to.entered, na.rm=TRUE),
             Median=median(t.orientation.to.entered, na.rm=TRUE))
+
+v18[,c("orient_loc.Primary","t.orientation.to.entered")] %>% 
+  group_by(orient_loc.Primary) %>% 
+  summarise(Min=min(t.orientation.to.entered, na.rm=TRUE),
+            Max=max(t.orientation.to.entered, na.rm=TRUE),
+            Median=median(t.orientation.to.entered, na.rm=TRUE))
+
 ```
 
 * What is this wait time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD)
 
 ```{r}
-v <- v.activity[,c("orient_loc.Primary", "orient_type.Primary", "t.orientation.to.entered")] %>% 
+v <- v17[,c("orient_loc.Primary", "orient_type.Primary", "t.orientation.to.entered")] %>% 
   group_by(orient_loc.Primary, orient_type.Primary) %>% 
   summarise(Min=min(t.orientation.to.entered, na.rm=TRUE),
             Max=max(t.orientation.to.entered, na.rm=TRUE),
@@ -302,16 +318,46 @@ v <- v[1:7,]
 v <- v[c(6:7,3,1:2,5,4),]
 v$row <- 1:7
 v$Median <- as.numeric(as.character(v$Median))
+medians <- v$Median
 
-p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
-  ggtitle("Days between orientation and date entered into Volgistics 2018") + 
+p17 <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
+  ggtitle("Days between orientation and date entered into Volgistics 2017") + 
   geom_bar(stat="identity", fill="steelblue") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
   scale_x_discrete(name = "Orientation Location and Type", breaks = v$row, labels = as.character(v$orient_type.Primary)) + 
   scale_y_continuous(name="Number of Days", limits=c(0, 10), breaks = c(0:10))
   
-png("days_orientation_to_system.png", width=800, height=400)
-p
+v <- v18[,c("orient_loc.Primary", "orient_type.Primary", "t.orientation.to.entered")] %>% 
+  group_by(orient_loc.Primary, orient_type.Primary) %>% 
+  summarise(Min=min(t.orientation.to.entered, na.rm=TRUE),
+            Max=max(t.orientation.to.entered, na.rm=TRUE),
+            Median=median(t.orientation.to.entered, na.rm=TRUE))
+
+v <- v[v$orient_type.Primary != "WD",] %>% 
+  group_by(orient_loc.Primary) %>% 
+  do(rbind(.,c(.$orient_loc.Primary,rep(NA,NCOL(v)-1)))) %>%
+  ungroup() %>% 
+  data.frame()
+v$orient_type.Primary <- paste0(v$orient_loc.Primary," - ", v$orient_type.Primary)
+v$orient_type.Primary[c(3,5,8)] <- ""
+v$Median[c(3,5,8)] <- 0
+v <- v[1:7,]
+v <- v[c(6:7,3,1:2,5,4),]
+v$row <- 1:7
+v$Median <- as.numeric(as.character(v$Median))
+v$medians2017 <- c(1,1,NA,3,3,NA,10) #displaying what was shown in last report; at GF, the numbers look different in this updated dataset for some reason, but not dramatically. 
+
+p18 <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
+  ggtitle("Days between orientation and date entered into Volgistics 2018, vs 2017 (black outline)") + 
+  geom_bar(stat="identity", aes(x=factor(v$row), y=medians2017), color="black", fill=NA) +
+  geom_bar(stat="identity", fill="steelblue", alpha = 0.75) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
+  scale_x_discrete(name = "Orientation Location and Type", breaks = v$row, labels = as.character(v$orient_type.Primary)) + 
+  scale_y_continuous(name="Number of Days", limits=c(0, 10), breaks = c(0:10))
+  
+
+png("days_orientation_to_system2018v2017.png", width=800, height=400)
+p18
 dev.off()
 
 ```
@@ -321,7 +367,8 @@ The time it takes for volunteers to be entered into the system after attending o
 2. What is the typical time from being entered into the system (and therefore, being able to sign up for shifts) to demonstrating an interest in signing up for shifts (logging into the system for the first time)? For this question too, I will create groups based only on location of orientation.
 
 ```{r}
-quantile(as.numeric(v.activity$t.entered.to.start), na.rm = TRUE, c(seq(0,1,0.1)))
+quantile(as.numeric(v17$t.entered.to.start), na.rm = TRUE, c(seq(0,1,0.1)))
+quantile(as.numeric(v18$t.entered.to.start), na.rm = TRUE, c(seq(0,1,0.1)))
 ```
 
 It looks like the vast majority of people log into the volunteer management system on the day they are added. 
@@ -329,7 +376,13 @@ It looks like the vast majority of people log into the volunteer management syst
 * What is this time for orientations that took place at the different locations (PAC, NE and GF)? 
 
 ```{r}
-v.activity[,c("orient_loc.Primary","t.entered.to.start")] %>% 
+v17[,c("orient_loc.Primary","t.entered.to.start")] %>% 
+  group_by(orient_loc.Primary) %>% 
+  summarise(Min=min(t.entered.to.start, na.rm=TRUE),
+            Max=max(t.entered.to.start, na.rm=TRUE),
+            Median=median(t.entered.to.start, na.rm=TRUE))
+
+v18[,c("orient_loc.Primary","t.entered.to.start")] %>% 
   group_by(orient_loc.Primary) %>% 
   summarise(Min=min(t.entered.to.start, na.rm=TRUE),
             Max=max(t.entered.to.start, na.rm=TRUE),
@@ -339,11 +392,19 @@ v.activity[,c("orient_loc.Primary","t.entered.to.start")] %>%
 * What is this time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD )
 
 ```{r}
-v.activity[,c("orient_loc.Primary", "orient_type.Primary", "t.entered.to.start")] %>% 
+v17[,c("orient_loc.Primary", "orient_type.Primary", "t.entered.to.start")] %>% 
   group_by(orient_loc.Primary, orient_type.Primary) %>% 
   summarise(Min=min(t.entered.to.start, na.rm=TRUE),
             Max=max(t.entered.to.start, na.rm=TRUE),
             Median=median(t.entered.to.start, na.rm=TRUE))
+
+v18[,c("orient_loc.Primary", "orient_type.Primary", "t.entered.to.start")] %>% 
+  group_by(orient_loc.Primary, orient_type.Primary) %>% 
+  summarise(Min=min(t.entered.to.start, na.rm=TRUE),
+            Max=max(t.entered.to.start, na.rm=TRUE),
+            Median=median(t.entered.to.start, na.rm=TRUE))
+
+
 ```
 
 Nothing particularly unexpected here - people log into the system on the same day they are added.
@@ -351,25 +412,39 @@ Nothing particularly unexpected here - people log into the system on the same da
 3. What is the typical time from demonstrating an interest in signing up for shifts (logging into the system for the first time) to shift 1? For this question, I will create groups based on location of orientation, and based on location of shift 1.
 
 ```{r}
-quantile(as.numeric(v.activity$t.start.to.shift1), na.rm = TRUE, c(seq(0,1,0.1)))
+quantile(as.numeric(v17$t.start.to.shift1), na.rm = TRUE, c(seq(0,1,0.1)))
+quantile(as.numeric(v18$t.start.to.shift1), na.rm = TRUE, c(seq(0,1,0.1)))
 ```
 
-Again, it looks like there are some extreme values, so the median is likely a more representative value than the mean. Based on that, it looks like the typical PAWS volunteer waits for `r median(as.numeric(v.activity$t.start.to.shift1), na.rm = TRUE)` days before attending their first shift.
+Again, it looks like there are some extreme values, so the median is likely a more representative value than the mean. Based on that, it looks like the typical PAWS volunteer waits for `r median(as.numeric(v17$t.start.to.shift1), na.rm = TRUE)` days before attending their first shift in 2017, and `r median(as.numeric(v18$t.start.to.shift1), na.rm = TRUE)` in 2018.
 
 * What is this time for orientations that took place at the different locations (PAC, NE and GF) from orientation? 
 
 ```{r}
-v.activity[,c("orient_loc.Primary","t.orientation.to.shift1")] %>% 
+v17[,c("orient_loc.Primary","t.orientation.to.shift1")] %>% 
   group_by(orient_loc.Primary) %>% 
   summarise(Min=min(t.orientation.to.shift1, na.rm=TRUE),
             Max=max(t.orientation.to.shift1, na.rm=TRUE),
             Median=median(t.orientation.to.shift1, na.rm=TRUE))
+
+v18[,c("orient_loc.Primary","t.orientation.to.shift1")] %>% 
+  group_by(orient_loc.Primary) %>% 
+  summarise(Min=min(t.orientation.to.shift1, na.rm=TRUE),
+            Max=max(t.orientation.to.shift1, na.rm=TRUE),
+            Median=median(t.orientation.to.shift1, na.rm=TRUE))
+
 ```
 
 * What is this time for first shifts that took place at the different locations (PAC, NE and GF)? 
 
 ```{r}
-v.activity[,c("location.1","t.orientation.to.shift1")] %>% 
+v17[,c("location.1","t.orientation.to.shift1")] %>% 
+  group_by(location.1) %>% 
+  summarise(Min=min(t.orientation.to.shift1, na.rm=TRUE),
+            Max=max(t.orientation.to.shift1, na.rm=TRUE),
+            Median=median(t.orientation.to.shift1, na.rm=TRUE))
+
+v18[,c("location.1","t.orientation.to.shift1")] %>% 
   group_by(location.1) %>% 
   summarise(Min=min(t.orientation.to.shift1, na.rm=TRUE),
             Max=max(t.orientation.to.shift1, na.rm=TRUE),
@@ -379,7 +454,7 @@ v.activity[,c("location.1","t.orientation.to.shift1")] %>%
 * What is this time for orientations of different types at the same location? (PAC Cat, PAC Dog; GF Basic, GF Basic + WD )
 
 ```{r}
-v <- v.activity[,c("orient_loc.Primary", "orient_type.Primary", "t.orientation.to.shift1")] %>% 
+v <- v17[,c("orient_loc.Primary", "orient_type.Primary", "t.orientation.to.shift1")] %>% 
   group_by(orient_loc.Primary, orient_type.Primary) %>% 
   summarise(Min=min(t.orientation.to.shift1, na.rm=TRUE),
             Max=max(t.orientation.to.shift1, na.rm=TRUE),
@@ -398,15 +473,38 @@ v <- v[1:7,]
 v <- v[c(6:7,3,1:2,5,4),]
 v$row <- 1:7
 v$Median <- as.numeric(as.character(v$Median))
+medians <- v$Median
+
+v <- v18[,c("orient_loc.Primary", "orient_type.Primary", "t.orientation.to.shift1")] %>% 
+  group_by(orient_loc.Primary, orient_type.Primary) %>% 
+  summarise(Min=min(t.orientation.to.shift1, na.rm=TRUE),
+            Max=max(t.orientation.to.shift1, na.rm=TRUE),
+            Median=median(t.orientation.to.shift1, na.rm=TRUE))
+
+v <- v[v$orient_type.Primary != "WD",] %>% 
+  group_by(orient_loc.Primary) %>% 
+  do(rbind(.,c(.$orient_loc.Primary,rep(NA,NCOL(v)-1)))) %>%
+  ungroup() %>% 
+  data.frame()
+
+v$orient_type.Primary <- paste0(v$orient_loc.Primary," - ", v$orient_type.Primary)
+v$orient_type.Primary[c(3,5,8)] <- ""
+v$Median[c(3,5,8)] <- 0
+v <- v[1:7,]
+v <- v[c(6:7,3,1:2,5,4),]
+v$row <- 1:7
+v$Median <- as.numeric(as.character(v$Median))
+v$medians2017 <- c(14,9.5,NA,17,17.5,NA,21) #the numbers here are differet in the updated dataset; I will use the numbers from the last report
 
 p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
-  ggtitle("Days between orientation and date of first shift 2018") + 
-  geom_bar(stat="identity", fill="steelblue") +
+  ggtitle("Days between orientation and date of first shift 2018, vs 2017 (in black line)") + 
+  geom_bar(stat="identity", aes(x=factor(v$row), y=medians2017), color="black", fill=NA) +
+  geom_bar(stat="identity", fill="steelblue", alpha = 0.75) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
   scale_x_discrete(name = "Orientation Location and Type", breaks = v$row, labels = as.character(v$orient_type.Primary)) + 
   scale_y_continuous(name="Number of Days", limits=c(0, 22), breaks = c(0:22))
   
-png("days_orientation_to_shift1.png", width=800, height=400)
+png("days_orientation_to_shift1_2018v2017.png", width=800, height=400)
 p
 dev.off()
 
@@ -417,12 +515,35 @@ dev.off()
 * What is this time for first shifts of different types at the same location? (Cat care, Dog care)
 
 ```{r}
-shift1.by.location <- v.activity[,c("location.1", "assignment_type.1", "t.start.to.shift1")] %>% 
+shift1.by.location <- v17[,c("location.1", "assignment_type.1", "t.start.to.shift1")] %>% 
   group_by(location.1, assignment_type.1) %>% 
   summarise(Min=min(t.start.to.shift1, na.rm=TRUE),
             Max=max(t.start.to.shift1, na.rm=TRUE),
             Median=median(t.start.to.shift1, na.rm=TRUE))
 shift1.by.location
+v <- shift1.by.location
+# v <- v %>% 
+#   group_by(location.1) %>% 
+#   do(rbind(.,c(.$location.1,rep(NA,NCOL(v)-1)))) %>%
+#   ungroup() %>% 
+#   data.frame()
+# v$assignment_type.1 <- paste0(v$location.1," - ", v$assignment_type.1)
+# v$assignment_type.1[c(2,6,10,15,17)] <- ""
+# v$Median[c(2,6,10,15,17)] <- 0
+# v <- v[1:16,]
+# v <- v[c(1,16,2,11:15,3:10),]
+# v$row <- 1:16
+v$Median2017 <- as.numeric(as.character(v$Median))
+v <- v[,c("location.1","assignment_type.1","Median2017")]
+
+shift1.by.location <- v18[,c("location.1", "assignment_type.1", "t.start.to.shift1")] %>% 
+  group_by(location.1, assignment_type.1) %>% 
+  summarise(Min=min(t.start.to.shift1, na.rm=TRUE),
+            Max=max(t.start.to.shift1, na.rm=TRUE),
+            Median=median(t.start.to.shift1, na.rm=TRUE))
+shift1.by.location
+shift1.by.location <- merge(shift1.by.location,v, all=TRUE)
+
 v <- shift1.by.location
 v <- v %>% 
   group_by(location.1) %>% 
@@ -430,23 +551,26 @@ v <- v %>%
   ungroup() %>% 
   data.frame()
 v$assignment_type.1 <- paste0(v$location.1," - ", v$assignment_type.1)
+
 v$assignment_type.1[c(2,6,10,15,17)] <- ""
 v$Median[c(2,6,10,15,17)] <- 0
 v <- v[1:16,]
 v <- v[c(1,16,2,11:15,3:10),]
 v$row <- 1:16
 v$Median <- as.numeric(as.character(v$Median))
+medians <- v$Median
 
-p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
-  ggtitle("Days between first sign-in to Volgistics and date of first shift 2018") + 
-  geom_bar(stat="identity", fill="steelblue") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
-  scale_x_discrete(name = "First Shift Location and Type", breaks = v$row, labels = as.character(v$assignment_type.1)) + 
-  scale_y_continuous(name="Number of Days", limits=c(0, 50), breaks = seq(0, 50,5))
-  
-png("days_login_to_shift1_byShiftLoc.png", width=800, height=400)
-p
-dev.off()
+
+# p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
+#   ggtitle("Days between first sign-in to Volgistics and date of first shift 2018") + 
+#   geom_bar(stat="identity", fill="steelblue") +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
+#   scale_x_discrete(name = "First Shift Location and Type", breaks = v$row, labels = as.character(v$assignment_type.1)) + 
+#   scale_y_continuous(name="Number of Days", limits=c(0, 50), breaks = seq(0, 50,5))
+#   
+# png("days_login_to_shift1_byShiftLoc.png", width=800, height=400)
+# p
+# dev.off()
 
 ```
 
@@ -454,12 +578,24 @@ dev.off()
 * What is this time for first shifts of different types at the same location? (Cat care, Dog care) FROM ORIENTATION
 
 ```{r}
-o.shift1.by.location <- v.activity[,c("location.1", "assignment_type.1", "t.orientation.to.shift1")] %>% 
+o.shift1.by.location17 <- v17[,c("location.1", "assignment_type.1", "t.orientation.to.shift1")] %>% 
+  group_by(location.1, assignment_type.1) %>% 
+  summarise(Min=min(t.orientation.to.shift1, na.rm=TRUE),
+            Max=max(t.orientation.to.shift1, na.rm=TRUE),
+            Median=median(t.orientation.to.shift1, na.rm=TRUE))
+o.shift1.by.location17
+o.shift1.by.location17$Median2017 <- as.numeric(as.character(o.shift1.by.location17$Median))
+o.shift1.by.location17 <- o.shift1.by.location17[,c("location.1","assignment_type.1","Median2017")]
+
+o.shift1.by.location <- v18[,c("location.1", "assignment_type.1", "t.orientation.to.shift1")] %>% 
   group_by(location.1, assignment_type.1) %>% 
   summarise(Min=min(t.orientation.to.shift1, na.rm=TRUE),
             Max=max(t.orientation.to.shift1, na.rm=TRUE),
             Median=median(t.orientation.to.shift1, na.rm=TRUE))
 o.shift1.by.location
+
+o.shift1.by.location <- merge(o.shift1.by.location,o.shift1.by.location17, all=TRUE)
+
 v <- o.shift1.by.location
 v <- v %>% 
   group_by(location.1) %>% 
@@ -467,21 +603,33 @@ v <- v %>%
   ungroup() %>% 
   data.frame()
 v$assignment_type.1 <- paste0(v$location.1," - ", v$assignment_type.1)
-v$assignment_type.1[c(2,6,10,15,17)] <- ""
-v$Median[c(2,6,10,15,17)] <- 0
-v <- v[1:16,]
-v <- v[c(1,16,2,11:15,3:10),]
-v$row <- 1:16
+
+# remove some lines
+
+v <- v[!v$assignment_type.1 %in% c(" - Administrative tasks",
+                                   " - Cat Socialization Team",
+                                   "PAC - Veterinary Tech Volunteer",
+                                   "NA - NA",
+                                   " - ",
+                                   "PAC - Cat Pawsitive Program Volunteer",
+                                   "NA - Mutt Strut"),]
+
+v$assignment_type.1[c(4,8,13)] <- ""
+v$Median[c(4,8,13)] <- 0
+v$row <- 1:nrow(v)
 v$Median <- as.numeric(as.character(v$Median))
+v$Median2017 <- c(14,17,20,NA,20,21,23,NA,13,13,NA,11,NA,24) # numbers from 2017 are different in the report we sent, so adjusting to reflect those
+
 
 p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
-  ggtitle("Days between orientation and date of first shift") + 
-  geom_bar(stat="identity", fill="steelblue") +
+  ggtitle("Days between orientation and date of first shift in 2018 (versus 2017, black line)") + 
+  geom_bar(stat="identity", aes(x=factor(v$row), y=Median2017), color="black", fill=NA) +
+  geom_bar(stat="identity", fill="steelblue", alpha = 0.75) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12)) +
   scale_x_discrete(name = "First Shift Location and Type", breaks = v$row, labels = as.character(v$assignment_type.1)) + 
   scale_y_continuous(name="Number of Days", limits=c(0, 50), breaks = seq(0, 50,5))
   
-png("days_orientation_to_shift1_byShiftLoc.png", width=800, height=400)
+png("days_orientation_to_shift1_byShiftLoc2018v2017.png", width=800, height=400)
 p
 dev.off()
 
@@ -490,11 +638,13 @@ dev.off()
 4. Are there some months that are busier than others for first-time orientations?
 
 ```{r}
+
+process.timeline.data <- function(v.activity,year) {
 v.activity$orientation.month <- as.numeric(format(v.activity$Orientation.Date.Primary, "%m"))
 v.activity$orientation.year <- as.numeric(format(v.activity$Orientation.Date.Primary, "%y"))
 v.activity$orient_loc.Primary <- as.character(v.activity$orient_loc.Primary)
 
-new.vols.by.month <- with(v.activity[v.activity$orientation.year=="18",], table(orient_loc.Primary, orientation.month, exclude = NULL) )
+new.vols.by.month <- with(v.activity[v.activity$orientation.year==year,], table(orient_loc.Primary, orientation.month, exclude = NULL) )
 new.vols.by.month <- data.frame(new.vols.by.month)
 
 # GF
@@ -511,57 +661,54 @@ new.vols.by.month$Freq[which(new.vols.by.month$orient_loc.Primary=="PAC")] / sum
 new.vols.by.month$Freq[which(new.vols.by.month$orient_loc.Primary=="NE")] <- 
 new.vols.by.month$Freq[which(new.vols.by.month$orient_loc.Primary=="NE")] / sum(new.vols.by.month$Freq[which(new.vols.by.month$orient_loc.Primary=="NE")])
 
-# add months 7-12 wuth NA
+return(new.vols.by.month)
 
-new.vols.by.month$Freq[new.vols.by.month$orientation.month==7] <- NA
-new.vols.by.month$orientation.month <- as.numeric(as.character(new.vols.by.month$orientation.month))
+}
 
-empty.rows.GF <- data.frame(orient_loc.Primary = c("GF"),
-                         orientation.month = c(7,8,9,10,11,12),
-                         Freq = NA)
-empty.rows.NE <- data.frame(orient_loc.Primary = c("NE"),
-                         orientation.month = c(7,8,9,10,11,12),
-                         Freq = NA)
-empty.rows.PAC <- data.frame(orient_loc.Primary = c("PAC"),
-                         orientation.month = c(7,8,9,10,11,12),
-                         Freq = NA)
-new.vols.by.month <- rbind(new.vols.by.month,empty.rows.GF,empty.rows.NE,empty.rows.PAC)
-new.vols.by.month <- new.vols.by.month[!is.na(new.vols.by.month$orient_loc.Primary) & 
-                                         !is.na(new.vols.by.month$orientation.month),]
+orientations17 <- process.timeline.data(v17,"17")
+orientations18 <- process.timeline.data(v18,"18")
+colnames(orientations17)[3] <- "Freq17"
 
-p <- ggplot(data=new.vols.by.month[new.vols.by.month$orient_loc.Primary=="GF",],
-       aes(x=factor(orientation.month), 
-           y=Freq*100, group=1)) +
-       geom_line() +
+orientations <- merge(orientations17,orientations18, all = TRUE)
+
+new.vols.by.month <- orientations[!is.na(orientations$orient_loc.Primary),]
+new.vols.by.month <- orientations[!is.na(orientations$orientation.month),]
+new.vols.by.month$Freq[new.vols.by.month$orientation.month==7] <- NA # assign NA to July 2018 because numbers not complete 
+  
+
+p <- ggplot(data=new.vols.by.month[new.vols.by.month$orient_loc.Primary=="GF",]) + 
+  geom_line(aes(x=factor(orientation.month), y = Freq17*100),group=1, colour="black") + 
+  geom_line(aes(x=factor(orientation.month), y = Freq*100), group=2, colour="red") +
+  scale_colour_manual(values=c("black", "red"))+
   scale_y_continuous(name="Percent", limits=c(0, 30), breaks = seq(0, 20,2)) +
-  ggtitle("Percent new volunteers attending first orientation at Grays Ferry in 2018") + 
+  ggtitle("Percent new volunteers attending first orientation at Grays Ferry in 2018 (vs 2017, in black)") + 
   scale_x_discrete(name = "Month")
 
-png("GF_orientationByMonth.png", width=800, height=250)
+png("GF_orientationByMonth2018v2017.png", width=800, height=250)
 p
 dev.off()
 
-p <- ggplot(data=new.vols.by.month[new.vols.by.month$orient_loc.Primary=="PAC",],
-       aes(x=factor(orientation.month), 
-           y=Freq*100, group=1)) +
-       geom_line() +
+p <- ggplot(data=new.vols.by.month[new.vols.by.month$orient_loc.Primary=="PAC",]) + 
+  geom_line(aes(x=factor(orientation.month), y = Freq17*100),group=1, colour="black") + 
+  geom_line(aes(x=factor(orientation.month), y = Freq*100), group=2, colour="red") +
+  scale_colour_manual(values=c("black", "red"))+
   scale_y_continuous(name="Percent", limits=c(0, 30), breaks = seq(0, 20,2)) +
-  ggtitle("Percent new volunteers attending first orientation at PAC in 2018") + 
+  ggtitle("Percent new volunteers attending first orientation at PAC in 2018 (vs 2017, in black)") + 
   scale_x_discrete(name = "Month")
 
-png("PAC_orientationByMonth.png", width=800, height=250)
+png("PAC_orientationByMonth2018v2017.png", width=800, height=250)
 p
 dev.off()
 
-p <- ggplot(data=new.vols.by.month[new.vols.by.month$orient_loc.Primary=="NE",],
-       aes(x=factor(orientation.month), 
-           y=Freq*100, group=1)) +
-       geom_line() +
+p <- ggplot(data=new.vols.by.month[new.vols.by.month$orient_loc.Primary=="NE",]) + 
+  geom_line(aes(x=factor(orientation.month), y = Freq17*100),group=1, colour="black") + 
+  geom_line(aes(x=factor(orientation.month), y = Freq*100), group=2, colour="red") +
+  scale_colour_manual(values=c("black", "red"))+
   scale_y_continuous(name="Percent", limits=c(0, 30), breaks = seq(0, 20,2)) +
-  ggtitle("Percent new volunteers attending first orientation at Grant Ave in 2018") + 
+  ggtitle("Percent new volunteers attending first orientation at Grant Ave in 2018 (vs 2017, in black)") + 
   scale_x_discrete(name = "Month")
 
-png("NE_orientationByMonth.png", width=800, height=250)
+png("NE_orientationByMonth2018v2017.png", width=800, height=250)
 p
 dev.off()
 
