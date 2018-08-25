@@ -1,335 +1,801 @@
-ID,Orientation.Date,Type,NOT.Attending,Present,orientation
-1922,5/29/18,PAC Cat,,PRESENT,Primary
-1938,2/25/18,PAC Cat,,PRESENT,Primary
-1995,1/14/18,PAC Cat,,PRESENT,Primary
-1871,6/3/18,NE,,PRESENT,Primary
-1926,04/03/18,PAC Cat,,PRESENT,Primary
-2099,03/27/18,PAC Cat,,PRESENT,Primary
-1794,6/3/18,GF Basic,,PRESENT,Primary
-1988,4/15/18,PAC Cat,,PRESENT,Primary
-1988,4/29/18,GF Basic + GF WD,,PRESENT,Secondary
-2203,03/20/18,PAC Cat,,PRESENT,Primary
-2120,6/3/18,GF Basic,,PRESENT,Primary
-1917,6/3/18,GF Basic + GF WD,,PRESENT,Primary
-1968,5/20/18,PAC Cat,,PRESENT,Primary
-2046,1/7/18,NE,,PRESENT,Primary
-1809,3/6/18,NE,,PRESENT,Primary
-2146,04/03/18,NE,,PRESENT,Primary
-2019,03/18/18,NE,,PRESENT,Primary
-2123,6/5/18,NE,,PRESENT,Primary
-2149,1/14/18,GF Basic + GF WD,,PRESENT,Primary
-1881,2/25/18,GF Basic + GF WD,,PRESENT,Primary
-1783,4/15/18,GF Basic + GF WD,,PRESENT,Primary
-2034,03/18/18,PAC Cat,,PRESENT,Primary
-1882,1/9/18,PAC Cat,,PRESENT,Primary
-1890,04/08/18,PAC Cat,,PRESENT,Primary
-1932,5/15/18,PAC Cat,,PRESENT,Primary
-1887,6/3/18,GF Basic,,PRESENT,Primary
-1901,1/9/18,PAC Dog,,PRESENT,Primary
-1806,3/11/18,PAC Cat,,PRESENT,Primary
-1993,6/12/18,PAC Cat,,PRESENT,Primary
-1916,4/10/18,PAC Cat,,PRESENT,Primary
-2012,6/19/18,PAC Cat,,PRESENT,Primary
-2085,1/16/18,NE,,PRESENT,Primary
-1781,2/11/18,GF Basic + GF WD,,PRESENT,Primary
-1929,6/10/18,GF Basic + GF WD,,PRESENT,Primary
-2136,2/27/18,PAC Cat,,PRESENT,Primary
-1944,2/25/18,GF Basic + GF WD,,PRESENT,Primary
-1861,04/03/18,NE,,PRESENT,Primary
-2151,2/11/18,PAC Cat,,PRESENT,Primary
-2071,6/19/18,PAC Cat,,PRESENT,Primary
-1949,3/6/18,PAC Cat,,PRESENT,Primary
-2056,1/28/18,PAC Cat,,PRESENT,Primary
-1906,1/14/18,GF Basic + GF WD,,PRESENT,Primary
-1980,6/19/18,PAC Cat,,PRESENT,Primary
-1980,6/24/18,GF Basic,,PRESENT,Secondary
-1886,1/7/18,NE,,PRESENT,Primary
-1807,2/4/17,PAC Cat,,PRESENT,Primary
-1789,5/1/18,NE,,PRESENT,Primary
-1755,4/22/18,PAC Cat,,PRESENT,Primary
-1914,4/22/18,GF Basic,,PRESENT,Primary
-1752,5/20/18,PAC Cat,,PRESENT,Primary
-1760,6/10/18,PAC Cat,,PRESENT,Primary
-2152,03/18/18,GF Basic + GF WD,,PRESENT,Primary
-2152,3/4/18,PAC Cat,,PRESENT,Secondary
-2135,03/30/18,GF Basic,,PRESENT,Primary
-2129,5/18/18,GF Basic,,PRESENT,Primary
-2002,6/3/18,GF Basic,,PRESENT,Primary
-1866,4/17/18,PAC Dog,,PRESENT,Primary
-1866,4/29/18,PAC Cat,,PRESENT,Secondary
-1823,5/8/18,PAC Dog,,PRESENT,Primary
-2235,03/25/18,PAC Cat,,PRESENT,Primary
-1768,1/23/18,PAC Cat,,PRESENT,Primary
-2131,2/27/18,PAC Cat,,PRESENT,Primary
-2043,4/22/18,GF WD,,PRESENT,Primary
-2070,1/28/18,GF Basic + GF WD,,PRESENT,Primary
-1811,1/16/18,NE,,PRESENT,Primary
-2182,04/08/18,NE,,PRESENT,Primary
-2217,2/18/18,GF Basic + GF WD,,PRESENT,Primary
-1860,1/21/18,GF Basic + GF WD,,PRESENT,Primary
-1212,1/21/18,PAC Cat,,PRESENT,Primary
-1907,2/20/18,PAC Cat,,PRESENT,Primary
-1896,6/24/18,GF Basic + GF WD,,PRESENT,Primary
-1910,03/27/18,PAC Cat,,PRESENT,Primary
-1856,04/08/18,GF Basic + GF WD,,PRESENT,Primary
-2041,03/13/18,PAC Cat,,PRESENT,Primary
-2204,03/18/18,GF Basic,,PRESENT,Primary
-2204,1/28/18,PAC Cat,,PRESENT,Secondary
-2030,2/4/17,PAC Cat,,PRESENT,Primary
-2065,1/28/18,GF Basic,,PRESENT,Primary
-1872,2/27/18,PAC Cat,,PRESENT,Primary
-2127,5/1/18,NE,,PRESENT,Primary
-1838,2/20/18,PAC Cat,,PRESENT,Primary
-1800,3/6/18,NE,,PRESENT,Primary
-1920,4/29/18,PAC Cat,,PRESENT,Primary
-1946,4/22/18,PAC Cat,,PRESENT,Primary
-2172,1/28/18,GF Basic + GF WD,,PRESENT,Primary
-2018,2/18/18,NE,,PRESENT,Primary
-2051,5/18/18,GF Basic,,PRESENT,Primary
-1808,,PAC Cat,,PRESENT,Primary
-1969,2/18/18,GF Basic + GF WD,,PRESENT,Primary
-1904,03/30/18,GF Basic,,PRESENT,Primary
-2005,3/4/18,GF Basic + GF WD,,PRESENT,Primary
-1780,2/18/18,NE,,PRESENT,Primary
-2102,5/1/18,PAC Cat,,PRESENT,Primary
-2102,5/8/18,PAC Dog,,PRESENT,Secondary
-1987,4/29/18,GF Basic + GF WD,,PRESENT,Primary
-1945,2/11/18,GF Basic + GF WD,,PRESENT,Primary
-1825,3/6/18,PAC Cat,,PRESENT,Primary
-1967,6/12/18,PAC Cat,,PRESENT,Primary
-2205,04/03/18,PAC Cat,,PRESENT,Primary
-1757,1/14/18,GF Basic,,PRESENT,Primary
-2226,1/7/18,NE,,PRESENT,Primary
-1936,6/3/18,GF Basic,,PRESENT,Primary
-1747,5/18/18,GF Basic,,PRESENT,Primary
-1964,2/11/18,GF Basic + GF WD,,PRESENT,Primary
-1974,03/30/18,GF Basic,,PRESENT,Primary
-1799,04/08/18,NE,,PRESENT,Primary
-1925,3/6/18,NE,,PRESENT,Primary
-2185,4/17/18,PAC Dog,,PRESENT,Primary
-2011,2/18/18,GF Basic + GF WD,,PRESENT,Primary
-1941,04/03/18,NE,,PRESENT,Primary
-1831,4/22/18,GF Basic,,PRESENT,Primary
-2091,04/03/18,PAC Dog,,PRESENT,Primary
-1761,1/14/18,GF Basic + GF WD,,PRESENT,Primary
-2100,3/11/18,PAC Cat,,PRESENT,Primary
-1869,04/08/18,PAC Cat,,PRESENT,Primary
-1953,6/24/18,GF Basic,,PRESENT,Primary
-2029,5/20/18,PAC Cat,,PRESENT,Primary
-2048,03/30/18,GF Basic,,PRESENT,Primary
-2048,04/08/18,GF WD,,PRESENT,Secondary
-1960,3/6/18,NE,,PRESENT,Primary
-1788,03/18/18,PAC Cat,,PRESENT,Primary
-1950,6/26/18,PAC Dog,,PRESENT,Primary
-2039,4/15/18,GF Basic,,PRESENT,Primary
-2072,6/5/18,NE,,PRESENT,Primary
-2040,6/12/18,PAC Dog,,PRESENT,Primary
-2119,2/11/18,PAC Cat,,PRESENT,Primary
-2119,3/4/18,GF Basic,,PRESENT,Secondary
-2025,6/10/18,GF Basic,,PRESENT,Primary
-1897,2/20/18,NE,,PRESENT,Primary
-2073,4/17/18,NE,,PRESENT,Primary
-1748,5/8/18,PAC Cat,,PRESENT,Primary
-2000,2/18/18,GF Basic + GF WD,,PRESENT,Primary
-1898,4/15/18,GF Basic + GF WD,,PRESENT,Primary
-1970,5/15/18,PAC Dog,,PRESENT,Primary
-2238,03/18/18,GF Basic + GF WD,,PRESENT,Primary
-2128,03/13/18,PAC Cat,,PRESENT,Primary
-1955,5/13/18,GF Basic,,PRESENT,Primary
-1955,6/10/18,GF WD,,PRESENT,Secondary
-1858,7/1/18,NE,,PRESENT,Primary
-1956,5/13/18,GF Basic,,PRESENT,Primary
-2147,5/1/18,PAC Cat,,PRESENT,Primary
-2010,4/15/18,GF Basic + GF WD,,PRESENT,Primary
-2050,5/15/18,PAC Dog,,PRESENT,Primary
-2121,03/18/18,NE,,PRESENT,Primary
-1889,1/7/18,NE,,PRESENT,Primary
-1971,2/11/18,GF Basic + GF WD,,PRESENT,Primary
-2103,3/11/18,PAC Cat,,PRESENT,Primary
-2087,1/9/18,PAC Cat,,PRESENT,Primary
-2196,4/22/18,PAC Cat,,PRESENT,Primary
-1913,2/11/18,GF Basic + GF WD,,PRESENT,Primary
-2009,4/17/18,NE,,PRESENT,Primary
-1769,03/13/18,PAC Cat,,PRESENT,Primary
-2201,03/18/18,PAC Cat,,PRESENT,Primary
-2060,4/10/18,PAC Cat,,PRESENT,Primary
-2031,04/08/18,NE,,PRESENT,Primary
-1849,5/22/18,PAC Cat,,PRESENT,Primary
-1849,6/3/18,GF Basic + GF WD,,PRESENT,Secondary
-1762,6/24/18,PAC Cat,,PRESENT,Primary
-1934,4/29/18,GF Basic + GF WD,,PRESENT,Primary
-1846,5/22/18,PAC Cat,,PRESENT,Primary
-1957,2/6/18,PAC Cat,,PRESENT,Primary
-1821,2/25/18,GF Basic + GF WD,,PRESENT,Primary
-2202,1/23/18,PAC Dog,,PRESENT,Primary
-2202,1/9/18,PAC Cat,,PRESENT,Secondary
-1975,6/3/18,PAC Cat,,PRESENT,Primary
-2174,04/08/18,NE,,PRESENT,Primary
-2125,2/11/18,PAC Cat,,PRESENT,Primary
-2083,04/03/18,PAC Cat,,PRESENT,Primary
-1791,5/13/18,PAC Cat,,PRESENT,Primary
-1852,1/23/18,PAC Cat,,PRESENT,Primary
-1952,5/22/18,PAC Cat,,PRESENT,Primary
-2168,4/29/18,GF Basic + GF WD,,PRESENT,Primary
-1775,6/5/18,NE,,PRESENT,Primary
-2075,1/23/18,PAC Cat,,PRESENT,Primary
-1888,03/13/18,PAC Cat,,PRESENT,Primary
-1903,5/13/18,GF Basic,,PRESENT,Primary
-1903,6/3/18,GF WD,,PRESENT,Secondary
-2179,6/19/18,PAC Cat,,PRESENT,Primary
-2228,3/6/18,NE,,PRESENT,Primary
-2066,04/03/18,NE,,PRESENT,Primary
-2165,4/22/18,GF Basic,,PRESENT,Primary
-2153,4/22/18,GF Basic,,PRESENT,Primary
-2076,4/29/18,GF Basic,,PRESENT,Primary
-2139,2/20/18,NE,,PRESENT,Primary
-2022,1/23/18,PAC Dog,,PRESENT,Primary
-2130,1/23/18,PAC Cat,,PRESENT,Primary
-1790,6/12/18,PAC Cat,,PRESENT,Primary
-1786,03/18/18,NE,,PRESENT,Primary
-1855,6/5/18,NE,,PRESENT,Primary
-1958,1/28/18,PAC Cat,,PRESENT,Primary
-2081,03/18/18,GF Basic + GF WD,,PRESENT,Primary
-2081,04/03/18,PAC Dog,,PRESENT,Secondary
-2098,5/1/18,PAC Cat,,PRESENT,Primary
-1817,2/4/17,PAC Cat,,PRESENT,Primary
-2105,2/20/18,NE,,PRESENT,Primary
-2045,1/16/18,PAC Cat,,PRESENT,Primary
-1812,2/20/18,NE,,PRESENT,Primary
-1891,03/27/18,PAC Cat,,PRESENT,Primary
-2177,2/18/18,GF WD,,PRESENT,Primary
-1895,6/24/18,GF Basic,,PRESENT,Primary
-2017,1/21/18,PAC Cat,,PRESENT,Primary
-2190,4/29/18,GF WD,,PRESENT,Primary
-2166,04/08/18,NE,,PRESENT,Primary
-2208,2/11/18,GF Basic + GF WD,,PRESENT,Primary
-1928,3/6/18,PAC Dog,,PRESENT,Primary
-2108,5/18/18,GF Basic,,PRESENT,Primary
-1999,2/11/18,GF Basic + GF WD,,PRESENT,Primary
-2064,6/10/18,PAC Cat,,PRESENT,Primary
-2137,6/5/18,PAC Cat,,PRESENT,Primary
-2143,5/8/18,PAC Cat,,PRESENT,Primary
-2181,2/6/18,NE,,PRESENT,Primary
-1994,5/15/18,PAC Dog,,PRESENT,Primary
-1777,6/10/18,GF Basic + GF WD,,PRESENT,Primary
-1771,6/5/18,PAC Cat,,PRESENT,Primary
-1643,03/18/18,GF Basic + GF WD,,PRESENT,Primary
-1815,2/6/18,PAC Cat,,PRESENT,Primary
-2171,2/20/18,PAC Cat,,PRESENT,Primary
-1935,5/6/18,PAC Cat,,PRESENT,Primary
-1998,2/18/18,PAC Cat,,PRESENT,Primary
-2053,1/14/18,GF WD,,PRESENT,Primary
-2053,1/7/18,GF Basic,,PRESENT,Secondary
-2008,4/17/18,PAC Dog,,PRESENT,Primary
-2008,5/13/18,GF Basic,,PRESENT,Secondary
-2162,1/9/18,PAC Cat,,PRESENT,Primary
-NA,5/1/18,NE,,PRESENT,Primary
-2113,5/20/18,NE,,PRESENT,Primary
-1972,6/12/18,PAC Dog,,PRESENT,Primary
-1912,03/20/18,PAC Cat,,PRESENT,Primary
-1200,1/2/18,PAC Cat,,PRESENT,Primary
-2148,2/6/18,NE,,PRESENT,Primary
-2155,3/6/18,PAC Cat,,PRESENT,Primary
-2038,5/15/18,NE,,PRESENT,Primary
-2090,03/30/18,GF Basic,,PRESENT,Primary
-1863,1/7/18,NE,,PRESENT,Primary
-2163,6/17/18,GF Basic,,PRESENT,Primary
-2116,1/21/18,GF Basic,,PRESENT,Primary
-2132,1/9/18,PAC Dog,,PRESENT,Primary
-1984,4/15/18,GF Basic,,PRESENT,Primary
-1977,6/5/18,NE,,PRESENT,Primary
-1948,6/26/18,PAC Dog,,PRESENT,Primary
-1816,4/24/18,PAC Cat,,PRESENT,Primary
-1892,2/11/18,GF Basic + GF WD,,PRESENT,Primary
-2191,6/24/18,PAC Cat,,PRESENT,Primary
-2024,6/3/18,NE,,PRESENT,Primary
-1787,1/16/18,NE,,PRESENT,Primary
-2213,03/20/18,PAC Cat,,PRESENT,Primary
-1927,2/4/17,NE,,PRESENT,Primary
-1754,1/14/18,GF Basic + GF WD,,PRESENT,Primary
-2224,6/5/18,PAC Cat,,PRESENT,Primary
-1835,1/7/18,GF WD,,PRESENT,Primary
-2003,04/08/18,GF Basic + GF WD,,PRESENT,Primary
-1873,6/5/18,PAC Cat,,PRESENT,Primary
-2225,03/18/18,GF Basic + GF WD,,PRESENT,Primary
-1767,6/17/18,GF Basic + GF WD,,PRESENT,Primary
-1774,1/7/18,GF Basic + GF WD,,PRESENT,Primary
-1885,6/17/18,GF Basic + GF WD,,PRESENT,Primary
-2067,7/1/18,NE,,PRESENT,Primary
-1770,6/19/18,PAC Cat,,PRESENT,Primary
-1773,5/8/18,PAC Cat,,PRESENT,Primary
-2078,04/03/18,NE,,PRESENT,Primary
-1085,1/2/18,PAC Cat,,PRESENT,Primary
-1976,5/22/18,PAC Cat,,PRESENT,Primary
-2054,4/24/18,PAC Cat,,PRESENT,Primary
-1911,03/18/18,GF Basic + GF WD,,PRESENT,Primary
-1824,1/28/18,GF Basic + GF WD,,PRESENT,Primary
-1753,1/23/18,PAC Dog,,PRESENT,Primary
-1878,6/26/18,PAC Cat,,PRESENT,Primary
-2199,2/11/18,GF Basic + GF WD,,PRESENT,Primary
-2167,3/4/18,PAC Cat,,PRESENT,Primary
-2111,2/4/17,NE,,PRESENT,Primary
-1569,1/2/18,NE,,PRESENT,Primary
-2094,6/5/18,NE,,PRESENT,Primary
-1951,5/8/18,PAC Cat,,PRESENT,Primary
-1828,2/6/18,PAC Cat,,PRESENT,Primary
-2219,5/8/18,PAC Dog,,PRESENT,Primary
-1857,1/21/18,GF Basic,,PRESENT,Primary
-1880,4/15/18,GF Basic,,PRESENT,Primary
-1772,3/6/18,NE,,PRESENT,Primary
-1853,03/13/18,PAC Cat,,PRESENT,Primary
-1819,1/16/18,NE,,PRESENT,Primary
-2207,2/6/18,NE,,PRESENT,Primary
-1841,1/7/18,GF Basic,,PRESENT,Primary
-2006,1/28/18,GF WD,CANCELLED,PRESENT,Primary
-2144,03/18/18,GF Basic + GF WD,,PRESENT,Primary
-2144,3/4/18,PAC Cat,,PRESENT,Secondary
-1983,4/29/18,PAC Cat,,PRESENT,Primary
-1983,5/8/18,PAC Dog,,PRESENT,Secondary
-1820,2/18/18,PAC Cat,,PRESENT,Primary
-2140,3/4/18,NE,,PRESENT,Primary
-1386,1/28/18,GF Basic + GF WD,,PRESENT,Primary
-2097,5/15/18,PAC Cat,,PRESENT,Primary
-2115,5/13/18,GF Basic,,PRESENT,Primary
-2044,5/6/18,PAC Cat,,PRESENT,Primary
-2062,5/20/18,PAC Cat,,PRESENT,Primary
-1959,4/22/18,PAC Cat,,PRESENT,Primary
-2013,5/15/18,PAC Cat,,PRESENT,Primary
-1933,03/25/18,PAC Cat,,PRESENT,Primary
-2142,1/7/18,GF Basic + GF WD,,PRESENT,Primary
-1848,1/2/18,NE,,PRESENT,Primary
-2089,4/10/18,PAC Cat,,PRESENT,Primary
-1865,2/20/18,PAC Dog,,PRESENT,Primary
-1877,1/21/18,NE,,PRESENT,Primary
-1875,1/21/18,NE,,PRESENT,Primary
-2033,4/29/18,PAC Cat,,PRESENT,Primary
-1659,1/30/18,PAC Cat,,PRESENT,Primary
-2133,1/14/18,PAC Cat,,PRESENT,Primary
-2020,1/14/18,GF Basic + GF WD,,PRESENT,Primary
-2214,1/21/18,GF Basic,,PRESENT,Primary
-1784,6/26/18,PAC Cat,,PRESENT,Primary
-1859,2/18/18,GF WD,,PRESENT,Primary
-1859,2/6/18,PAC Cat,,PRESENT,Secondary
-2231,6/26/18,PAC Cat,,PRESENT,Primary
-2016,2/20/18,NE,,PRESENT,Primary
-2124,5/18/18,GF Basic,,PRESENT,Primary
-1621,1/2/18,PAC Cat,,PRESENT,Primary
-2126,2/6/18,PAC Dog,,PRESENT,Primary
-1826,6/12/18,PAC Cat,,PRESENT,Primary
-1963,3/4/18,GF Basic + GF WD,,PRESENT,Primary
-1930,6/3/18,PAC Cat,,PRESENT,Primary
-1965,6/17/18,GF Basic + GF WD,,PRESENT,Primary
-2229,6/24/18,GF Basic + GF WD,,PRESENT,Primary
-1779,7/1/18,NE,,PRESENT,Primary
-1822,6/5/18,NE,,PRESENT,Primary
-1842,1/7/18,NE,,PRESENT,Primary
-1854,2/20/18,PAC Dog,,PRESENT,Primary
-2086,03/18/18,GF Basic + GF WD,,PRESENT,Primary
-2028,6/17/18,GF Basic + GF WD,,PRESENT,Primary
-1997,5/20/18,NE,,PRESENT,Primary
-2049,2/11/18,PAC Cat,,PRESENT,Primary
-2186,6/3/18,GF Basic,,PRESENT,Primary
-2015,1/23/18,PAC Cat,,PRESENT,Primary
-2059,7/1/18,NE,,PRESENT,Primary
-1990,5/18/18,GF Basic,,PRESENT,Primary
-1756,1/28/18,GF Basic,,PRESENT,Primary
+"","ID","Orientation.Date","Type","NOT.Attending","Present","orientation"
+"2826",1922,"5/29/18","PAC Cat","","PRESENT","Primary"
+"2370",1938,"2/25/18","PAC Cat","","PRESENT","Primary"
+"1548",1954,"10/1/17","PAC Cat","","PRESENT","Primary"
+"2081",1995,"1/14/18","PAC Cat","","PRESENT","Primary"
+"2866",1871,"6/3/18","NE","","PRESENT","Primary"
+"2019",1690,"12/26/17","PAC Cat","","PRESENT","Primary"
+"2565",1926,"04/03/18","PAC Cat","","PRESENT","Primary"
+"1575",1390,"10/1/17","NE","","PRESENT","Primary"
+"550",1626,"3/28/17","PAC Cat","","PRESENT","Primary"
+"2532",2099,"03/27/18","PAC Cat","","PRESENT","Primary"
+"1693",1065,"10/22/17","GF Basic + GF WD","","PRESENT","Primary"
+"1970",1095,"12/17/17","PAC Cat","","PRESENT","Primary"
+"1856",1496,"11/19/17","NE","","PRESENT","Primary"
+"1362",1818,"8/22/17","PAC Cat","","PRESENT","Primary"
+"504",1344,"3/21/17","PAC Cat","","PRESENT","Primary"
+"1738",1315,"11/5/17","GF Basic","","PRESENT","Primary"
+"2009",1315,"12/19/17","PAC Dog","","PRESENT","Secondary"
+"776",1716,"5/9/17","PAC Cat","","PRESENT","Primary"
+"1470",1675,"9/12/17","PAC Cat","","PRESENT","Primary"
+"2837",1794,"6/3/18","GF Basic","","PRESENT","Primary"
+"1483",1347,"9/17/17","NE","","PRESENT","Primary"
+"2620",1988,"4/15/18","PAC Cat","","PRESENT","Primary"
+"2704",1988,"4/29/18","GF Basic + GF WD","","PRESENT","Secondary"
+"2516",2203,"03/20/18","PAC Cat","","PRESENT","Primary"
+"705",1042,"4/30/17","GF Basic + GF WD","","PRESENT","Primary"
+"2841",2120,"6/3/18","GF Basic","","PRESENT","Primary"
+"2848",1917,"6/3/18","GF Basic + GF WD","","PRESENT","Primary"
+"2808",1968,"5/20/18","PAC Cat","","PRESENT","Primary"
+"1421",1209,"9/3/17","NE","","PRESENT","Primary"
+"2062",2046,"1/7/18","NE","","PRESENT","Primary"
+"972",1190,"6/11/17","GF WD","","PRESENT","Primary"
+"867",1093,"5/23/17","PAC Dog","","PRESENT","Primary"
+"1375",1445,"8/27/17","PAC Cat","","PRESENT","Primary"
+"1527",1555,"9/24/17","GF Basic + GF WD","","PRESENT","Primary"
+"2450",1809,"3/6/18","NE","","PRESENT","Primary"
+"1705",1702,"10/24/17","PAC Cat","","PRESENT","Primary"
+"1785",1702,"11/7/17","PAC Dog","","PRESENT","Secondary"
+"344",1665,"2/26/17","PAC Dog","","PRESENT","Primary"
+"1374",1701,"8/27/17","PAC Cat","","PRESENT","Primary"
+"2560",2146,"04/03/18","NE","","PRESENT","Primary"
+"1647",1053,"10/17/17","NE","","PRESENT","Primary"
+"1878",1536,"11/21/17","NE","","PRESENT","Primary"
+"1796",1136,"11/12/17","GF Basic + GF WD","","PRESENT","Primary"
+"1619",1412,"10/8/17","GF Basic + GF WD","","PRESENT","Primary"
+"2506",2019,"03/18/18","NE","","PRESENT","Primary"
+"1402",1154,"8/31/17","NE + NE","","PRESENT","Primary"
+"2883",2123,"6/5/18","NE","","PRESENT","Primary"
+"542",1197,"3/26/17","NE","","PRESENT","Primary"
+"1893",1123,"12/3/17","GF Basic","","PRESENT","Primary"
+"2088",2149,"1/14/18","GF Basic + GF WD","","PRESENT","Primary"
+"2374",1881,"2/25/18","GF Basic + GF WD","","PRESENT","Primary"
+"1190",1660,"7/25/17","PAC Dog","","PRESENT","Primary"
+"1366",1118,"8/22/17","PAC Dog","","PRESENT","Primary"
+"1394",1118,"8/29/17","PAC Cat","","PRESENT","Secondary"
+"2629",1783,"4/15/18","GF Basic + GF WD","","PRESENT","Primary"
+"512",1523,"3/26/17","PAC Cat","","PRESENT","Primary"
+"2476",2034,"03/18/18","PAC Cat","","PRESENT","Primary"
+"1319",1027,"8/13/17","PAC Cat","","PRESENT","Primary"
+"2073",1882,"1/9/18","PAC Cat","","PRESENT","Primary"
+"2574",1890,"04/08/18","PAC Cat","","PRESENT","Primary"
+"1203",1199,"7/27/17","NE","","PRESENT","Primary"
+"1459",1741,"9/10/17","GF Basic","","PRESENT","Primary"
+"2775",1932,"5/15/18","PAC Cat","","PRESENT","Primary"
+"2836",1887,"6/3/18","GF Basic","","PRESENT","Primary"
+"2077",1901,"1/9/18","PAC Dog","","PRESENT","Primary"
+"1601",1166,"10/3/17","PAC Dog","","PRESENT","Primary"
+"2457",1806,"3/11/18","PAC Cat","","PRESENT","Primary"
+"1342",1616,"8/20/17","GF Basic + GF WD","","PRESENT","Primary"
+"2910",1993,"6/12/18","PAC Cat","","PRESENT","Primary"
+"2619",1916,"4/10/18","PAC Cat","","PRESENT","Primary"
+"1290",1292,"8/13/17","GF Basic + GF WD","","PRESENT","Primary"
+"1216",1561,"7/30/17","GF Basic","","PRESENT","Primary"
+"560",1026,"4/2/17","GF Basic + GF WD","","PRESENT","Primary"
+"582",1026,"4/4/17","PAC Cat","","PRESENT","Secondary"
+"2953",2012,"6/19/18","PAC Cat","","PRESENT","Primary"
+"2121",2085,"1/16/18","NE","","PRESENT","Primary"
+"1956",1692,"12/10/17","GF Basic + GF WD","","PRESENT","Primary"
+"466",1194,"3/12/17","NE","","PRESENT","Primary"
+"1910",1180,"12/3/17","NE","","PRESENT","Primary"
+"1122",1126,"7/9/17","GF Basic + GF WD","","PRESENT","Primary"
+"1683",1489,"10/22/17","PAC Cat","","PRESENT","Primary"
+"1132",1368,"7/11/17","PAC Cat","","PRESENT","Primary"
+"2266",1781,"2/11/18","GF Basic + GF WD","","PRESENT","Primary"
+"2901",1929,"6/10/18","GF Basic + GF WD","","PRESENT","Primary"
+"1440",1674,"9/5/17","NE","","PRESENT","Primary"
+"2395",2136,"2/27/18","PAC Cat","","PRESENT","Primary"
+"322",1630,"2/21/17","PAC Dog","","PRESENT","Primary"
+"2381",1944,"2/25/18","GF Basic + GF WD","","PRESENT","Primary"
+"642",2069,"4/11/17","PAC Dog","","PRESENT","Primary"
+"609",1174,"4/9/17","GF Basic + GF WD","","PRESENT","Primary"
+"2557",1861,"04/03/18","NE","","PRESENT","Primary"
+"2256",2151,"2/11/18","PAC Cat","","PRESENT","Primary"
+"2952",2071,"6/19/18","PAC Cat","","PRESENT","Primary"
+"219",1503,"2/7/17","PAC Cat","","PRESENT","Primary"
+"2441",1949,"3/6/18","PAC Cat","","PRESENT","Primary"
+"2002",1291,"12/19/17","PAC Cat","","PRESENT","Primary"
+"2180",2056,"1/28/18","PAC Cat","","PRESENT","Primary"
+"1791",1906,"11/12/17","PAC Cat","","PRESENT","Primary"
+"2094",1906,"1/14/18","GF Basic + GF WD","","PRESENT","Secondary"
+"1899",1509,"12/3/17","GF Basic","","PRESENT","Primary"
+"1864",1107,"11/21/17","PAC Cat","","PRESENT","Primary"
+"161",1305,"1/29/17","GF Basic","","PRESENT","Primary"
+"2951",1980,"6/19/18","PAC Cat","","PRESENT","Primary"
+"2969",1980,"6/24/18","GF Basic","","PRESENT","Secondary"
+"2060",1886,"1/7/18","NE","","PRESENT","Primary"
+"2212",1807,"2/4/17","PAC Cat","","PRESENT","Primary"
+"2735",1789,"5/1/18","NE","","PRESENT","Primary"
+"1640",1677,"10/10/17","PAC Cat","","PRESENT","Primary"
+"1871",1677,"11/21/17","PAC Dog","","PRESENT","Secondary"
+"1581",1047,"10/3/17","NE","","PRESENT","Primary"
+"2671",1755,"4/22/18","PAC Cat","","PRESENT","Primary"
+"2018",1535,"12/26/17","PAC Cat","","PRESENT","Primary"
+"2683",1914,"4/22/18","GF Basic","","PRESENT","Primary"
+"868",1112,"5/23/17","PAC Dog","","PRESENT","Primary"
+"777",1112,"5/9/17","PAC Cat","","PRESENT","Secondary"
+"2807",1752,"5/20/18","PAC Cat","","PRESENT","Primary"
+"1244",1597,"8/1/17","PAC Cat","","PRESENT","Primary"
+"1860",1544,"11/21/17","PAC Cat","","PRESENT","Primary"
+"1954",1544,"12/10/17","GF Basic","","PRESENT","Secondary"
+"1931",1544,"12/5/17","PAC Dog","","PRESENT","Secondary"
+"1940",1581,"12/5/17","NE","","PRESENT","Primary"
+"2889",1760,"6/10/18","PAC Cat","","PRESENT","Primary"
+"636",2001,"4/11/17","PAC Cat","","PRESENT","Primary"
+"283",1839,"2/19/17","PAC Cat","","PRESENT","Primary"
+"1335",1341,"8/20/17","PAC Cat","","PRESENT","Primary"
+"2482",2152,"03/18/18","GF Basic + GF WD","","PRESENT","Primary"
+"2404",2152,"3/4/18","PAC Cat","","PRESENT","Secondary"
+"2536",2135,"03/30/18","GF Basic","","PRESENT","Primary"
+"1715",1805,"10/29/17","PAC Cat","","PRESENT","Primary"
+"2800",2129,"5/18/18","GF Basic","","PRESENT","Primary"
+"1373",1542,"8/27/17","PAC Cat","","PRESENT","Primary"
+"2847",2002,"6/3/18","GF Basic","","PRESENT","Primary"
+"2664",1866,"4/17/18","PAC Dog","","PRESENT","Primary"
+"2699",1866,"4/29/18","PAC Cat","","PRESENT","Secondary"
+"2752",1823,"5/8/18","PAC Dog","","PRESENT","Primary"
+"1897",1538,"12/3/17","GF Basic + GF WD","","PRESENT","Primary"
+"1913",1548,"12/3/17","NE","","PRESENT","Primary"
+"1085",1240,"7/2/17","GF Basic + GF WD","","PRESENT","Primary"
+"2528",2235,"03/25/18","PAC Cat","","PRESENT","Primary"
+"2170",1768,"1/23/18","PAC Cat","","PRESENT","Primary"
+"184",1992,"2/5/17","PAC Cat","","PRESENT","Primary"
+"2397",2131,"2/27/18","PAC Cat","","PRESENT","Primary"
+"340",1803,"2/26/17","PAC Cat","","PRESENT","Primary"
+"1686",1343,"10/22/17","GF Basic + GF WD","","PRESENT","Primary"
+"2685",2043,"4/22/18","GF WD","","PRESENT","Primary"
+"505",1864,"3/21/17","PAC Cat","","PRESENT","Primary"
+"1822",1444,"11/14/17","PAC Cat","","PRESENT","Primary"
+"698",1040,"4/25/17","PAC Dog","","PRESENT","Primary"
+"1827",1317,"11/19/17","PAC Cat","","PRESENT","Primary"
+"1850",1720,"11/19/17","NE","","PRESENT","Primary"
+"2187",2070,"1/28/18","GF Basic + GF WD","","PRESENT","Primary"
+"2120",1811,"1/16/18","NE","","PRESENT","Primary"
+"743",1159,"5/7/17","PAC Cat","","PRESENT","Primary"
+"1550",1424,"10/1/17","PAC Cat","","PRESENT","Primary"
+"2610",2182,"04/08/18","NE","","PRESENT","Primary"
+"2314",2217,"2/18/18","GF Basic + GF WD","","PRESENT","Primary"
+"1339",1121,"8/20/17","GF Basic + GF WD","","PRESENT","Primary"
+"2146",1860,"1/21/18","GF Basic + GF WD","","PRESENT","Primary"
+"710",1212,"4/30/17","GF Basic","","PRESENT","Primary"
+"2128",1212,"1/21/18","PAC Cat","","PRESENT","Secondary"
+"1831",1278,"11/19/17","GF Basic + GF WD","","PRESENT","Primary"
+"1125",1727,"7/9/17","GF Basic","","PRESENT","Primary"
+"2346",1907,"2/20/18","PAC Cat","","PRESENT","Primary"
+"2971",1896,"6/24/18","GF Basic + GF WD","","PRESENT","Primary"
+"2533",1910,"03/27/18","PAC Cat","","PRESENT","Primary"
+"2585",1856,"04/08/18","GF Basic + GF WD","","PRESENT","Primary"
+"1855",1613,"11/19/17","NE","","PRESENT","Primary"
+"1249",1302,"8/6/17","PAC Cat","","PRESENT","Primary"
+"2464",2041,"03/13/18","PAC Cat","","PRESENT","Primary"
+"1926",1059,"12/5/17","PAC Cat","","PRESENT","Primary"
+"2484",2204,"03/18/18","GF Basic","","PRESENT","Primary"
+"2182",2204,"1/28/18","PAC Cat","","PRESENT","Secondary"
+"2214",2030,"2/4/17","PAC Cat","","PRESENT","Primary"
+"923",1730,"6/4/17","NE","","PRESENT","Primary"
+"2186",2065,"1/28/18","GF Basic","","PRESENT","Primary"
+"288",1025,"2/19/17","GF Basic + GF WD","","PRESENT","Primary"
+"2393",1872,"2/27/18","PAC Cat","","PRESENT","Primary"
+"2729",2127,"5/1/18","NE","","PRESENT","Primary"
+"2339",1838,"2/20/18","PAC Cat","","PRESENT","Primary"
+"1194",1382,"7/27/17","NE","","PRESENT","Primary"
+"2452",1800,"3/6/18","NE","","PRESENT","Primary"
+"1617",1295,"10/8/17","GF Basic + GF WD","","PRESENT","Primary"
+"1545",1295,"9/26/17","PAC Cat","","PRESENT","Secondary"
+"2697",1920,"4/29/18","PAC Cat","","PRESENT","Primary"
+"2672",1946,"4/22/18","PAC Cat","","PRESENT","Primary"
+"2190",2172,"1/28/18","GF Basic + GF WD","","PRESENT","Primary"
+"1832",1138,"11/19/17","GF Basic + GF WD","","PRESENT","Primary"
+"1242",1395,"8/1/17","PAC Cat","","PRESENT","Primary"
+"1381",1220,"8/27/17","GF Basic + GF WD","","PRESENT","Primary"
+"665",2138,"4/23/17","GF Basic + GF WD","","PRESENT","Primary"
+"1730",1215,"11/5/17","PAC Cat","","PRESENT","Primary"
+"2335",2018,"2/18/18","NE","","PRESENT","Primary"
+"1793",1609,"11/12/17","PAC Cat","","PRESENT","Primary"
+"2805",2051,"5/18/18","GF Basic","","PRESENT","Primary"
+"1866",1606,"11/21/17","PAC Cat","","PRESENT","Primary"
+"1837",1146,"11/19/17","GF Basic","","PRESENT","Primary"
+"1905",1146,"12/3/17","GF WD","","PRESENT","Secondary"
+"417",1682,"3/7/17","PAC Cat","","PRESENT","Primary"
+"1272",1796,"8/8/17","PAC Cat","","PRESENT","Primary"
+"715",1620,"4/30/17","GF Basic + GF WD","","PRESENT","Primary"
+"1468",1378,"9/10/17","GF WD","","PRESENT","Primary"
+"2959",1808,"","PAC Cat","","PRESENT","Primary"
+"1083",1512,"7/2/17","GF Basic + GF WD","","PRESENT","Primary"
+"1038",1134,"6/25/17","GF Basic + GF WD","","PRESENT","Primary"
+"1173",1448,"7/18/17","PAC Cat","","PRESENT","Primary"
+"2312",1969,"2/18/18","GF Basic + GF WD","","PRESENT","Primary"
+"604",1661,"4/9/17","GF Basic + GF WD","","PRESENT","Primary"
+"2545",1904,"03/30/18","GF Basic","","PRESENT","Primary"
+"1211",1461,"7/30/17","GF Basic + GF WD","","PRESENT","Primary"
+"612",2218,"4/9/17","GF Basic + GF WD","","PRESENT","Primary"
+"2410",2005,"3/4/18","GF Basic + GF WD","","PRESENT","Primary"
+"1262",1430,"8/6/17","GF Basic + GF WD","","PRESENT","Primary"
+"1326",1908,"8/15/17","PAC Cat","","PRESENT","Primary"
+"2329",1780,"2/18/18","NE","","PRESENT","Primary"
+"823",2134,"5/21/17","PAC Cat","","PRESENT","Primary"
+"1296",2134,"8/13/17","GF Basic","","PRESENT","Secondary"
+"217",1868,"2/7/17","PAC Cat","","PRESENT","Primary"
+"2728",2102,"5/1/18","PAC Cat","","PRESENT","Primary"
+"2750",2102,"5/8/18","PAC Dog","","PRESENT","Secondary"
+"2711",1987,"4/29/18","GF Basic + GF WD","","PRESENT","Primary"
+"1613",1372,"10/8/17","PAC Cat","","PRESENT","Primary"
+"1253",1463,"8/6/17","GF Basic","","PRESENT","Primary"
+"2265",1945,"2/11/18","GF Basic + GF WD","","PRESENT","Primary"
+"310",2079,"2/21/17","PAC Cat","","PRESENT","Primary"
+"1826",1655,"11/19/17","PAC Cat","","PRESENT","Primary"
+"2439",1825,"3/6/18","PAC Cat","","PRESENT","Primary"
+"2915",1967,"6/12/18","PAC Cat","","PRESENT","Primary"
+"1674",1531,"10/17/17","PAC Dog","","PRESENT","Primary"
+"2563",2205,"04/03/18","PAC Cat","","PRESENT","Primary"
+"2086",1757,"1/14/18","GF Basic","","PRESENT","Primary"
+"2064",2226,"1/7/18","NE","","PRESENT","Primary"
+"2840",1936,"6/3/18","GF Basic","","PRESENT","Primary"
+"1494",1576,"9/19/17","PAC Cat","","PRESENT","Primary"
+"2797",1747,"5/18/18","GF Basic","","PRESENT","Primary"
+"546",2198,"3/28/17","PAC Cat","","PRESENT","Primary"
+"1678",1408,"10/17/17","PAC Dog","","PRESENT","Primary"
+"1733",1408,"11/5/17","GF Basic","","PRESENT","Secondary"
+"2272",1964,"2/11/18","GF Basic + GF WD","","PRESENT","Primary"
+"1263",1182,"8/6/17","GF Basic + GF WD","","PRESENT","Primary"
+"2551",1974,"03/30/18","GF Basic","","PRESENT","Primary"
+"2612",1799,"04/08/18","NE","","PRESENT","Primary"
+"2447",1925,"3/6/18","NE","","PRESENT","Primary"
+"470",1066,"3/19/17","PAC Cat","","PRESENT","Primary"
+"1336",1245,"8/20/17","PAC Cat","","PRESENT","Primary"
+"1277",1245,"8/8/17","PAC Dog","","PRESENT","Secondary"
+"2663",2185,"4/17/18","PAC Dog","","PRESENT","Primary"
+"2315",2011,"2/18/18","GF Basic + GF WD","","PRESENT","Primary"
+"2555",1941,"04/03/18","NE","","PRESENT","Primary"
+"2684",1831,"4/22/18","GF Basic","","PRESENT","Primary"
+"2569",2091,"04/03/18","PAC Dog","","PRESENT","Primary"
+"2089",1761,"1/14/18","GF Basic + GF WD","","PRESENT","Primary"
+"1923",1149,"12/5/17","PAC Cat","","PRESENT","Primary"
+"2463",2100,"3/11/18","PAC Cat","","PRESENT","Primary"
+"774",1459,"5/9/17","PAC Cat","","PRESENT","Primary"
+"1182",1189,"7/25/17","PAC Cat","","PRESENT","Primary"
+"2576",1869,"04/08/18","PAC Cat","","PRESENT","Primary"
+"2967",1953,"6/24/18","GF Basic","","PRESENT","Primary"
+"2809",2029,"5/20/18","PAC Cat","","PRESENT","Primary"
+"1376",1193,"8/27/17","GF Basic","","PRESENT","Primary"
+"1894",1363,"12/3/17","GF Basic + GF WD","","PRESENT","Primary"
+"193",1034,"2/5/17","PAC Dog","","PRESENT","Primary"
+"1765",2052,"11/7/17","PAC Cat","","PRESENT","Primary"
+"2548",2048,"03/30/18","GF Basic","","PRESENT","Primary"
+"2596",2048,"04/08/18","GF WD","","PRESENT","Secondary"
+"1885",1383,"11/18/17","PAC Cat","","PRESENT","Primary"
+"2444",1960,"3/6/18","NE","","PRESENT","Primary"
+"2473",1788,"03/18/18","PAC Cat","","PRESENT","Primary"
+"692",1507,"4/25/17","PAC Cat","","PRESENT","Primary"
+"1918",1044,"12/3/17","NE","","PRESENT","Primary"
+"955",1369,"6/11/17","PAC Dog","","PRESENT","Primary"
+"887",1369,"6/4/17","PAC Cat","","PRESENT","Secondary"
+"1722",1725,"10/31/17","PAC Cat","","PRESENT","Primary"
+"1804",1725,"11/12/17","GF Basic + GF WD","","PRESENT","Secondary"
+"1784",1725,"11/7/17","PAC Dog","","PRESENT","Secondary"
+"1806",1186,"11/12/17","GF Basic + GF WD","","PRESENT","Primary"
+"2992",1950,"6/26/18","PAC Dog","","PRESENT","Primary"
+"1445",1184,"9/10/17","PAC Cat","","PRESENT","Primary"
+"2638",2039,"4/15/18","GF Basic","","PRESENT","Primary"
+"2885",2072,"6/5/18","NE","","PRESENT","Primary"
+"1585",1742,"10/3/17","NE","","PRESENT","Primary"
+"831",1551,"5/21/17","GF Basic + GF WD","","PRESENT","Primary"
+"2919",2040,"6/12/18","PAC Dog","","PRESENT","Primary"
+"1969",1417,"12/17/17","PAC Cat","","PRESENT","Primary"
+"1240",1254,"8/1/17","NE","","PRESENT","Primary"
+"2294",2119,"2/11/18","PAC Cat","","PRESENT","Primary"
+"2411",2119,"3/4/18","GF Basic","","PRESENT","Secondary"
+"1766",2109,"11/7/17","PAC Cat","","PRESENT","Primary"
+"2903",2025,"6/10/18","GF Basic","","PRESENT","Primary"
+"2363",1897,"2/20/18","NE","","PRESENT","Primary"
+"2652",2073,"4/17/18","NE","","PRESENT","Primary"
+"1943",1365,"12/10/17","PAC Cat","","PRESENT","Primary"
+"2743",1748,"5/8/18","PAC Cat","","PRESENT","Primary"
+"1714",1431,"10/29/17","PAC Cat","","PRESENT","Primary"
+"485",1547,"3/19/17","GF Basic","","PRESENT","Primary"
+"2313",2000,"2/18/18","GF Basic + GF WD","","PRESENT","Primary"
+"464",1354,"3/12/17","NE","","PRESENT","Primary"
+"2627",1898,"4/15/18","GF Basic + GF WD","","PRESENT","Primary"
+"1438",1324,"9/5/17","NE","","PRESENT","Primary"
+"744",1216,"5/7/17","PAC Cat","","PRESENT","Primary"
+"2784",1970,"5/15/18","PAC Dog","","PRESENT","Primary"
+"1579",1414,"10/1/17","NE","","PRESENT","Primary"
+"1419",1707,"9/3/17","NE","","PRESENT","Primary"
+"297",1319,"2/19/17","GF Basic","","PRESENT","Primary"
+"922",1238,"6/4/17","NE","","PRESENT","Primary"
+"2485",2238,"03/18/18","GF Basic + GF WD","","PRESENT","Primary"
+"2469",2128,"03/13/18","PAC Cat","","PRESENT","Primary"
+"2762",1955,"5/13/18","GF Basic","","PRESENT","Primary"
+"2905",1955,"6/10/18","GF WD","","PRESENT","Secondary"
+"2996",1858,"7/1/18","NE","","PRESENT","Primary"
+"1549",1142,"10/1/17","PAC Cat","","PRESENT","Primary"
+"2766",1956,"5/13/18","GF Basic","","PRESENT","Primary"
+"1179",1505,"7/23/17","PAC Cat","","PRESENT","Primary"
+"1607",1176,"10/8/17","PAC Cat","","PRESENT","Primary"
+"1684",1718,"10/22/17","PAC Cat","","PRESENT","Primary"
+"2727",2147,"5/1/18","PAC Cat","","PRESENT","Primary"
+"2636",2010,"4/15/18","GF Basic + GF WD","","PRESENT","Primary"
+"2782",2050,"5/15/18","PAC Dog","","PRESENT","Primary"
+"2511",2121,"03/18/18","NE","","PRESENT","Primary"
+"1423",1595,"9/5/17","PAC Cat","","PRESENT","Primary"
+"2066",1889,"1/7/18","NE","","PRESENT","Primary"
+"1078",1172,"7/2/17","GF Basic + GF WD","","PRESENT","Primary"
+"1181",1666,"7/23/17","PAC Cat","","PRESENT","Primary"
+"1788",1333,"11/7/17","PAC Dog","","PRESENT","Primary"
+"613",1494,"4/9/17","GF Basic","","PRESENT","Primary"
+"2273",1971,"2/11/18","GF Basic + GF WD","","PRESENT","Primary"
+"1461",1437,"9/10/17","GF Basic + GF WD","","PRESENT","Primary"
+"811",1709,"5/16/17","PAC Cat","","PRESENT","Primary"
+"1163",1691,"7/16/17","NE","","PRESENT","Primary"
+"2458",2103,"3/11/18","PAC Cat","","PRESENT","Primary"
+"2069",2087,"1/9/18","PAC Cat","","PRESENT","Primary"
+"2668",2196,"4/22/18","PAC Cat","","PRESENT","Primary"
+"2264",1913,"2/11/18","GF Basic + GF WD","","PRESENT","Primary"
+"1591",1307,"10/3/17","PAC Cat","","PRESENT","Primary"
+"1582",1495,"10/3/17","NE","","PRESENT","Primary"
+"987",1627,"6/11/17","NE","","PRESENT","Primary"
+"2651",2009,"4/17/18","NE","","PRESENT","Primary"
+"2468",1769,"03/13/18","PAC Cat","","PRESENT","Primary"
+"250",2201,"2/12/17","GF Basic","","PRESENT","Primary"
+"2471",2201,"03/18/18","PAC Cat","","PRESENT","Secondary"
+"476",1325,"3/19/17","GF Basic + GF WD","","PRESENT","Primary"
+"279",1899,"2/19/17","PAC Cat","","PRESENT","Primary"
+"1616",1151,"10/8/17","GF Basic + GF WD","","PRESENT","Primary"
+"1451",1328,"9/10/17","GF Basic","","PRESENT","Primary"
+"1938",1580,"12/5/17","NE","","PRESENT","Primary"
+"1447",2156,"9/10/17","PAC Cat","","PRESENT","Primary"
+"1890",1326,"12/3/17","PAC Cat","","PRESENT","Primary"
+"267",1404,"2/12/17","NE","","PRESENT","Primary"
+"1397",1404,"8/29/17","PAC Cat","","PRESENT","Secondary"
+"2617",2060,"4/10/18","PAC Cat","","PRESENT","Primary"
+"2611",2031,"04/08/18","NE","","PRESENT","Primary"
+"1917",1486,"12/3/17","NE","","PRESENT","Primary"
+"2816",1849,"5/22/18","PAC Cat","","PRESENT","Primary"
+"2844",1849,"6/3/18","GF Basic + GF WD","","PRESENT","Secondary"
+"1456",1099,"9/10/17","GF Basic","","PRESENT","Primary"
+"1383",1611,"8/27/17","GF Basic + GF WD","","PRESENT","Primary"
+"2963",1762,"6/24/18","PAC Cat","","PRESENT","Primary"
+"2710",1934,"4/29/18","GF Basic + GF WD","","PRESENT","Primary"
+"2819",1846,"5/22/18","PAC Cat","","PRESENT","Primary"
+"1571",1097,"10/1/17","NE","","PRESENT","Primary"
+"1753",1285,"11/5/17","NE","","PRESENT","Primary"
+"2232",1957,"2/6/18","PAC Cat","","PRESENT","Primary"
+"650",1079,"4/18/17","PAC Cat","","PRESENT","Primary"
+"1608",1242,"10/8/17","PAC Cat","","PRESENT","Primary"
+"1964",1472,"12/12/17","PAC Cat","","PRESENT","Primary"
+"1259",1022,"8/6/17","GF Basic","","PRESENT","Primary"
+"1921",1076,"12/5/17","PAC Cat","","PRESENT","Primary"
+"1510",1297,"9/22/17","NE","","PRESENT","Primary"
+"1514",1018,"9/22/17","NE","","PRESENT","Primary"
+"2380",1821,"2/25/18","GF Basic + GF WD","","PRESENT","Primary"
+"1172",1183,"7/18/17","PAC Cat","","PRESENT","Primary"
+"2179",2202,"1/23/18","PAC Dog","","PRESENT","Primary"
+"2071",2202,"1/9/18","PAC Cat","","PRESENT","Secondary"
+"342",1633,"2/26/17","PAC Dog","","PRESENT","Primary"
+"896",1070,"6/4/17","GF Basic + GF WD","","PRESENT","Primary"
+"2830",1975,"6/3/18","PAC Cat","","PRESENT","Primary"
+"2606",2174,"04/08/18","NE","","PRESENT","Primary"
+"2291",2125,"2/11/18","PAC Cat","","PRESENT","Primary"
+"169",1530,"1/29/17","NE","","PRESENT","Primary"
+"598",1668,"4/9/17","PAC Cat","","PRESENT","Primary"
+"2567",2083,"04/03/18","PAC Cat","","PRESENT","Primary"
+"2754",1791,"5/13/18","PAC Cat","","PRESENT","Primary"
+"527",1367,"3/26/17","GF Basic","","PRESENT","Primary"
+"1623",1181,"10/8/17","GF Basic + GF WD","","PRESENT","Primary"
+"2171",1852,"1/23/18","PAC Cat","","PRESENT","Primary"
+"921",1384,"6/4/17","NE","","PRESENT","Primary"
+"2817",1952,"5/22/18","PAC Cat","","PRESENT","Primary"
+"1057",1102,"6/27/17","NE","","PRESENT","Primary"
+"2705",2168,"4/29/18","GF Basic + GF WD","","PRESENT","Primary"
+"1863",1608,"11/21/17","PAC Cat","","PRESENT","Primary"
+"1488",1694,"9/17/17","NE","","PRESENT","Primary"
+"2884",1775,"6/5/18","NE","","PRESENT","Primary"
+"1769",1679,"11/7/17","PAC Cat","","PRESENT","Primary"
+"1437",1456,"9/5/17","NE","","PRESENT","Primary"
+"356",1096,"2/26/17","GF Basic ","","PRESENT","Primary"
+"1410",1457,"8/31/17","NE","","PRESENT","Primary"
+"2169",2075,"1/23/18","PAC Cat","","PRESENT","Primary"
+"1770",1318,"11/7/17","PAC Cat","","PRESENT","Primary"
+"2466",1888,"03/13/18","PAC Cat","","PRESENT","Primary"
+"1140",1227,"7/11/17","NE","","PRESENT","Primary"
+"2764",1903,"5/13/18","GF Basic","","PRESENT","Primary"
+"2850",1903,"6/3/18","GF WD","","PRESENT","Secondary"
+"2954",2179,"6/19/18","PAC Cat","","PRESENT","Primary"
+"1555",1639,"10/1/17","GF Basic + GF WD","","PRESENT","Primary"
+"2451",2228,"3/6/18","NE","","PRESENT","Primary"
+"1614",1210,"10/8/17","GF Basic + GF WD","","PRESENT","Primary"
+"716",1012,"4/30/17","GF Basic + GF WD","","PRESENT","Primary"
+"2553",2066,"04/03/18","NE","","PRESENT","Primary"
+"2673",2165,"4/22/18","GF Basic","","PRESENT","Primary"
+"2674",2153,"4/22/18","GF Basic","","PRESENT","Primary"
+"1472",1232,"9/12/17","PAC Cat","","PRESENT","Primary"
+"2703",2076,"4/29/18","GF Basic","","PRESENT","Primary"
+"1547",1013,"10/1/17","PAC Cat","","PRESENT","Primary"
+"2364",2139,"2/20/18","NE","","PRESENT","Primary"
+"1312",1513,"8/13/17","NE","","PRESENT","Primary"
+"1217",1534,"7/30/17","GF Basic","","PRESENT","Primary"
+"1261",1516,"8/6/17","GF Basic","","PRESENT","Primary"
+"1965",1103,"12/12/17","PAC Cat","","PRESENT","Primary"
+"1873",1225,"11/21/17","PAC Dog","","PRESENT","Primary"
+"1879",1631,"11/21/17","NE","","PRESENT","Primary"
+"2178",2022,"1/23/18","PAC Dog","","PRESENT","Primary"
+"1696",1062,"10/22/17","GF Basic + GF WD","","PRESENT","Primary"
+"787",1481,"5/14/17","PAC Cat","","PRESENT","Primary"
+"2167",2130,"1/23/18","PAC Cat","","PRESENT","Primary"
+"2911",1790,"6/12/18","PAC Cat","","PRESENT","Primary"
+"65",1120,"1/15/17","GF Basic + GF WD","","PRESENT","Primary"
+"2505",1786,"03/18/18","NE","","PRESENT","Primary"
+"2887",1855,"6/5/18","NE","","PRESENT","Primary"
+"2183",1958,"1/28/18","PAC Cat","","PRESENT","Primary"
+"2478",2081,"03/18/18","GF Basic + GF WD","","PRESENT","Primary"
+"2573",2081,"04/03/18","PAC Dog","","PRESENT","Secondary"
+"2725",2098,"5/1/18","PAC Cat","","PRESENT","Primary"
+"2215",1817,"2/4/17","PAC Cat","","PRESENT","Primary"
+"1382",1265,"8/27/17","GF Basic + GF WD","","PRESENT","Primary"
+"589",2105,"4/4/17","NE","","PRESENT","Primary"
+"2353",2105,"2/20/18","NE","","PRESENT","Secondary"
+"28",1654,"1/8/17","NE","","PRESENT","Primary"
+"653",1073,"4/18/17","NE","","PRESENT","Primary"
+"2115",2045,"1/16/18","PAC Cat","","PRESENT","Primary"
+"1962",1296,"12/12/17","PAC Cat","","PRESENT","Primary"
+"1974",1296,"12/17/17","GF Basic + GF WD","","PRESENT","Secondary"
+"1400",1650,"8/29/17","PAC Cat","","PRESENT","Primary"
+"2359",1812,"2/20/18","NE","","PRESENT","Primary"
+"1477",1075,"9/17/17","PAC Cat","","PRESENT","Primary"
+"2529",1891,"03/27/18","PAC Cat","","PRESENT","Primary"
+"2321",2177,"2/18/18","GF WD","","PRESENT","Primary"
+"2964",1895,"6/24/18","GF Basic","","PRESENT","Primary"
+"2132",2017,"1/21/18","PAC Cat","","PRESENT","Primary"
+"588",1109,"4/4/17","NE","","PRESENT","Primary"
+"1434",1961,"9/5/17","PAC Dog","","PRESENT","Primary"
+"2717",2190,"4/29/18","GF WD","","PRESENT","Primary"
+"810",1284,"5/16/17","PAC Cat","","PRESENT","Primary"
+"2601",2166,"04/08/18","NE","","PRESENT","Primary"
+"1474",1389,"9/12/17","PAC Cat","","PRESENT","Primary"
+"1650",1705,"10/17/17","NE","","PRESENT","Primary"
+"2270",2208,"2/11/18","GF Basic + GF WD","","PRESENT","Primary"
+"2455",1928,"3/6/18","PAC Dog","","PRESENT","Primary"
+"1622",1469,"10/8/17","GF Basic + GF WD","","PRESENT","Primary"
+"581",1387,"4/4/17","PAC Cat","","PRESENT","Primary"
+"142",1010,"1/29/17","PAC Cat","","PRESENT","Primary"
+"836",1353,"5/21/17","GF Basic","","PRESENT","Primary"
+"1137",1171,"7/11/17","PAC Cat","","PRESENT","Primary"
+"2804",2108,"5/18/18","GF Basic","","PRESENT","Primary"
+"2271",1999,"2/11/18","GF Basic + GF WD","","PRESENT","Primary"
+"2888",2064,"6/10/18","PAC Cat","","PRESENT","Primary"
+"1209",1135,"7/30/17","PAC Cat","","PRESENT","Primary"
+"1999",1251,"12/17/17","NE","","PRESENT","Primary"
+"351",1048,"2/26/17","GF Basic  + GF WD","","PRESENT","Primary"
+"1108",1345,"7/9/17","PAC Cat","","PRESENT","Primary"
+"1279",1345,"8/8/17","PAC Dog","","PRESENT","Secondary"
+"1786",1697,"11/7/17","PAC Dog","","PRESENT","Primary"
+"2874",2137,"6/5/18","PAC Cat","","PRESENT","Primary"
+"1101",1235,"7/2/17","NE","","PRESENT","Primary"
+"1185",1129,"7/25/17","PAC Cat","","PRESENT","Primary"
+"2749",2143,"5/8/18","PAC Cat","","PRESENT","Primary"
+"1422",1377,"9/5/17","PAC Cat","","PRESENT","Primary"
+"2245",2181,"2/6/18","NE","","PRESENT","Primary"
+"2780",1994,"5/15/18","PAC Dog","","PRESENT","Primary"
+"1363",1635,"8/22/17","PAC Cat","","PRESENT","Primary"
+"2902",1777,"6/10/18","GF Basic + GF WD","","PRESENT","Primary"
+"1556",2227,"10/1/17","GF Basic + GF WD","","PRESENT","Primary"
+"1207",2227,"7/30/17","PAC Cat","","PRESENT","Secondary"
+"1448",1575,"9/10/17","PAC Cat","","PRESENT","Primary"
+"1431",1575,"9/5/17","PAC Dog","","PRESENT","Secondary"
+"666",1267,"4/23/17","GF Basic + GF WD","","PRESENT","Primary"
+"2873",1771,"6/5/18","PAC Cat","","PRESENT","Primary"
+"1661",1425,"10/17/17","NE","","PRESENT","Primary"
+"1888",1726,"12/3/17","PAC Cat","","PRESENT","Primary"
+"1189",1067,"7/25/17","PAC Dog","","PRESENT","Primary"
+"1218",1067,"7/30/17","GF Basic + GF WD","","PRESENT","Secondary"
+"1561",1618,"10/1/17","GF Basic + GF WD","","PRESENT","Primary"
+"1600",1618,"10/3/17","PAC Dog","","PRESENT","Secondary"
+"1767",1643,"11/7/17","PAC Cat","","PRESENT","Primary"
+"2479",1643,"03/18/18","GF Basic + GF WD","","PRESENT","Secondary"
+"1497",1157,"9/19/17","PAC Cat","","PRESENT","Primary"
+"2227",1815,"2/6/18","PAC Cat","","PRESENT","Primary"
+"1599",1696,"10/3/17","PAC Dog","","PRESENT","Primary"
+"2347",2171,"2/20/18","PAC Cat","","PRESENT","Primary"
+"1518",1540,"9/24/17","PAC Cat","","PRESENT","Primary"
+"1199",1498,"7/27/17","NE","","PRESENT","Primary"
+"1406",1261,"8/31/17","NE","","PRESENT","Primary"
+"672",1222,"4/23/17","GF Basic","","PRESENT","Primary"
+"583",1222,"4/4/17","PAC Cat","","PRESENT","Secondary"
+"1028",1336,"6/25/17","PAC Cat","","PRESENT","Primary"
+"2742",1935,"5/6/18","PAC Cat","","PRESENT","Primary"
+"2299",1998,"2/18/18","PAC Cat","","PRESENT","Primary"
+"1157",1592,"7/16/17","PAC Cat","","PRESENT","Primary"
+"1792",1615,"11/12/17","PAC Cat","","PRESENT","Primary"
+"1248",1348,"8/6/17","PAC Cat","","PRESENT","Primary"
+"2101",2053,"1/14/18","GF WD","","PRESENT","Primary"
+"2046",2053,"1/7/18","GF Basic","","PRESENT","Secondary"
+"400",1728,"3/5/17","GF WD","","PRESENT","Primary"
+"1955",1688,"12/10/17","GF Basic","","PRESENT","Primary"
+"1881",1744,"11/21/17","NE","","PRESENT","Primary"
+"1597",2047,"10/3/17","PAC Dog","","PRESENT","Primary"
+"2004",1105,"12/19/17","PAC Cat","","PRESENT","Primary"
+"1734",1685,"11/5/17","GF Basic + GF WD","","PRESENT","Primary"
+"1188",1541,"7/25/17","PAC Cat","","PRESENT","Primary"
+"1281",1657,"8/8/17","PAC Dog","","PRESENT","Primary"
+"945",1645,"6/6/17","PAC Dog","","PRESENT","Primary"
+"1560",1160,"10/1/17","GF Basic + GF WD","","PRESENT","Primary"
+"350",1038,"2/26/17","GF Basic  + GF WD","","PRESENT","Primary"
+"592",1038,"4/4/17","NE","","PRESENT","Secondary"
+"1000",2008,"6/18/17","PAC Cat","","PRESENT","Primary"
+"2666",2008,"4/17/18","PAC Dog","","PRESENT","Secondary"
+"2769",2008,"5/13/18","GF Basic","","PRESENT","Secondary"
+"1273",2112,"8/8/17","PAC Cat","","PRESENT","Primary"
+"1435",2112,"9/5/17","PAC Dog","","PRESENT","Secondary"
+"2072",2162,"1/9/18","PAC Cat","","PRESENT","Primary"
+"55",1883,"1/15/17","PAC Cat","","PRESENT","Primary"
+"124",1504,"1/24/17","PAC Cat","","PRESENT","Primary"
+"950",2080,"6/11/17","PAC Cat","","PRESENT","Primary"
+"1708",1452,"10/24/17","PAC Cat","","PRESENT","Primary"
+"528",1003,"3/26/17","GF Basic + GF WD","","PRESENT","Primary"
+"248",1603,"2/12/17","GF Basic","","PRESENT","Primary"
+"1505",NA,"9/22/17","NE","","PRESENT","Primary"
+"2734",NA,"5/1/18","NE","","PRESENT","Secondary"
+"1138",1623,"7/11/17","PAC Cat","","PRESENT","Primary"
+"1886",1545,"11/18/17","PAC Cat","","PRESENT","Primary"
+"1164",1545,"7/16/17","NE","","PRESENT","Secondary"
+"1283",1028,"8/13/17","GF Basic + GF WD","","PRESENT","Primary"
+"1479",1374,"9/17/17","PAC Cat","","PRESENT","Primary"
+"2811",2113,"5/20/18","NE","","PRESENT","Primary"
+"1587",NA,"10/3/17","PAC Cat","","PRESENT","Primary"
+"2917",1972,"6/12/18","PAC Dog","","PRESENT","Primary"
+"2519",1912,"03/20/18","PAC Cat","","PRESENT","Primary"
+"856",1648,"5/21/17","NE","","PRESENT","Primary"
+"1654",1358,"10/17/17","NE","","PRESENT","Primary"
+"2035",1200,"1/2/18","PAC Cat","","PRESENT","Primary"
+"1282",1693,"8/8/17","PAC Dog","","PRESENT","Primary"
+"1818",1565,"11/14/17","PAC Cat","","PRESENT","Primary"
+"2247",2148,"2/6/18","NE","","PRESENT","Primary"
+"1732",1086,"11/5/17","GF Basic + GF WD","","PRESENT","Primary"
+"1713",1008,"10/24/17","PAC Cat","","PRESENT","Primary"
+"682",1698,"4/23/17","NE","","PRESENT","Primary"
+"1065",1170,"6/27/17","PAC Cat","","PRESENT","Primary"
+"2443",2155,"3/6/18","PAC Cat","","PRESENT","Primary"
+"518",2223,"3/26/17","PAC Dog","","PRESENT","Primary"
+"2787",2038,"5/15/18","NE","","PRESENT","Primary"
+"866",1537,"5/23/17","PAC Cat","","PRESENT","Primary"
+"1059",1564,"6/27/17","NE","","PRESENT","Primary"
+"2550",2090,"03/30/18","GF Basic","","PRESENT","Primary"
+"1823",1111,"11/19/17","PAC Cat","","PRESENT","Primary"
+"1145",1539,"7/11/17","PAC Dog","","PRESENT","Primary"
+"904",1566,"6/4/17","GF Basic + GF WD","","PRESENT","Primary"
+"2063",1863,"1/7/18","NE","","PRESENT","Primary"
+"1348",1604,"8/20/17","GF Basic + GF WD","","PRESENT","Primary"
+"2931",2163,"6/17/18","GF Basic","","PRESENT","Primary"
+"2136",2116,"1/21/18","GF Basic","","PRESENT","Primary"
+"2078",2132,"1/9/18","PAC Dog","","PRESENT","Primary"
+"2628",1984,"4/15/18","GF Basic","","PRESENT","Primary"
+"341",1334,"2/26/17","PAC Dog","","PRESENT","Primary"
+"2876",1977,"6/5/18","NE","","PRESENT","Primary"
+"2994",1948,"6/26/18","PAC Dog","","PRESENT","Primary"
+"2691",1816,"4/24/18","PAC Cat","","PRESENT","Primary"
+"753",1231,"5/7/17","GF Basic + GF WD","","PRESENT","Primary"
+"1246",1162,"8/1/17","PAC Cat","","PRESENT","Primary"
+"1830",1356,"11/19/17","GF Basic","","PRESENT","Primary"
+"1415",2035,"9/3/17","NE","","PRESENT","Primary"
+"1737",1764,"11/5/17","GF Basic","","PRESENT","Primary"
+"2000",1276,"12/17/17","NE","","PRESENT","Primary"
+"1801",1091,"11/12/17","GF Basic + GF WD","","PRESENT","Primary"
+"2269",1892,"2/11/18","GF Basic + GF WD","","PRESENT","Primary"
+"1835",1152,"11/19/17","GF Basic + GF WD","","PRESENT","Primary"
+"1586",1418,"10/3/17","NE","","PRESENT","Primary"
+"10",1413,"1/8/17","GF Basic","","PRESENT","Primary"
+"2962",2191,"6/24/18","PAC Cat","","PRESENT","Primary"
+"2865",2024,"6/3/18","NE","","PRESENT","Primary"
+"1436",1401,"9/5/17","NE","","PRESENT","Primary"
+"1166",1409,"7/16/17","NE","","PRESENT","Primary"
+"1371",1409,"8/27/17","PAC Cat","","PRESENT","Secondary"
+"2124",1787,"1/16/18","NE","","PRESENT","Primary"
+"2522",2213,"03/20/18","PAC Cat","","PRESENT","Primary"
+"1343",1192,"8/20/17","GF Basic + GF WD","","PRESENT","Primary"
+"92",1792,"1/17/17","PAC Dog","","PRESENT","Primary"
+"2012",1078,"12/19/17","PAC Dog","","PRESENT","Primary"
+"147",1778,"1/29/17","PAC Dog","","PRESENT","Primary"
+"1655",1266,"10/17/17","NE","","PRESENT","Primary"
+"419",1177,"3/7/17","NE","","PRESENT","Primary"
+"329",1441,"2/21/17","NE","","PRESENT","Primary"
+"2225",1927,"2/4/17","NE","","PRESENT","Primary"
+"2093",1754,"1/14/18","GF Basic + GF WD","","PRESENT","Primary"
+"1578",1004,"10/1/17","NE","","PRESENT","Primary"
+"2870",2224,"6/5/18","PAC Cat","","PRESENT","Primary"
+"784",1663,"5/9/17","PAC Dog","","PRESENT","Primary"
+"1920",1161,"12/5/17","PAC Cat","","PRESENT","Primary"
+"1476",1407,"9/17/17","PAC Cat","","PRESENT","Primary"
+"1517",2057,"9/24/17","PAC Cat","","PRESENT","Primary"
+"688",1471,"4/23/17","NE","","PRESENT","Primary"
+"1116",1041,"7/9/17","GF Basic + GF WD","","PRESENT","Primary"
+"2055",1835,"1/7/18","GF WD","","PRESENT","Primary"
+"985",1005,"6/11/17","NE","","PRESENT","Primary"
+"1126",1016,"7/9/17","GF Basic + GF WD","","PRESENT","Primary"
+"1624",1168,"10/8/17","GF Basic + GF WD","","PRESENT","Primary"
+"1919",1168,"12/3/17","NE","","PRESENT","Secondary"
+"1492",1264,"9/19/17","PAC Cat","","PRESENT","Primary"
+"2588",2003,"04/08/18","GF Basic + GF WD","","PRESENT","Primary"
+"1487",1746,"9/17/17","NE","","PRESENT","Primary"
+"2872",1873,"6/5/18","PAC Cat","","PRESENT","Primary"
+"2480",2225,"03/18/18","GF Basic + GF WD","","PRESENT","Primary"
+"411",1081,"3/7/17","PAC Cat","","PRESENT","Primary"
+"1331",1169,"8/15/17","PAC Cat","","PRESENT","Primary"
+"2933",1767,"6/17/18","GF Basic + GF WD","","PRESENT","Primary"
+"2044",1774,"1/7/18","GF Basic + GF WD","","PRESENT","Primary"
+"657",1310,"4/18/17","NE","","PRESENT","Primary"
+"2934",1885,"6/17/18","GF Basic + GF WD","","PRESENT","Primary"
+"1220",1211,"7/30/17","GF Basic + GF WD","","PRESENT","Primary"
+"106",1130,"1/22/17","GF Basic","","PRESENT","Primary"
+"1007",1600,"6/18/17","PAC Dog","","PRESENT","Primary"
+"3003",2067,"7/1/18","NE","","PRESENT","Primary"
+"468",1703,"3/12/17","NE","","PRESENT","Primary"
+"2955",1770,"6/19/18","PAC Cat","","PRESENT","Primary"
+"335",1862,"2/26/17","PAC Cat","","PRESENT","Primary"
+"2745",1773,"5/8/18","PAC Cat","","PRESENT","Primary"
+"1851",1704,"11/19/17","NE","","PRESENT","Primary"
+"2558",2078,"04/03/18","NE","","PRESENT","Primary"
+"2037",1085,"1/2/18","PAC Cat","","PRESENT","Primary"
+"2822",1976,"5/22/18","PAC Cat","","PRESENT","Primary"
+"2690",2054,"4/24/18","PAC Cat","","PRESENT","Primary"
+"2490",1911,"03/18/18","GF Basic + GF WD","","PRESENT","Primary"
+"2189",1824,"1/28/18","GF Basic + GF WD","","PRESENT","Primary"
+"2177",1753,"1/23/18","PAC Dog","","PRESENT","Primary"
+"2986",1878,"6/26/18","PAC Cat","","PRESENT","Primary"
+"2268",2199,"2/11/18","GF Basic + GF WD","","PRESENT","Primary"
+"2400",2167,"3/4/18","PAC Cat","","PRESENT","Primary"
+"2220",2111,"2/4/17","NE","","PRESENT","Primary"
+"2032",1569,"1/2/18","NE","","PRESENT","Primary"
+"2878",2094,"6/5/18","NE","","PRESENT","Primary"
+"1485",1089,"9/17/17","NE","","PRESENT","Primary"
+"2744",1951,"5/8/18","PAC Cat","","PRESENT","Primary"
+"952",1381,"6/11/17","PAC Cat","","PRESENT","Primary"
+"1728",1759,"11/5/17","PAC Cat","","PRESENT","Primary"
+"1052",1084,"6/25/17","GF WD","","PRESENT","Primary"
+"899",1084,"6/4/17","GF Basic + GF WD","","PRESENT","Secondary"
+"2236",1828,"2/6/18","PAC Cat","","PRESENT","Primary"
+"1726",1923,"11/5/17","PAC Cat","","PRESENT","Primary"
+"1213",1733,"7/30/17","GF Basic + GF WD","","PRESENT","Primary"
+"2753",2219,"5/8/18","PAC Dog","","PRESENT","Primary"
+"1690",1009,"10/22/17","GF Basic","","PRESENT","Primary"
+"1936",1009,"12/5/17","NE","","PRESENT","Secondary"
+"1107",1475,"7/2/17","NE","","PRESENT","Primary"
+"20",1723,"1/8/17","GF WD","","PRESENT","Primary"
+"2140",1857,"1/21/18","GF Basic","","PRESENT","Primary"
+"2639",1880,"4/15/18","GF Basic","","PRESENT","Primary"
+"515",1446,"3/26/17","PAC Dog","","PRESENT","Primary"
+"561",1446,"4/2/17","GF Basic + GF WD","","PRESENT","Secondary"
+"2445",1772,"3/6/18","NE","","PRESENT","Primary"
+"1251",1131,"8/6/17","PAC Cat","","PRESENT","Primary"
+"1278",1131,"8/8/17","PAC Dog","","PRESENT","Secondary"
+"1963",1502,"12/12/17","PAC Cat","","PRESENT","Primary"
+"2467",1853,"03/13/18","PAC Cat","","PRESENT","Primary"
+"827",1339,"5/21/17","PAC Cat","","PRESENT","Primary"
+"1146",1734,"7/11/17","PAC Dog","","PRESENT","Primary"
+"44",1572,"1/10/17","NE","","PRESENT","Primary"
+"2118",1819,"1/16/18","NE","","PRESENT","Primary"
+"2246",2207,"2/6/18","NE","","PRESENT","Primary"
+"1025",1634,"6/25/17","PAC Cat","","PRESENT","Primary"
+"2048",1841,"1/7/18","GF Basic","","PRESENT","Primary"
+"881",1664,"5/30/17","NE","","PRESENT","Primary"
+"1719",1023,"10/29/17","PAC Cat","","PRESENT","Primary"
+"2197",2006,"1/28/18","GF WD","CANCELLED","PRESENT","Primary"
+"565",1411,"4/2/17","GF Basic","","PRESENT","Primary"
+"1824",1289,"11/19/17","PAC Cat","","PRESENT","Primary"
+"1252",2058,"8/6/17","PAC Cat","","PRESENT","Primary"
+"1495",2037,"9/19/17","PAC Cat","","PRESENT","Primary"
+"2483",2144,"03/18/18","GF Basic + GF WD","","PRESENT","Primary"
+"2405",2144,"3/4/18","PAC Cat","","PRESENT","Secondary"
+"1653",1736,"10/17/17","NE","","PRESENT","Primary"
+"155",1653,"1/29/17","GF Basic","","PRESENT","Primary"
+"1739",1653,"11/5/17","GF Basic","","PRESENT","Secondary"
+"2700",1983,"4/29/18","PAC Cat","","PRESENT","Primary"
+"2751",1983,"5/8/18","PAC Dog","","PRESENT","Secondary"
+"2300",1820,"2/18/18","PAC Cat","","PRESENT","Primary"
+"2434",2140,"3/4/18","NE","","PRESENT","Primary"
+"1399",1386,"8/29/17","PAC Cat","","PRESENT","Primary"
+"2192",1386,"1/28/18","GF Basic + GF WD","","PRESENT","Secondary"
+"1982",1349,"12/17/17","GF Basic + GF WD","","PRESENT","Primary"
+"2773",2097,"5/15/18","PAC Cat","","PRESENT","Primary"
+"601",1526,"4/9/17","PAC Cat","","PRESENT","Primary"
+"88",1802,"1/17/17","PAC Cat","","PRESENT","Primary"
+"1557",1002,"10/1/17","GF Basic + GF WD","","PRESENT","Primary"
+"2767",2115,"5/13/18","GF Basic","","PRESENT","Primary"
+"1841",1624,"11/19/17","GF Basic","","PRESENT","Primary"
+"855",1579,"5/21/17","NE","","PRESENT","Primary"
+"2737",2044,"5/6/18","PAC Cat","","PRESENT","Primary"
+"290",1069,"2/19/17","GF Basic + GF WD","","PRESENT","Primary"
+"2806",2062,"5/20/18","PAC Cat","","PRESENT","Primary"
+"2670",1959,"4/22/18","PAC Cat","","PRESENT","Primary"
+"1158",1229,"7/16/17","NE","","PRESENT","Primary"
+"859",1175,"5/21/17","NE","","PRESENT","Primary"
+"2772",2013,"5/15/18","PAC Cat","","PRESENT","Primary"
+"1803",1560,"11/12/17","GF Basic + GF WD","","PRESENT","Primary"
+"2524",1933,"03/25/18","PAC Cat","","PRESENT","Primary"
+"2053",2142,"1/7/18","GF Basic + GF WD","","PRESENT","Primary"
+"1710",1275,"10/24/17","PAC Cat","","PRESENT","Primary"
+"1729",1191,"11/5/17","PAC Cat","","PRESENT","Primary"
+"2028",1848,"1/2/18","NE","","PRESENT","Primary"
+"2614",2089,"4/10/18","PAC Cat","","PRESENT","Primary"
+"2351",1865,"2/20/18","PAC Dog","","PRESENT","Primary"
+"996",1942,"6/13/17","PAC Cat","","PRESENT","Primary"
+"1009",1942,"6/18/17","PAC Dog","","PRESENT","Secondary"
+"2158",1877,"1/21/18","NE","","PRESENT","Primary"
+"2159",1875,"1/21/18","NE","","PRESENT","Primary"
+"2696",2033,"4/29/18","PAC Cat","","PRESENT","Primary"
+"1250",1398,"8/6/17","PAC Cat","","PRESENT","Primary"
+"2207",1659,"1/30/18","PAC Cat","","PRESENT","Primary"
+"780",1050,"5/9/17","PAC Dog","","PRESENT","Primary"
+"1136",1978,"7/11/17","PAC Cat","","PRESENT","Primary"
+"2084",2133,"1/14/18","PAC Cat","","PRESENT","Primary"
+"2087",2020,"1/14/18","GF Basic + GF WD","","PRESENT","Primary"
+"330",1032,"2/21/17","NE","","PRESENT","Primary"
+"1998",1101,"12/17/17","NE","","PRESENT","Primary"
+"658",1487,"4/18/17","NE","","PRESENT","Primary"
+"1215",1306,"7/30/17","GF Basic + GF WD","","PRESENT","Primary"
+"2145",2214,"1/21/18","GF Basic","","PRESENT","Primary"
+"1559",1599,"10/1/17","GF Basic + GF WD","","PRESENT","Primary"
+"1679",1599,"10/17/17","PAC Dog","","PRESENT","Secondary"
+"2988",1784,"6/26/18","PAC Cat","","PRESENT","Primary"
+"959",1255,"6/11/17","GF Basic + GF WD","","PRESENT","Primary"
+"2318",1859,"2/18/18","GF WD","","PRESENT","Primary"
+"2229",1859,"2/6/18","PAC Cat","","PRESENT","Secondary"
+"2984",2231,"6/26/18","PAC Cat","","PRESENT","Primary"
+"2360",2016,"2/20/18","NE","","PRESENT","Primary"
+"1662",1485,"10/17/17","NE","","PRESENT","Primary"
+"1707",1236,"10/24/17","PAC Cat","","PRESENT","Primary"
+"125",1879,"1/24/17","PAC Cat","","PRESENT","Primary"
+"189",1556,"2/5/17","PAC Cat","","PRESENT","Primary"
+"2798",2124,"5/18/18","GF Basic","","PRESENT","Primary"
+"2033",1621,"1/2/18","PAC Cat","","PRESENT","Primary"
+"963",1055,"6/11/17","GF Basic + GF WD","","PRESENT","Primary"
+"2237",2126,"2/6/18","PAC Dog","","PRESENT","Primary"
+"2001",1700,"12/19/17","PAC Cat","","PRESENT","Primary"
+"1260",1510,"8/6/17","GF Basic + GF WD","","PRESENT","Primary"
+"1523",1074,"9/24/17","GF Basic + GF WD","","PRESENT","Primary"
+"2912",1826,"6/12/18","PAC Cat","","PRESENT","Primary"
+"2022",1153,"12/26/17","PAC Cat","","PRESENT","Primary"
+"865",1185,"5/23/17","PAC Cat","","PRESENT","Primary"
+"1223",1185,"7/30/17","GF Basic + GF WD","","PRESENT","Secondary"
+"2408",1963,"3/4/18","GF Basic + GF WD","","PRESENT","Primary"
+"2834",1930,"6/3/18","PAC Cat","","PRESENT","Primary"
+"1192",1501,"7/25/17","PAC Dog","","PRESENT","Primary"
+"1274",1501,"8/8/17","PAC Cat","","PRESENT","Secondary"
+"885",1436,"5/30/17","NE","","PRESENT","Primary"
+"608",1196,"4/9/17","GF Basic","","PRESENT","Primary"
+"2936",1965,"6/17/18","GF Basic + GF WD","","PRESENT","Primary"
+"668",1206,"4/23/17","GF Basic + GF WD","","PRESENT","Primary"
+"2965",2229,"6/24/18","GF Basic + GF WD","","PRESENT","Primary"
+"3001",1779,"7/1/18","NE","","PRESENT","Primary"
+"1691",1492,"10/22/17","GF Basic + GF WD","","PRESENT","Primary"
+"2886",1822,"6/5/18","NE","","PRESENT","Primary"
+"2067",1842,"1/7/18","NE","","PRESENT","Primary"
+"585",1293,"4/4/17","PAC Cat","","PRESENT","Primary"
+"1516",1371,"9/24/17","PAC Cat","","PRESENT","Primary"
+"1139",1090,"7/11/17","NE","","PRESENT","Primary"
+"2348",1854,"2/20/18","PAC Dog","","PRESENT","Primary"
+"751",1646,"5/7/17","GF Basic + GF WD","","PRESENT","Primary"
+"1934",1188,"12/5/17","PAC Dog","","PRESENT","Primary"
+"2486",2086,"03/18/18","GF Basic + GF WD","","PRESENT","Primary"
+"479",1054,"3/19/17","GF Basic + GF WD","","PRESENT","Primary"
+"1638",1402,"10/10/17","PAC Cat","","PRESENT","Primary"
+"1015",1470,"6/18/17","NE","","PRESENT","Primary"
+"1973",1393,"12/17/17","GF Basic","","PRESENT","Primary"
+"473",1098,"3/19/17","PAC Cat","","PRESENT","Primary"
+"1271",1439,"8/8/17","PAC Cat","","PRESENT","Primary"
+"474",1304,"3/19/17","PAC Cat","","PRESENT","Primary"
+"1887",2104,"11/18/17","PAC Cat","","PRESENT","Primary"
+"2938",2028,"6/17/18","GF Basic + GF WD","","PRESENT","Primary"
+"2812",1997,"5/20/18","NE","","PRESENT","Primary"
+"566",1625,"4/2/17","GF Basic + GF WD","","PRESENT","Primary"
+"1169",1314,"7/18/17","PAC Cat","","PRESENT","Primary"
+"1257",1586,"8/6/17","GF Basic + GF WD","","PRESENT","Primary"
+"2297",2049,"2/11/18","PAC Cat","","PRESENT","Primary"
+"428",1060,"3/7/17","NE","","PRESENT","Primary"
+"32",1636,"1/8/17","NE","","PRESENT","Primary"
+"2835",2186,"6/3/18","GF Basic","","PRESENT","Primary"
+"2168",2015,"1/23/18","PAC Cat","","PRESENT","Primary"
+"3004",2059,"7/1/18","NE","","PRESENT","Primary"
+"2801",1990,"5/18/18","GF Basic","","PRESENT","Primary"
+"2188",1756,"1/28/18","GF Basic","","PRESENT","Primary"
+"1902",1282,"12/3/17","GF Basic","","PRESENT","Primary"
+"1486",1428,"9/17/17","NE","","PRESENT","Primary"
