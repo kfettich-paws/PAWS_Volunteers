@@ -21,25 +21,6 @@ library(ggalluvial)
 # Question
 What is the typical pattern for volunteer disengagement?
 
-I need to summarise the number of volunteers with various characteristics:  
-
-* did orientation, but no shifts
-* did orientation, had only 1 shift
-* did orientation, had 2+ shifts
-
-What factors are associated with these three groups? location, orientation type, zip code, days to first shift?
-
-For volunteers that do show up, what happens? Lets plot frequencies over the following factors:  
-
-* orientation type
-* orientation location
-* did a shift
-* did a second shift
-* shift types
-
-How do we define a "disengaged" volunteer?  
-
-* My idea: Length of time after last shift is > x months (test different x)
 
 # Procedure  
 * We have data from orientation sign up - orientation dates
@@ -52,6 +33,8 @@ How do we define a "disengaged" volunteer?
 1. Make a plot to show volunteer patterns
 1. Idea: use ggplot2 extension ggalluvial
 
+This Rmd contains data cleaning code and some initial plots. The final_report_q3.Rmd has the analysis that uses the output from this file.
+
 ## Load Data
 ```{r data_load}
 master_file <- '../../../Data/master.csv'
@@ -61,8 +44,6 @@ signup_file <- '../../../Data/signupsheet.csv'
 master <- read.csv(master_file, quote="", stringsAsFactors = F)
 service <- read.csv(service_file, stringsAsFactors = F)
 signup <- read.csv(signup_file, stringsAsFactors = F)
-
-
 ```
 
 The `r master_file` has `r nrow(master)` rows.
@@ -74,10 +55,10 @@ The `r signup_file` has `r nrow(signup)` rows.
 ### Basic info on signup table
 Signup table has information of the types of orientations.
 ```{r basic_signup}
-knitr::kable(table(signup$Type), caption = "Type")
-knitr::kable(table(signup$NOT.Attending), caption = "Not Attending")
-knitr::kable(table(signup$Present), caption = "Present")
-knitr::kable(table(signup$orientation), caption = "Primary or Secondary Orientation")
+knitr::kable(table(signup$Type, exclude=NULL), caption = "Type")
+knitr::kable(table(signup$NOT.Attending, exclude=NULL), caption = "Not Attending")
+knitr::kable(table(signup$Present, exclude=NULL), caption = "Present")
+knitr::kable(table(signup$orientation, exclude=NULL), caption = "Primary or Secondary Orientation")
 ```
 
 OK, so I learned that we need to clean up with "Type" fields and remove one row for cancelling on the orientation.
@@ -105,10 +86,10 @@ with(signup_clean, table(orient_type, orientation, exclude = NULL) )
 with(signup_clean, table(orient_loc, orientation, exclude = NULL) )
 ```
 
-The earliest orientation date was `r min(signup_clean$Orientation.Date)`
+The earliest orientation date was `r min(signup_clean$Orientation.Date, na.rm = T)`
 
-
-Decided to make separate variables for Primary and Secondary orientation (convert to wide).  There were some cases where there were duplicate Secondary orientations for a single ID. Kept the earliest.
+Decided to make separate variables for Primary and Secondary orientation (convert to wide). 
+There were some cases where there were duplicate Secondary orientations for a single ID. Kept the earliest.
 
 ```{r}
 signup_clean <- reshape(signup_clean,timevar="orientation",idvar="ID",direction="wide")
@@ -159,7 +140,7 @@ master_clean <- master %>%
 ```{r basic_master}
 knitr::kable(table(master_clean$Status, exclude=NULL), caption = "Status")
 knitr::kable(table(master_clean$city_clean, exclude=NULL), caption = "City after cleaning")
-knitr::kable(table(master_clean$Zip, exclude=NULL), caption = "Zip Codes after cleaning")
+# knitr::kable(table(master_clean$Zip, exclude=NULL), caption = "Zip Codes after cleaning")
 ```
 
 
@@ -190,8 +171,7 @@ service <- service %>%
 
 print("From.date")
 summary(service$From.date)
-print("To.date")
-summary(service$To.date)
+
 ```
 
 Look at values for factors:
@@ -254,8 +234,6 @@ service_clean %>%
 
 ## Data manipulation
 
-
-
 ### Filter to after January 1, 2017
 How many unique volunteer IDs does this leave in each table?
 ```{r filter_dates}
@@ -265,11 +243,14 @@ service_clean <- service_clean %>%
 master_clean <- master_clean %>%
   filter(Date.entered >= "2017-01-01")
 
-length(unique(service_clean$ID))
-length(unique(master_clean$ID))
-length(unique(signup_clean$ID))
+paste("IDs in master table:",length(unique(master_clean$ID)))
+paste("IDs in service table:",length(unique(service_clean$ID)))
+paste("IDs in signup table:",length(unique(signup_clean$ID)))
 # In all three
-length(intersect(signup_clean$ID, intersect(service_clean$ID, master_clean$ID)))
+paste("IDs in both service and signup:",
+      length(intersect(service_clean$ID, signup_clean$ID)))
+paste("IDs common to all three:",
+      length(intersect(signup_clean$ID, intersect(service_clean$ID, master_clean$ID))))
 ```
 
 
@@ -315,7 +296,7 @@ signup_service <- merge(signup_clean, service_summary, by = "ID", all.x = TRUE) 
     TRUE ~ as.numeric(missed_shifts))) %>%
   mutate(any_shifts = total_shifts != 0,
          only_one_shift = total_shifts == 1,
-         twoplus_shifts = total_shifts > 1, 
+         twoplus_shifts = total_shifts > 1 & total_shifts<10, 
          tenplus_shifts = total_shifts >= 10)
   
 # Add in demographics from master
@@ -348,7 +329,7 @@ OK - This is a start. It needs to be clarified a little.
 
 How long since the last shift? This can help us decide a volunteer disengaged cutoff
 ```{r calc_diffs}
-todays_date <- "2018-07-27"
+todays_date <- "2018-07-26"
 final_data$total_time <- as.numeric(final_data$last_recorded_date - final_data$Orientation.Date.Primary)
 final_data$time_to_first <- as.numeric(final_data$first_shift_date - final_data$Orientation.Date.Primary)
 final_data$time_last_to_first <- as.numeric(final_data$last_recorded_date - final_data$first_shift_date)
@@ -356,7 +337,8 @@ final_data$days_since_last <- as.numeric(as.Date(todays_date) - final_data$last_
 
 final_data$test_period <- case_when(
   final_data$Orientation.Date.Primary >= "2017-01-01" & final_data$Orientation.Date.Primary < "2017-05-01" ~ "2017",
-  final_data$Orientation.Date.Primary >= "2018-01-01" & final_data$Orientation.Date.Primary < "2018-05-01" ~ "2018"
+  final_data$Orientation.Date.Primary >= "2018-01-01" & final_data$Orientation.Date.Primary < "2018-05-01" ~ "2018",
+  TRUE ~ "other"
 )
 ```
 
@@ -364,7 +346,7 @@ final_data$test_period <- case_when(
 
 model_data <- filter(final_data, total_shifts > 0)
 hist(as.numeric(model_data$days_since_last), 100,
-     main = "Days since last shift for those who did any shifts",
+     main = "Days since last shift for volunteers with 1+ shifts",
      xlab = "Days")
 
 
@@ -385,15 +367,15 @@ ggplot(filter(final_data, total_shifts > 0), aes(x = Orientation.Date.Primary, y
   geom_hline(yintercept = 90, color = "red") + 
   theme_bw()
 
-ggplot(filter(final_data, total_shifts > 0), aes(x = as.Date(todays_date) -Orientation.Date.Primary, y = days_since_last)) +
-  geom_point() +
-  geom_hline(yintercept = 90, color = "red") + 
-  geom_abline(slope = 1, intercept = -90, color = "blue") + 
-  theme_bw()
+# ggplot(filter(final_data, total_shifts > 0), aes(x = as.Date(todays_date) -Orientation.Date.Primary, y = days_since_last)) +
+#   geom_point() +
+#   geom_hline(yintercept = 90, color = "red") + 
+#   geom_abline(slope = 1, intercept = -90, color = "blue") + 
+#   theme_bw()
 ```
 
 OK. Based on this plot, I propose to use >90 days (red line) as a cutoff for when a volunteer is disengaged. 
-I will restrict to looking at data before a certain date (maybe May 01 2018) because we don't know if these volunteers will become disengaged.
+I will restrict to looking at data from volunteers who did orientation before a certain date (May 01 2018) because we don't know if these volunteers will become disengaged.
 
 ## Summary stats
 For volunteers:
@@ -402,19 +384,22 @@ For volunteers:
 * How many did orientation, had only 1 shift?
 * How many did orientation, had 2+ shifts?
 
-We will define two test periods:
+We will define two test periods to compare:
 
-* 2017: Orientation between Jan 01 2017 - May 01 2017
-* 2018: Orientation between Jan 01 2018 - May 01 2018
+* 2017: Orientation (primary) between Jan 01 2017 - May 01 2017
+* 2018: Orientation (primary) between Jan 01 2018 - May 01 2018
 
+To be a real comparison, we would need to only look at service data between Jan 01 and July 26 from both years as well.
+
+Overall, it looks like more volunteers did orientation in 2018! 
 ```{r summarise}
 end_summary <- final_data  %>%
   group_by(test_period) %>% 
   summarise(total_volunteers = n(),
-            volunteered_ever = paste( round(100* sum(total_shifts>0)/n(),1) ,"%"),
+            volunteered_never = paste( round(100* sum(total_shifts==0)/n(),1) ,"%"),
             volunteered_onlyonce = paste( round(100* sum(total_shifts==1)/n(),1),"%"),
-            twoplus = paste( round(100* sum(twoplus_shifts==TRUE)/n(), 1), "%"),
-            tenplus = paste( round(100* sum(tenplus_shifts==TRUE)/n(), 1), "%"),
+            twototen = paste( round(100* sum(total_shifts>=2 & total_shifts<10)/n(), 1), "%"),
+            tenplus = paste( round(100* sum(total_shifts>=10)/n(), 1), "%"),
             ave_shifts = round( mean(total_shifts), 2),
             ave_missed_shifts = round( mean(missed_shifts), 2))
 
