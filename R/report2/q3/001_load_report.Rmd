@@ -61,6 +61,8 @@ signup_file <- '../../../Data/signupsheet.csv'
 master <- read.csv(master_file, quote="", stringsAsFactors = F)
 service <- read.csv(service_file, stringsAsFactors = F)
 signup <- read.csv(signup_file, stringsAsFactors = F)
+
+
 ```
 
 The `r master_file` has `r nrow(master)` rows.
@@ -254,14 +256,14 @@ service_clean %>%
 
 
 
-### Filter to after January 1, 2018
+### Filter to after January 1, 2017
 How many unique volunteer IDs does this leave in each table?
 ```{r filter_dates}
 service_clean <- service_clean %>%
-  filter(From.date >= "2018-01-01")
+  filter(From.date >= "2017-01-01")
 
 master_clean <- master_clean %>%
-  filter(Date.entered >= "2018-01-01")
+  filter(Date.entered >= "2017-01-01")
 
 length(unique(service_clean$ID))
 length(unique(master_clean$ID))
@@ -325,7 +327,7 @@ final_data <- merge(signup_service, select(master_clean, ID, Status, Date.entere
 ## Visualizations
 ```{r plot}
 signup_service_plot <- final_data %>%
-  filter(Orientation.Date.Primary <= "2018-05-01") %>%
+  filter(Orientation.Date.Primary < "2018-05-01") %>%
   group_by(orient_loc.Primary, orient_type.Primary, primary_type, any_shifts) %>%
   summarise(Freq = n()) %>%
   ungroup()
@@ -352,6 +354,10 @@ final_data$time_to_first <- as.numeric(final_data$first_shift_date - final_data$
 final_data$time_last_to_first <- as.numeric(final_data$last_recorded_date - final_data$first_shift_date)
 final_data$days_since_last <- as.numeric(as.Date(todays_date) - final_data$last_recorded_date)
 
+final_data$test_period <- case_when(
+  final_data$Orientation.Date.Primary >= "2017-01-01" & final_data$Orientation.Date.Primary < "2017-05-01" ~ "2017",
+  final_data$Orientation.Date.Primary >= "2018-01-01" & final_data$Orientation.Date.Primary < "2018-05-01" ~ "2018"
+)
 ```
 
 ```{r hist_last}
@@ -390,15 +396,20 @@ OK. Based on this plot, I propose to use >90 days (red line) as a cutoff for whe
 I will restrict to looking at data before a certain date (maybe May 01 2018) because we don't know if these volunteers will become disengaged.
 
 ## Summary stats
-For volunteers that did orientation between Jan 01 2018 and May 01 2018:
+For volunteers:
 
 * How many did orientation, but no shifts?
 * How many did orientation, had only 1 shift?
 * How many did orientation, had 2+ shifts?
 
+We will define two test periods:
+
+* 2017: Orientation between Jan 01 2017 - May 01 2017
+* 2018: Orientation between Jan 01 2018 - May 01 2018
+
 ```{r summarise}
 end_summary <- final_data  %>%
-  filter(Orientation.Date.Primary >= "2018-01-01", Orientation.Date.Primary < "2018-05-01") %>%
+  group_by(test_period) %>% 
   summarise(total_volunteers = n(),
             volunteered_ever = paste( round(100* sum(total_shifts>0)/n(),1) ,"%"),
             volunteered_onlyonce = paste( round(100* sum(total_shifts==1)/n(),1),"%"),
