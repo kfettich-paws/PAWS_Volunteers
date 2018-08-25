@@ -88,7 +88,7 @@ TBD
 
 ## Mapping of volunteers
 
-We re-ran the analyses mapping volunteers' ZIP codes in relation to their location of service on the data from 2018. As in the data from 2017, it appears that Grays Ferry and PAC attract volunteers from Center City, while Grant attracts volunteers from Northeast Philadelphia. However, there are some volunteers who appear to serve at locations that are quite far from their reported ZIP codes (e.g. PAC volunteers who live near the Philadelphia Airoport, or in NE Phila). It may be possible to encourage these volunteers to sign up for (occasional) shifts at a closer location. 
+We re-ran the analyses mapping volunteers' ZIP codes in relation to their location of service on the data from 2018. As in the data from 2017, it appears that Grays Ferry and PAC attract volunteers from Center City, while Grant attracts volunteers from Northeast Philadelphia. However, there are some volunteers who appear to serve at locations that are quite far from their reported ZIP codes (e.g. PAC volunteers who live near the Philadelphia Airport, or in NE Phila). It may be possible to encourage these volunteers to sign up for (occasional) shifts at a closer location. 
 
 ![ZIP codes of volunteers at PAC](map_PAC_update.png)
 ![ZIP codes of volunteers at GF](map_GF_update.png)
@@ -96,10 +96,11 @@ We re-ran the analyses mapping volunteers' ZIP codes in relation to their locati
 
 # Results: Disengagement
 
-In this section, we considered a volunteer to be disengaged if more than 90 days passed since the date of their last recorded shift. All analyses in this section were performed for volunteers that did orientation between Jan 01 2018 and May 01 2018 in order to have a full mapping of their service timeline. 
+All analyses in this section were performed for volunteers that did orientation between Jan 01 2018 and May 01 2018 in order to have a full mapping of their service timeline. 
 
-From this volunteer pool, results suggest that approximately 20% of orientation attendees at any location disengage after orientation (which is a dramatic drop from 50% in 2017). Specifically, 20% of orientation attendees at Grays Ferry have no record of service, while this number stands at 18.52% at Grant Ave, and 21% at PAC. While the proportion of volunteers with only 1 shift recorded was approximately twice as high as in 2017 (approximately 13% across locations), this remains a fairly small percentage of volunteers, with the majority of new volunteers serving 2 or more shifts across all locations. 
+First, we examined the total number of shifts served. 21% of orientation attendees at Grays Ferry have no record of service, while this number stands at 22% at Grant Ave, and 24% at PAC. This remains a fairly small percentage of volunteers, with the majority of new volunteers serving 2 or more shifts across all locations. Comparing to 2017 new volunteers is difficult because we have much longer follow-up time for these individuals and so it will naturally appear better. Overall, we expect the service trends to be similar in 2018 as 2017. The Grant Ave. data looks encouraging with more new volunteers serving shifts than last year. 
 
+In this section, we considered a volunteer to be "disengaged" if more than 90 days passed since the date of their last recorded shift. From this 2018 volunteer pool, results suggest that approximately 27% of orientation attendees at any location disengage after orientation (which is a decrease from > 30% in 2017). 
 \newpage
 
 ![Number of volunteers by service level, per location](Engagement_by_ShiftCount_update.png)
