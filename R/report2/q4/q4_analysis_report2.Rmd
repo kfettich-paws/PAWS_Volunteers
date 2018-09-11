@@ -1,0 +1,292 @@
+---
+title: "q4_analysis"
+author: "Katerina Placek"
+date: "9/9/2018"
+output: html_document
+---
+
+#Research Questions
+What factors contribute to a volunteer returning after shift 1? 
+
+What factors contribute to a volunteer becoming a regular? 
+
+Was this different between volunteers who completed their orientation in 2017 vs 2018?
+
+e.g. time of first shift attended; day/month/season of first shift attended; who else/how many others were there during first shift attended; zip code; initial engagement pattern; sign-up pattern in first month
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_libs, warning=FALSE, include=FALSE}
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(reshape))
+suppressPackageStartupMessages(library(tidyr))
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(leaps))
+suppressPackageStartupMessages(library(pheatmap))
+suppressPackageStartupMessages(library(glmnet))
+suppressPackageStartupMessages(library(pander))
+```
+
+First, I load in cleaned data from q1; I only retained v.activity and service_clean (prior to service_clean being converted to wide format).
+```{r read_data, include=FALSE}
+load("mydata.rda")
+```
+
+Next, I clean the data a bit further to optimize for my analyses.
+```{r data_cleaning, include = FALSE}
+#v.activity
+##remove service variables (since I will re-create these according to frequency) but retain time delay variables
+v.activity  <- subset(v.activity , select = c(1:32, 16413:16416))
+
+#service_clean_long
+##clean location and assignment
+service_clean_long$location[is.na(service_clean_long$location)] = "other"
+service_clean_long$location[service_clean_long$location==""] = "other"
+service_clean_long$assignment_type[service_clean_long$assignment_type==""] = "other_event"
+
+##only keep individuals from service_clean_long if they appear in v.activity(with orientation in 2017 or 2018)
+service_clean_long <- subset(service_clean_long, ID %in% unique(v.activity$ID))
+```
+
+With the service_clean_long data, I first want to see how many times an individual volunteered; this will be my dependent variable. 
+```{r nVolunteer}
+#ensure date range
+min(service_clean_long$From.date)
+max(service_clean_long$From.date)
+
+#calculate number of times volunteered
+nTimesVol_all <- as.data.frame(ftable(service_clean_long$ID))
+
+nTimesVol_all %>% 
+  summarise(Min=min(Freq, na.rm=TRUE),
+            Max=max(Freq, na.rm=TRUE),
+            Median=median(Freq, na.rm=TRUE))
+
+nTimesVol_all <- dplyr::rename(nTimesVol_all, ID = Var1, nTimesVolunteer = Freq)
+
+v.activity <- merge(nTimesVol_all, v.activity, by="ID")
+
+remove(nTimesVol_all)
+```
+
+I create a new variable for each location that includes the total number of times an individual volunteered at each of the five locations. I add this to v.activity.
+```{r location}
+location <- as.data.frame(ftable(service_clean_long$ID~service_clean_long$location))
+
+location <- reshape(location,timevar="service_clean_long.location",idvar="service_clean_long.ID",direction="wide")
+
+location <- dplyr::rename(location, ID = service_clean_long.ID)
+
+v.activity <- merge(location, v.activity, by="ID")
+
+remove(location)
+```
+
+I create a new variable for each assignment that includes the total number of times an individual volunteered for each assignment type. I also add this to v.activity.
+```{r assignment}
+assignment <- as.data.frame(ftable(service_clean_long$ID~service_clean_long$assignment_type))
+
+assignment <- reshape(assignment,timevar="service_clean_long.assignment_type",idvar="service_clean_long.ID",direction="wide")
+
+assignment <- dplyr::rename(assignment, ID = service_clean_long.ID)
+
+v.activity <- merge(assignment, v.activity, by="ID")
+
+remove(assignment)
+```
+
+Using this information, we can now investigate how many individuals volunteered only once or returned after the first time volunteering?
+```{r repeat}
+v.activity$Date.entered <- as.POSIXct(v.activity$Date.entered)
+v.activity$Start.date <- as.POSIXct(v.activity$Start.date)
+v.activity$Orientation.Date.Primary <- as.POSIXct(v.activity$Orientation.Date.Primary)
+
+v.activity$repeat.vol <- ifelse(v.activity$nTimesVolunteer > 1, "repeat", "once")
+
+v.activity <- v.activity %>%
+  mutate(orientation_year = case_when(
+    Orientation.Date.Primary < "2018-01-01" ~ "2017",
+    Orientation.Date.Primary >= "2018-01-01" ~ "2018"
+    ))
+
+
+pander(ftable(v.activity$repeat.vol, exclude=NULL), caption = "Volunteering - More Than Once?")
+
+pander(ftable(v.activity$repeat.vol~v.activity$orientation_year, exclude=NULL), caption = "Volunteering - More Than Once? 2017 vs 2018", style = "rmarkdown" )
+
+chisq.test(v.activity$repeat.vol, v.activity$orientation_year)
+
+```
+The numbers of volunteers who completed only one shift vs those who completed more than one shift did not differ between 2017 and 2018.
+
+How many individuals became regulars?
+```{r repeat}
+v.activity <- v.activity %>%
+  mutate(regulars = case_when(
+    nTimesVolunteer == 1 ~ "once",
+    nTimesVolunteer > 1 & nTimesVolunteer < 10 ~ "2-9 times",
+    nTimesVolunteer >= 10 ~ "10 or more times"
+    ))
+
+pander(ftable(v.activity$regulars, exclude=NULL), caption = "Volunteering - Regulars?")
+
+pander(ftable(v.activity$regulars~v.activity$orientation_year, exclude=NULL), caption = "Volunteering - Regulars?", style = "simple")
+
+chisq.test(v.activity$regulars, v.activity$orientation_year)
+```
+The numbers of volunteers who volunteered more than 10 times is greater in 2017 and 2018, as expected given that only 7 months of data from 2017 were analyzed vs 12 months of data from 2018. Further data from the second half of 2018 is required to see if this persists.
+
+Now, we divide volunteer data into 2 groups based on volunteers who did orientation in 2017 volunteers who did orientation in 2018
+Divide volunteer data into 2 groups based on volunteers who did orientation in 2017 volunteers who did orientation in 2018
+```{r year}
+v17 <- v.activity[v.activity$Orientation.Date.Primary >= "2017-01-01" &  v.activity$Orientation.Date.Primary < "2018-01-01",]
+
+v18 <- v.activity[v.activity$Orientation.Date.Primary >= "2018-01-01",]
+```
+
+Do individuals from Philadelphia tend to volunteer more? Did this differ in 2017 vs 2018?
+```{r}
+table(v17$city_clean)
+(cityMod17 <- lm(nTimesVolunteer~city_clean, data = v17))
+summary(cityMod17)
+
+table(v18$city_clean)
+(cityMod18 <- lm(nTimesVolunteer~city_clean, data = v18))
+summary(cityMod18)
+```
+Whether someone is from Philadelphia or not doesn't seem to affect the number of times a person volunteers; this did not differ in 2017 vs 2018.
+
+Does length of time between orientation and shift1 affect the number of times a person volunteers?
+```{r orientation_shift1_time}
+(t_o_s1_Mod17 <- lm(nTimesVolunteer~ t.orientation.to.shift1, data = v17))
+summary(t_o_s1_Mod17)
+
+(t_o_s1_Mod18 <- lm(nTimesVolunteer~ t.orientation.to.shift1, data = v18))
+summary(t_o_s1_Mod18)
+```
+The greater the time between orientation and shift 1, the less number of times a volunteer showed up - this remained true for volunteers who had orientation in 2017 and those who had orientation in 2018.
+
+Now, in a more exploratory approach, we can use backward/forward elimination, or LASSO (not sure if necessary, since n>p) to find variables that best predict whether someone 1) returns after shift 1, or 2) becomes a regular.
+
+Before we investigate additional variables relating to the number of times an individual volunteered, lets investigate the relationship between some variables in our dataset. This will help us identify collinearity, which can violate model assumptions.
+```{r}
+v.activity$X.Primary <- as.factor(v.activity$X.Primary)
+v.activity$X.Secondary <- as.factor(v.activity$X.Secondary)
+hmap <- select_if(v.activity, is.numeric)
+
+plotData <-melt(cor(hmap))
+
+ggplot(plotData ,
+    aes(x = X1, y = X2, fill =value)) +
+    geom_tile() +
+    ylab("") +
+    xlab("") +
+    theme(legend.title = element_blank(),
+           axis.text.x = element_text(angle=90,hjust=1,vjust=1.0),
+           axis.text.y = element_text(size = 12))+
+scale_x_discrete(limits = rev(levels(plotData$X2))) + #Flip the x- or y-axis
+    scale_fill_gradient( low = "#56B1F7", high = "#132B43") +
+       guides(fill = guide_legend(title = "Correlation"))
+```
+
+Let's remove variables that are highly correlated with one another, date variables, and redundant variables (e.g. City) Select variables for analysis.
+```{r select variables}
+keep <- colnames(v.activity[2:19])
+
+
+v17 <- select(v17, keep, YTD.hours, Absence, city_clean, orient_loc.Primary, orient_type.Primary, t.orientation.to.entered, t.entered.to.start, t.start.to.shift1, t.orientation.to.shift1, nTimesVolunteer)
+
+v18 <- select(v18, keep, YTD.hours, Absence, city_clean, orient_loc.Primary, orient_type.Primary, t.orientation.to.entered, t.entered.to.start, t.start.to.shift1, t.orientation.to.shift1, nTimesVolunteer)
+```
+
+LASSO
+```{r lasso_setup}
+#2017
+v17 <-v17[complete.cases(v17),]
+#set dependent variable
+Y <- v17$nTimesVolunteer
+
+#set independent variable matrix
+X <- model.matrix(nTimesVolunteer~., data = v17)
+X <- X[,-1]
+colnames(X)
+
+#2018
+v18 <-v18[complete.cases(v18),]
+#set dependent variable
+Y2 <- v18$nTimesVolunteer
+
+#set independent variable matrix
+X2 <- model.matrix(nTimesVolunteer~., data = v18)
+X2 <- X2[,-1]
+```
+As L1Norm decreases in value, our lambda value is larger meaning a sparser solution for our analysis. Let's employ cross-validation to select an appropriate lamdba. 
+```{r cross_validate}
+#for 2017 data
+fit.cv <- cv.glmnet(X, Y, alpha=1, nfolds=10 ) 
+plot(fit.cv$cvm, fit.cv$lambda, xlab=expression(lambda), ylab="mean cv errors") 
+fit.cv$cvm               # the mean cv error for each lambda
+#plot(fit.fl.cv$lambda, fit.fl.cv$cvm, xlab="lambda", ylab="mean cv errors")
+fit.cv$lambda.min        # lambda.min returns the min point amoth all the cvm. 
+fit.cv$nzero             # number of non-zero coeff's returned for each lambda
+plot(fit.cv$lambda, fit.cv$nzero, xlab="lambda", ylab="number of non-zeros") #as the value of lambda increases, the number of non-zero variables decreases
+
+plot(fit.cv) # this is suggesting we pick a value of lambda between the 2 dotted lines; The first vertical line is the lambda.min, or the λ which gives the smallest cvm. The second vertical line is lambda.1se, or largest λ whose cvm is within the cvsd bar for the lambda.min value.
+
+
+#and for 2018 data
+fit.cv2 <- cv.glmnet(X2, Y2, alpha=1, nfolds=10 ) 
+plot(fit.cv2$cvm, fit.cv2$lambda, xlab=expression(lambda), ylab="mean cv errors") 
+fit.cv2$cvm               # the mean cv error for each lambda
+#plot(fit.fl.cv$lambda, fit.fl.cv$cvm, xlab="lambda", ylab="mean cv errors")
+fit.cv2$lambda.min        # lambda.min returns the min point amoth all the cvm. 
+fit.cv2$nzero             # number of non-zero coeff's returned for each lambda
+plot(fit.cv2$lambda, fit.cv2$nzero, xlab="lambda", ylab="number of non-zeros") #as the value of lambda increases, the number of non-zero variables decreases
+
+plot(fit.cv2)
+```
+
+Based on our cross-validation procedure, let's proceed our LASSO with our minimum lambda value. This should retain 11 variables from our original dataset.
+```{r}
+#2017 data
+coef.min <- coef(fit.cv, s="lambda.min")
+coef.min <- coef.min[which(coef.min !=0),]   # get the non=zero coefficients
+coef.min[-1]  # the set of predictors chosen
+var.min <- rownames(as.matrix(coef.min[-1])) 
+
+#2018 data
+coef.min2 <- coef(fit.cv2, s="lambda.min")
+coef.min2 <- coef.min2[which(coef.min2 !=0),]   # get the non=zero coefficients
+coef.min2[-1]  # the set of predictors chosen
+var.min2 <- rownames(as.matrix(coef.min2[-1])) 
+
+```
+
+This shows us the variables LASSO has selected as most contributing to the number of times an individual has volunteered.
+
+We now enter these variables in a regression:
+```{r}
+#2017 data
+(lm.input <- as.formula(paste("nTimesVolunteer", "~", paste(var.min, collapse = "+")))) # prepare for lm fomula
+
+
+fit.min.lm <- lm(lm.input, data=v17)
+lm.output <- coef(fit.min.lm) # output lm estimates
+summary(fit.min.lm) 
+
+#2018 data
+(lm.input2 <- as.formula(paste("nTimesVolunteer", "~", paste(var.min2, collapse = "+")))) # prepare for lm fomula
+
+
+fit.min.lm2 <- lm(lm.input2, data=v18)
+lm.output2 <- coef(fit.min.lm2) # output lm estimates
+summary(fit.min.lm2) 
+```
+For volunteers who completed orientation in 2017, the assignments Cat Care Volunteer, Cat Pawsitive Program Volunteer, Dog Care Volunteer, Dog Walking Volunteer, Cat Mentee Shift, Dog Mentee Shift and Veterinary Tech Volunteer contributed to greater number of times volunteering. 
+Furthermore, volunteers who completed shifts at the PAWS South Philly PetSmart, PAC, and at 'other' locations had greater number of times Volunteering. Also, as we might expected, YTD.hours is highly positively associated with number of times volunteering.
+
+For volunteers who completed orientation in 2018, the assignments Cat Care Volunteer, Cat Pawsitive Program Volunteer, Dog Care Volunteer, Dog Walking Volunteer, Cat Mentee Shift, and Dog Mentee Shift contributed to greater number of times volunteering; this is largely the same as in 2018 with the exclusion of Veterinary Tech Volunteer.
+Furthermore, volunteers who completed shifts at the PAWS South Philly PetSmart and at 'other' locations had greater number of times Volunteering; however PAC and YTD.hours were not associated with number of times volunteering. 
+
