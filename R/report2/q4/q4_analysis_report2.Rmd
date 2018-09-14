@@ -86,6 +86,7 @@ remove(location)
 
 I create a new variable for each assignment that includes the total number of times an individual volunteered for each assignment type. I also add this to v.activity.
 ```{r assignment}
+service_clean_long$assignment_type <- paste0(service_clean_long$assignment_type," - ",service_clean_long$location)
 assignment <- as.data.frame(ftable(service_clean_long$ID~service_clean_long$assignment_type))
 
 assignment <- reshape(assignment,timevar="service_clean_long.assignment_type",idvar="service_clean_long.ID",direction="wide")
@@ -193,7 +194,7 @@ scale_x_discrete(limits = rev(levels(plotData$X2))) + #Flip the x- or y-axis
 
 Let's remove variables that are highly correlated with one another, date variables, and redundant variables (e.g. City) Select variables for analysis.
 ```{r select variables}
-keep <- colnames(v.activity[2:19])
+keep <- colnames(v.activity[2:26])
 
 
 v17 <- select(v17, keep, YTD.hours, Absence, city_clean, orient_loc.Primary, orient_type.Primary, t.orientation.to.entered, t.entered.to.start, t.start.to.shift1, t.orientation.to.shift1, nTimesVolunteer)
@@ -266,10 +267,16 @@ var.min2 <- rownames(as.matrix(coef.min2[-1]))
 
 This shows us the variables LASSO has selected as most contributing to the number of times an individual has volunteered.
 
-We now enter these variables in a regression:
+We now enter these variables in a regression: [KF update 9/14: instead of adding the lasso selected variables, we hand choose variables that may be most relevant, e.g. mentee shifts, and apply the same model formula to both years so they can be compared]
 ```{r}
 #2017 data
-(lm.input <- as.formula(paste("nTimesVolunteer", "~", paste(var.min, collapse = "+")))) # prepare for lm fomula
+(lm.input <- as.formula(paste("nTimesVolunteer", "~", paste(var.min2, collapse = "+")))) # prepare for lm fomula
+lm.input <- nTimesVolunteer ~ `Freq.Cat Care Volunteer - GF` + `Freq.Cat Care Volunteer - Grant Ave.` + 
+    `Freq.Cat Care Volunteer - PAC` + `Freq.Cat Mentee Shift - PAC` + 
+    `Freq.Cat Pawsitive Program Volunteer - Grant Ave.` + `Freq.Cat Pawsitive Program Volunteer - PAC` + 
+    `Freq.Cat Socialization Team - other` + `Freq.Dog Care Volunteer - GF` + `Freq.Dog Mentee Shift - GF` + 
+    `Freq.Dog Mentee Shift - PAC` + `Freq.Dog Walking Volunteer - Grant Ave.` +
+    `Freq.Dog Walking Volunteer - PAC` + `Freq.Mentee Shift - Grant Ave.` # not including time from orientation to shift 1 bc we already ran that analysis
 
 
 fit.min.lm <- lm(lm.input, data=v17)
@@ -279,8 +286,7 @@ summary(fit.min.lm)
 #2018 data
 (lm.input2 <- as.formula(paste("nTimesVolunteer", "~", paste(var.min2, collapse = "+")))) # prepare for lm fomula
 
-
-fit.min.lm2 <- lm(lm.input2, data=v18)
+fit.min.lm2 <- lm(lm.input, data=v18)
 lm.output2 <- coef(fit.min.lm2) # output lm estimates
 summary(fit.min.lm2) 
 ```
@@ -290,3 +296,46 @@ Furthermore, volunteers who completed shifts at the PAWS South Philly PetSmart, 
 For volunteers who completed orientation in 2018, the assignments Cat Care Volunteer, Cat Pawsitive Program Volunteer, Dog Care Volunteer, Dog Walking Volunteer, Cat Mentee Shift, and Dog Mentee Shift contributed to greater number of times volunteering; this is largely the same as in 2018 with the exclusion of Veterinary Tech Volunteer.
 Furthermore, volunteers who completed shifts at the PAWS South Philly PetSmart and at 'other' locations had greater number of times Volunteering; however PAC and YTD.hours were not associated with number of times volunteering. 
 
+[KF: I am running a quick analysis to look at the use of tablets. ]
+
+```{r use_tablets}
+vols2017 <- as.character(v.activity$ID[v.activity$orientation_year == "2017"])
+vols2017 <- service_clean_long[as.character(service_clean_long$ID) %in% vols2017,]
+vols2017$m <- format(vols2017$From.date,"%Y-%m")
+vols2017$tablet <- ifelse(vols2017$From.time=="","Website","Tablet")
+res2017 <- vols2017 %>% count(m,tablet)
+
+vols2018 <- as.character(v.activity$ID[v.activity$orientation_year == "2018"])
+vols2018 <- service_clean_long[as.character(service_clean_long$ID) %in% vols2018,]
+vols2018$m <- format(vols2018$From.date,"%Y-%m")
+vols2018$tablet <- ifelse(vols2018$From.time=="","Website","Tablet")
+res2018 <- vols2018 %>% count(m,tablet)
+
+g1 <- ggplot(mapping = aes(x, y)) +
+  geom_bar(data = res2017, aes(y = n, x = m, fill = factor(tablet, levels=c("Website","Tablet" ))), width = 0.8, stat = 'identity') +
+  guides(fill=guide_legend(title="Recorded via:")) +
+  scale_fill_manual(values=c("#999999", "cornflowerblue")) +
+  theme_classic() + scale_y_continuous(limits=c(0,500)) +
+  ggtitle("Tablet Use") +
+  xlab("Month") +
+  ylab ("Number of Records") +
+  scale_x_discrete(breaks=res2017$m) +
+  theme(axis.text.x = element_text(face="bold",
+                                   size=10, angle=70, vjust=0.5))
+
+g2 <- ggplot(mapping = aes(x, y)) +
+  geom_bar(data = res2018, aes(y = n, x = m, fill = factor(tablet, levels=c("Website","Tablet" ))), width = 0.8, stat = 'identity') +
+  guides(fill=guide_legend(title="Recorded via:")) +
+  scale_fill_manual(values=c("#999999", "cornflowerblue")) +
+  theme_classic() + scale_y_continuous(limits=c(0,500)) +
+  ggtitle("Tablet Use") +
+  xlab("Month") +
+  ylab ("Number of Records") +
+  scale_x_discrete(breaks=res2018$m) +
+  theme(axis.text.x = element_text(face="bold",
+                                   size=10, angle=70, vjust=0.5))
+
+library(gridExtra)
+g3 <- grid.arrange(g1, g2, ncol=2)
+
+```
