@@ -169,6 +169,12 @@ summary(t_o_s1_Mod18)
 ```
 The greater the time between orientation and shift 1, the less number of times a volunteer showed up - this remained true for volunteers who had orientation in 2017 and those who had orientation in 2018.
 
+```{r}
+
+```
+
+
+
 Now, in a more exploratory approach, we can use backward/forward elimination, or LASSO (not sure if necessary, since n>p) to find variables that best predict whether someone 1) returns after shift 1, or 2) becomes a regular.
 
 Before we investigate additional variables relating to the number of times an individual volunteered, lets investigate the relationship between some variables in our dataset. This will help us identify collinearity, which can violate model assumptions.
@@ -269,8 +275,6 @@ This shows us the variables LASSO has selected as most contributing to the numbe
 
 We now enter these variables in a regression: [KF update 9/14: instead of adding the lasso selected variables, we hand choose variables that may be most relevant, e.g. mentee shifts, and apply the same model formula to both years so they can be compared]
 ```{r}
-#2017 data
-(lm.input <- as.formula(paste("nTimesVolunteer", "~", paste(var.min2, collapse = "+")))) # prepare for lm fomula
 lm.input <- nTimesVolunteer ~ `Freq.Cat Care Volunteer - GF` + `Freq.Cat Care Volunteer - Grant Ave.` + 
     `Freq.Cat Care Volunteer - PAC` + `Freq.Cat Mentee Shift - PAC` + 
     `Freq.Cat Pawsitive Program Volunteer - Grant Ave.` + `Freq.Cat Pawsitive Program Volunteer - PAC` + 
@@ -278,23 +282,61 @@ lm.input <- nTimesVolunteer ~ `Freq.Cat Care Volunteer - GF` + `Freq.Cat Care Vo
     `Freq.Dog Mentee Shift - PAC` + `Freq.Dog Walking Volunteer - Grant Ave.` +
     `Freq.Dog Walking Volunteer - PAC` + `Freq.Mentee Shift - Grant Ave.` # not including time from orientation to shift 1 bc we already ran that analysis
 
-
+#2017 data
 fit.min.lm <- lm(lm.input, data=v17)
 lm.output <- coef(fit.min.lm) # output lm estimates
 summary(fit.min.lm) 
 
 #2018 data
-(lm.input2 <- as.formula(paste("nTimesVolunteer", "~", paste(var.min2, collapse = "+")))) # prepare for lm fomula
-
 fit.min.lm2 <- lm(lm.input, data=v18)
 lm.output2 <- coef(fit.min.lm2) # output lm estimates
 summary(fit.min.lm2) 
 ```
 For volunteers who completed orientation in 2017, the assignments Cat Care Volunteer, Cat Pawsitive Program Volunteer, Dog Care Volunteer, Dog Walking Volunteer, Cat Mentee Shift, Dog Mentee Shift and Veterinary Tech Volunteer contributed to greater number of times volunteering. 
-Furthermore, volunteers who completed shifts at the PAWS South Philly PetSmart, PAC, and at 'other' locations had greater number of times Volunteering. Also, as we might expected, YTD.hours is highly positively associated with number of times volunteering.
+Furthermore, volunteers who completed shifts at the PAWS South Philly PetSmart, PAC, and at 'other' locations had greater number of times Volunteering. Also, as we might expect, YTD.hours is highly positively associated with number of times volunteering.
 
 For volunteers who completed orientation in 2018, the assignments Cat Care Volunteer, Cat Pawsitive Program Volunteer, Dog Care Volunteer, Dog Walking Volunteer, Cat Mentee Shift, and Dog Mentee Shift contributed to greater number of times volunteering; this is largely the same as in 2018 with the exclusion of Veterinary Tech Volunteer.
 Furthermore, volunteers who completed shifts at the PAWS South Philly PetSmart and at 'other' locations had greater number of times Volunteering; however PAC and YTD.hours were not associated with number of times volunteering. 
+
+Did number of shifts differ based on location for 2017 vs 2018?
+```{r}
+#2017 data
+v17_location <- select(v17, ID, Freq.GF , `Freq.Grant Ave.` , Freq.other , Freq.PAC , `Freq.PAWS South Philly PetSmart`) 
+v17_location <- melt(v17_location, variable_name = "Location", value.names = "Frequency")
+
+loc_17 <- ggplot(data = v17_location) +
+  geom_col(aes(x = Location, y = value, fill = Location))+
+  ggtitle("Volunteering by Location - 2017") +
+  xlab("Location") +
+  ylab ("Number of Shifts") +
+  theme(legend.position = "none") + 
+  scale_x_discrete(labels = c("Gray's Ferry", "Grant Ave", "Other", "PAC", "South Philly PetSmart"))
+  
+#2018 data
+v18_location <- select(v18, ID, Freq.GF , `Freq.Grant Ave.` , Freq.other , Freq.PAC , `Freq.PAWS South Philly PetSmart`) 
+v18_location <- melt(v18_location, variable_name = "Location", value.names = "Frequency")
+
+loc_18 <- ggplot(data = v18_location) +
+  geom_col(aes(x = Location, y = value, fill = Location))+
+  ggtitle("Volunteering by Location - 2018") +
+  xlab("Location") +
+  ylab ("Number of Shifts") +
+  theme(legend.position = "none") + 
+  scale_x_discrete(labels = c("Gray's Ferry", "Grant Ave", "Other", "PAC", "South Philly PetSmart"))
+
+library(gridExtra)
+loc_both <- grid.arrange(loc_17, loc_18, ncol=2)
+  
+mod_loc17 <- lm(value~Location, data = v17_location)
+anova(mod_loc17)
+summary(mod_loc17)
+
+mod_loc18 <- lm(value~Location, data = v18_location)
+anova(mod_loc18)
+summary(mod_loc18)
+```
+To some extent - in 2017 and in 2018 PAC had the greatest number of shifts. However, in 2017 Grant Ave had more shifts than Gray's Ferry whereas in 2018 Gray's Ferry had more shifts than Grant Ave. This appears to be supporting PAWS' goal of increasing volunteering at the Gray's Ferry location.
+
 
 [KF: I am running a quick analysis to look at the use of tablets. ]
 
