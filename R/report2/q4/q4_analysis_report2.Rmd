@@ -203,9 +203,9 @@ Let's remove variables that are highly correlated with one another, date variabl
 keep <- colnames(v.activity[2:26])
 
 
-v17 <- select(v17, keep, YTD.hours, Absence, city_clean, orient_loc.Primary, orient_type.Primary, t.orientation.to.entered, t.entered.to.start, t.start.to.shift1, t.orientation.to.shift1, nTimesVolunteer)
+v17 <- select(v17, keep, YTD.hours, Absence, city_clean, orient_loc.Primary, orient_type.Primary, t.orientation.to.entered, t.entered.to.start, t.start.to.shift1, t.orientation.to.shift1, nTimesVolunteer, ID)
 
-v18 <- select(v18, keep, YTD.hours, Absence, city_clean, orient_loc.Primary, orient_type.Primary, t.orientation.to.entered, t.entered.to.start, t.start.to.shift1, t.orientation.to.shift1, nTimesVolunteer)
+v18 <- select(v18, keep, YTD.hours, Absence, city_clean, orient_loc.Primary, orient_type.Primary, t.orientation.to.entered, t.entered.to.start, t.start.to.shift1, t.orientation.to.shift1, nTimesVolunteer, ID)
 ```
 
 LASSO
@@ -310,7 +310,9 @@ loc_17 <- ggplot(data = v17_location) +
   xlab("Location") +
   ylab ("Number of Shifts") +
   theme(legend.position = "none") + 
-  scale_x_discrete(labels = c("Gray's Ferry", "Grant Ave", "Other", "PAC", "South Philly PetSmart"))
+  scale_x_discrete(labels = c("Gray's Ferry", "Grant Ave", "Other", "PAC", "South Philly PetSmart")) +
+  theme(axis.text.x = element_text(face="bold",
+                                   size=10, angle=70, vjust=0.5))
   
 #2018 data
 v18_location <- select(v18, ID, Freq.GF , `Freq.Grant Ave.` , Freq.other , Freq.PAC , `Freq.PAWS South Philly PetSmart`) 
@@ -322,10 +324,13 @@ loc_18 <- ggplot(data = v18_location) +
   xlab("Location") +
   ylab ("Number of Shifts") +
   theme(legend.position = "none") + 
-  scale_x_discrete(labels = c("Gray's Ferry", "Grant Ave", "Other", "PAC", "South Philly PetSmart"))
+  scale_x_discrete(labels = c("Gray's Ferry", "Grant Ave", "Other", "PAC", "South Philly PetSmart")) +
+  theme(axis.text.x = element_text(face="bold",
+                                   size=10, angle=70, vjust=0.5))
 
 library(gridExtra)
-loc_both <- grid.arrange(loc_17, loc_18, ncol=2)
+loc_both <- arrangeGrob(loc_17, loc_18, ncol=2)
+ggsave(file="volsByLocation.png", loc_both, width=8, height=4)
   
 mod_loc17 <- lm(value~Location, data = v17_location)
 anova(mod_loc17)
@@ -363,7 +368,7 @@ g1 <- ggplot(mapping = aes(x, y)) +
   ylab ("Number of Records") +
   scale_x_discrete(breaks=res2017$m) +
   theme(axis.text.x = element_text(face="bold",
-                                   size=10, angle=70, vjust=0.5))
+                                   size=10, angle=90, vjust=0.5))
 
 g2 <- ggplot(mapping = aes(x, y)) +
   geom_bar(data = res2018, aes(y = n, x = m, fill = factor(tablet, levels=c("Website","Tablet" ))), width = 0.8, stat = 'identity') +
@@ -375,9 +380,10 @@ g2 <- ggplot(mapping = aes(x, y)) +
   ylab ("Number of Records") +
   scale_x_discrete(breaks=res2018$m) +
   theme(axis.text.x = element_text(face="bold",
-                                   size=10, angle=70, vjust=0.5))
+                                   size=10, angle=90, vjust=0.5))
 
 library(gridExtra)
-g3 <- grid.arrange(g1, g2, ncol=2)
+g3 <- arrangeGrob(g1, g2, ncol=2)
+ggsave(file="use_of_tablets.png", g3, width=8, height=3)
 
 ```

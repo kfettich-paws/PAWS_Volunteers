@@ -619,6 +619,7 @@ v$Median[c(4,8,13)] <- 0
 v$row <- 1:nrow(v)
 v$Median <- as.numeric(as.character(v$Median))
 v$Median2017 <- c(14,17,20,NA,20,21,23,NA,13,13,NA,11,NA,24) # numbers from 2017 are different in the report we sent, so adjusting to reflect those
+v$assignment_type.1[v$assignment_type.1 == "NA - other_event"] <- "Event"
 
 
 p <- ggplot(data = v, aes(x=factor(v$row), y=Median)) +
@@ -674,38 +675,56 @@ orientations <- merge(orientations17,orientations18, all = TRUE)
 new.vols.by.month <- orientations[!is.na(orientations$orient_loc.Primary),]
 new.vols.by.month <- orientations[!is.na(orientations$orientation.month),]
 new.vols.by.month$Freq[new.vols.by.month$orientation.month==7] <- NA # assign NA to July 2018 because numbers not complete 
-  
+new.vols.by.month <- new.vols.by.month[!is.na(new.vols.by.month$orient_loc.Primary),]
 
-p <- ggplot(data=new.vols.by.month[new.vols.by.month$orient_loc.Primary=="GF",]) + 
-  geom_line(aes(x=factor(orientation.month), y = Freq17*100),group=1, colour="black") + 
-  geom_line(aes(x=factor(orientation.month), y = Freq*100), group=2, colour="red") +
-  scale_colour_manual(values=c("black", "red"))+
+##Then rearrange your data frame
+library(reshape2)
+
+new.vols.by.month.g <- new.vols.by.month[new.vols.by.month$orient_loc.Primary=="GF",c(2,3,4)]
+colnames(new.vols.by.month.g) <- c("orientation.month", "2017", "2018" )
+new.vols.by.month.g <- melt(new.vols.by.month.g, id=c("orientation.month"))
+new.vols.by.month.g$value <- new.vols.by.month.g$value*100
+colnames(new.vols.by.month.g)[2] <- "year"
+
+p <- ggplot(data=new.vols.by.month.g) + 
+  geom_line(aes(x=as.factor(orientation.month), y=value, colour=year, group=year)) +
+  scale_colour_manual(values=c("black","red")) +
   scale_y_continuous(name="Percent", limits=c(0, 30), breaks = seq(0, 20,2)) +
-  ggtitle("Percent new volunteers attending first orientation at Grays Ferry in 2018 (vs 2017, in black)") + 
+  ggtitle("Percent new volunteers attending first orientation at Grays Ferry") + 
   scale_x_discrete(name = "Month")
 
 png("GF_orientationByMonth2018v2017.png", width=800, height=250)
 p
 dev.off()
 
-p <- ggplot(data=new.vols.by.month[new.vols.by.month$orient_loc.Primary=="PAC",]) + 
-  geom_line(aes(x=factor(orientation.month), y = Freq17*100),group=1, colour="black") + 
-  geom_line(aes(x=factor(orientation.month), y = Freq*100), group=2, colour="red") +
-  scale_colour_manual(values=c("black", "red"))+
+new.vols.by.month.g <- new.vols.by.month[new.vols.by.month$orient_loc.Primary=="PAC",c(2,3,4)]
+colnames(new.vols.by.month.g) <- c("orientation.month", "2017", "2018" )
+new.vols.by.month.g <- melt(new.vols.by.month.g, id=c("orientation.month"))
+new.vols.by.month.g$value <- new.vols.by.month.g$value*100
+colnames(new.vols.by.month.g)[2] <- "year"
+
+p <- ggplot(data=new.vols.by.month.g) + 
+  geom_line(aes(x=as.factor(orientation.month), y=value, colour=year, group=year)) +
+  scale_colour_manual(values=c("black","red")) +
   scale_y_continuous(name="Percent", limits=c(0, 30), breaks = seq(0, 20,2)) +
-  ggtitle("Percent new volunteers attending first orientation at PAC in 2018 (vs 2017, in black)") + 
+  ggtitle("Percent new volunteers attending first orientation at PAC") + 
   scale_x_discrete(name = "Month")
 
 png("PAC_orientationByMonth2018v2017.png", width=800, height=250)
 p
 dev.off()
 
-p <- ggplot(data=new.vols.by.month[new.vols.by.month$orient_loc.Primary=="NE",]) + 
-  geom_line(aes(x=factor(orientation.month), y = Freq17*100),group=1, colour="black") + 
-  geom_line(aes(x=factor(orientation.month), y = Freq*100), group=2, colour="red") +
-  scale_colour_manual(values=c("black", "red"))+
+new.vols.by.month.g <- new.vols.by.month[new.vols.by.month$orient_loc.Primary=="NE",c(2,3,4)]
+colnames(new.vols.by.month.g) <- c("orientation.month", "2017", "2018" )
+new.vols.by.month.g <- melt(new.vols.by.month.g, id=c("orientation.month"))
+new.vols.by.month.g$value <- new.vols.by.month.g$value*100
+colnames(new.vols.by.month.g)[2] <- "year"
+
+p <- ggplot(data=new.vols.by.month.g) + 
+  geom_line(aes(x=as.factor(orientation.month), y=value, colour=year, group=year)) +
+  scale_colour_manual(values=c("black","red")) +
   scale_y_continuous(name="Percent", limits=c(0, 30), breaks = seq(0, 20,2)) +
-  ggtitle("Percent new volunteers attending first orientation at Grant Ave in 2018 (vs 2017, in black)") + 
+  ggtitle("Percent new volunteers attending first orientation at Grant Ave") + 
   scale_x_discrete(name = "Month")
 
 png("NE_orientationByMonth2018v2017.png", width=800, height=250)
